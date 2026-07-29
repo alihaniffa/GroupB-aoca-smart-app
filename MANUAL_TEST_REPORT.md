@@ -4,9 +4,11 @@
 
 Dementia Tester App
 
-## Tester
+## Testers
 
-Tshering Dorji
+Tshering Dorji  
+Manila Shrestha  
+
 
 ## Testing Environment
 
@@ -40,9 +42,24 @@ The objective of this manual testing activity was to review the main user workfl
 | T14 | Notifications       | Review reminder functionality    | Reminder feature is available       | Reminder feature observed           | Reviewed |
 | T15 | Navigation          | Move between main screens        | No crashes occur                    | Navigation worked correctly         | Pass     |
 
+## Additional Usability Tests by Manila Shrestha
+
+| ID  | Area           | Test Case                         | Expected Result                   | Actual Result                                       | Status      |
+| --- | -------------- | --------------------------------- | --------------------------------  | --------------------------------------------------  | ----------- |
+| T16 | Readability    | Review font size and text clarity | Text is easy for older users      | Some small grey text may be difficult to read       | Issue Found |
+| T17 | Navigation     | Test screen labels and navigation | Each option opens the right page  | Main tabs opened the expected screens               | Pass        |
+| T18 | Buttons        | Review button size and spacing    | Buttons are easy to identify      | Buttons were clearly visible and easy to tap        | Pass        |
+| T19 | Instructions   | Review assessment wording         | Instructions are simple and clear | Some assessment questions were lengthy              | Issue Found |
+| T20 | Error Handling | Submit incomplete reminder form   | Clear validation messages appear  | Missing fields were highlighted with clear messages | Pass        |
+
 ## Issues Found
 
 No major blocking issues were identified during this testing review. The application launched successfully and the core screens were accessible through the Android emulator. However, additional automated testing would be beneficial for Firebase-related functionality, form validation, and Compose UI components.
+
+Additional usability testing identified the following areas for improvement:
+
+* Some smaller grey text may be difficult for older users to read.
+* Some assessment questions are lengthy and could be simplified for users with cognitive impairment.
 
 ## Recommendations
 
@@ -54,4 +71,4 @@ No major blocking issues were identified during this testing review. The applica
 
 ## Conclusion
 
-The manual testing review confirmed that the main application screens were accessible and that key user workflows appeared to function correctly within the testing environment. Further automated testing is recommended to improve reliability and reduce the risk of future regressions as the application continues to evolve.
+The manual testing review confirmed that the main application screens were accessible and that key user workflows functioned correctly within the Android emulator. The additional usability review identified minor concerns relating to small grey text and lengthy assessment questions. Further automated and physical device testing is recommended to improve accessibility, reliability, and reduce the risk of future regressions.
