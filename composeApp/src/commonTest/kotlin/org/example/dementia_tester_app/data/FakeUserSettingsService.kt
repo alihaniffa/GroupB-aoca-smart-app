@@ -1,17 +1,13 @@
 package org.example.dementia_tester_app.data
 
 class FakeUserSettingsService : UserSettingsServiceInterface {
-    private var storedSettings: UserSettings? = null
+
+    private var storedSettings: UserSettings = UserSettings()
     var shouldSucceed = true
-    var errorMessage = "Failed to load/save settings"
+    var errorMessage = "Failed to save settings"
 
     override fun loadSettings(callback: (DatabaseResult<UserSettings>) -> Unit) {
-        val current = storedSettings
-        if (current != null) {
-            callback(DatabaseResult.Success(current))
-        } else {
-            callback(DatabaseResult.Success(UserSettings())) // defaults, mirrors first-time load
-        }
+        callback(DatabaseResult.Success(storedSettings))
     }
 
     override fun saveSettings(settings: UserSettings, callback: (DatabaseResult<Unit>) -> Unit) {
