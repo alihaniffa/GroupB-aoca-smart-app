@@ -27,9 +27,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.dementia_tester_app.auth.AuthResult
 import org.example.dementia_tester_app.auth.AuthService
+import org.example.dementia_tester_app.auth.AuthServiceInterface
 import org.example.dementia_tester_app.data.DatabaseResult
 import org.example.dementia_tester_app.data.UserSettings
 import org.example.dementia_tester_app.data.UserSettingsService
+import org.example.dementia_tester_app.data.UserSettingsServiceInterface
 import org.example.dementia_tester_app.ui.components.CollapsibleSection
 import org.example.dementia_tester_app.ui.components.FormDropdown
 import org.example.dementia_tester_app.ui.components.FormTextField
@@ -49,12 +51,12 @@ import org.example.dementia_tester_app.ui.components.FormToggle
 //this is a setting page
 @Composable
 fun Settings(
+    authService: AuthServiceInterface = remember { AuthService() },
+    settingsService: UserSettingsServiceInterface = remember { UserSettingsService() },
     onAccountDeleted: () -> Unit,
     onSettingsChanged: (UserSettings) -> Unit = {}
 ) {
     val scrollState      = rememberScrollState()
-    val authService      = remember { AuthService() }
-    val settingsService  = remember { UserSettingsService() }
 
     // ── Single consolidated state object (replaces 12 separate vars) ──
     var settings by remember { mutableStateOf(UserSettings()) }

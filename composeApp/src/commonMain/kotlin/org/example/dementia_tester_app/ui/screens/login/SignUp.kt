@@ -28,6 +28,7 @@ import org.example.dementia_tester_app.data.UserType
 import org.example.dementia_tester_app.ui.components.LoadingSpinner
 import org.example.dementia_tester_app.utils.*
 import androidx.compose.material3.MaterialTheme // Added Import
+import org.example.dementia_tester_app.data.UserProfileServiceInterface
 
 
 /**
@@ -36,6 +37,7 @@ import androidx.compose.material3.MaterialTheme // Added Import
 @Composable
 fun SignUp(
     authService: AuthServiceInterface = remember { AuthService() },
+    userProfileService: UserProfileServiceInterface = remember { UserProfileService() },
     onBack: () -> Unit = {},
     onSignUpSuccess: (String) -> Unit = {_ ->}
 ) {
@@ -91,8 +93,6 @@ fun SignUp(
 
     var showErrorMessage by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("Please enter all required fields") }
-
-    val userProfileService = remember { UserProfileService() }
     var isLoading by remember { mutableStateOf(false) }
 
     fun handleSignUp(email: String, password: String) {

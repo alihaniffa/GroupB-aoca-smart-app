@@ -1,5 +1,9 @@
 package org.example.dementia_tester_app.data
 
+interface UserSettingsServiceInterface {
+    fun loadSettings(callback: (DatabaseResult<UserSettings>) -> Unit)
+    fun saveSettings(settings: UserSettings, callback: (DatabaseResult<Unit>) -> Unit)
+}
 /**
  * Holds all 12 user-configurable toggles / preferences.
  * Persisted to Firebase at UserSettings/{userId} (fixes issue #11).
@@ -62,8 +66,8 @@ data class UserSettings(
  * Expect class - load/save UserSettings from Firebase.
  * Fixes issue #11 (settings reset on every app restart).
  */
-expect class UserSettingsService() {
-    fun loadSettings(callback: (DatabaseResult<UserSettings>) -> Unit)
-    fun saveSettings(settings: UserSettings, callback: (DatabaseResult<Unit>) -> Unit)
+expect class UserSettingsService() : UserSettingsServiceInterface {
+    override fun loadSettings(callback: (DatabaseResult<UserSettings>) -> Unit)
+    override fun saveSettings(settings: UserSettings, callback: (DatabaseResult<Unit>) -> Unit)
 }
 
