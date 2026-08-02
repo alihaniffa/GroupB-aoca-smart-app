@@ -67,8 +67,15 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+
         }
-        
+        androidUnitTest.dependencies {
+            implementation("io.mockk:mockk:1.13.11")
+            implementation("io.mockk:mockk-android:1.13.11")
+            implementation("io.mockk:mockk-agent:1.13.11")
+            implementation("org.robolectric:robolectric:4.12.1")
+            implementation("junit:junit:4.13.2")
+        }
         /*
         val iosArm64Main by getting {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")

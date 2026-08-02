@@ -11,7 +11,22 @@ sealed class AuthResult {
 /**
  * Interface for authentication service
  */
-expect class AuthService() {
+ interface AuthServiceInterface {
+    fun signIn(email: String, password: String, callback: (AuthResult) -> Unit)
+    fun signUp(email: String, password: String, callback: (AuthResult) -> Unit)
+    fun sendPasswordResetEmail(email: String, callback: (AuthResult) -> Unit)
+    fun sendEmailVerification(callback: (AuthResult) -> Unit)
+    fun isEmailVerified(): Boolean
+    fun reloadUser(callback: (AuthResult) -> Unit)
+    fun signOut()
+    fun isUserSignedIn(): Boolean
+    fun getCurrentUserId(): String?
+    fun getCurrentUserEmail(): String?
+    fun changePassword(newPassword: String, callback: (AuthResult) -> Unit)
+    fun deleteAccount(callback: (AuthResult) -> Unit)
+}
+
+expect class AuthService() : AuthServiceInterface {
 
     /**
      * Sign in with email and password
@@ -19,7 +34,7 @@ expect class AuthService() {
      * @param password User's password
      * @param callback Callback to be invoked with the result of the operation
      */
-    fun signIn(email: String, password: String, callback: (AuthResult) -> Unit)
+    override fun signIn(email: String, password: String, callback: (AuthResult) -> Unit)
 
     /**
      * Sign up with email and password
@@ -27,63 +42,63 @@ expect class AuthService() {
      * @param password User's password
      * @param callback Callback to be invoked with the result of the operation
      */
-    fun signUp(email: String, password: String, callback: (AuthResult) -> Unit)
+    override fun signUp(email: String, password: String, callback: (AuthResult) -> Unit)
 
     /**
      * Send password reset email
      * @param email User's email
      * @param callback Callback to be invoked with the result of the operation
      */
-    fun sendPasswordResetEmail(email: String, callback: (AuthResult) -> Unit)
+    override fun sendPasswordResetEmail(email: String, callback: (AuthResult) -> Unit)
 
     /**
      * Send email verification to the current user
      * @param callback Callback to be invoked with the result of the operation
      */
-    fun sendEmailVerification(callback: (AuthResult) -> Unit)
+    override fun sendEmailVerification(callback: (AuthResult) -> Unit)
 
     /**
      * Check if the current user's email is verified
      * @return true if the email is verified, false otherwise
      */
-    fun isEmailVerified(): Boolean
+    override fun isEmailVerified(): Boolean
 
     /**
      * Reload the current user's data to get the latest status
      * @param callback Callback to be invoked with the result of the operation
      */
-    fun reloadUser(callback: (AuthResult) -> Unit)
+    override fun reloadUser(callback: (AuthResult) -> Unit)
 
     /**
      * Sign out the current user
      */
-    fun signOut()
+    override fun signOut()
 
     /**
      * Check if a user is currently signed in
      * @return true if a user is signed in, false otherwise
      */
-    fun isUserSignedIn(): Boolean
+    override fun isUserSignedIn(): Boolean
 
     /**
      * Get the current user's ID
      * @return the user's ID if signed in, null otherwise
      */
-    fun getCurrentUserId(): String?
+    override fun getCurrentUserId(): String?
 
     /**
      * Get the current user's email
      * @return the user's email if signed in, null otherwise
      */
-    fun getCurrentUserEmail(): String?
+    override fun getCurrentUserEmail(): String?
 
     /**
      * Change password for the currently signed-in user
      */
-    fun changePassword(newPassword: String, callback: (AuthResult) -> Unit)
+    override fun changePassword(newPassword: String, callback: (AuthResult) -> Unit)
 
     /**
      * Delete the currently signed-in user account
      */
-    fun deleteAccount(callback: (AuthResult) -> Unit)
+    override fun deleteAccount(callback: (AuthResult) -> Unit)
 }
