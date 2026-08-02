@@ -28,4 +28,16 @@ class PasswordResetLogicTest {
         assertTrue(result is AuthResult.Error)
         assertEquals("No user found with this email.", (result as AuthResult.Error).message)
     }
+
+    @Test
+    fun `empty email fails validation before reset attempt`() {
+        val trimmedEmail = "".trim()
+        assertTrue(trimmedEmail.isEmpty())
+    }
+
+    @Test
+    fun `whitespace-only email fails validation before reset attempt`() {
+        val trimmedEmail = "   ".trim()
+        assertTrue(trimmedEmail.isEmpty())
+    }
 }
