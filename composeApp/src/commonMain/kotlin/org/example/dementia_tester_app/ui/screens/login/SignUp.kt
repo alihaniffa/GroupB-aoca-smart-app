@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import org.example.dementia_tester_app.ui.components.*
 import org.example.dementia_tester_app.auth.AuthResult
 import org.example.dementia_tester_app.auth.AuthService
+import org.example.dementia_tester_app.auth.AuthServiceInterface
 import org.example.dementia_tester_app.data.UserProfile
 import org.example.dementia_tester_app.data.UserProfileService
 import org.example.dementia_tester_app.data.DatabaseResult
@@ -33,7 +34,11 @@ import androidx.compose.material3.MaterialTheme // Added Import
  * SignUp screen with user details and emergency contact information
  */
 @Composable
-fun SignUp(onBack: () -> Unit = {}, onSignUpSuccess: (String) -> Unit = {_ ->}) {
+fun SignUp(
+    authService: AuthServiceInterface = remember { AuthService() },
+    onBack: () -> Unit = {},
+    onSignUpSuccess: (String) -> Unit = {_ ->}
+) {
     val NAME = "name"
     val EMAIL = "email"
     val DATE_OF_BIRTH = "dateOfBirth"
@@ -86,8 +91,7 @@ fun SignUp(onBack: () -> Unit = {}, onSignUpSuccess: (String) -> Unit = {_ ->}) 
 
     var showErrorMessage by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("Please enter all required fields") }
-    
-    val authService = remember { AuthService() }
+
     val userProfileService = remember { UserProfileService() }
     var isLoading by remember { mutableStateOf(false) }
 
