@@ -15,7 +15,9 @@ class FakeAuthService : AuthServiceInterface {
     override fun signUp(email: String, password: String, callback: (AuthResult) -> Unit) {
         callback(signInResult)
     }
-    override fun sendPasswordResetEmail(email: String, callback: (AuthResult) -> Unit) = callback(AuthResult.Success)
+    override fun sendPasswordResetEmail(email: String, callback: (AuthResult) -> Unit) {
+        callback(signInResult)
+    }
     override fun sendEmailVerification(callback: (AuthResult) -> Unit) = callback(AuthResult.Success)
     override fun isEmailVerified(): Boolean = true
     override fun reloadUser(callback: (AuthResult) -> Unit) = callback(AuthResult.Success)

@@ -51,4 +51,9 @@ class SignUpValidationTest {
     fun `valid date of birth returns non-null age`() {
         assertNotNull(calculateAgeFromDateOfBirth("15/05/1990"))
     }
+
+    @Test
+    fun `empty email fails validation before reset attempt`() {
+        assertTrue("".isValidEmail().not())
+    }
 }
