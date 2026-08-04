@@ -11,15 +11,15 @@ import android.util.Log
  * Migrated from Firestore to fix permission issues and ensure consistency.
  */
 actual class UserProfileService actual constructor() : UserProfileServiceInterface {
-    private val auth = FirebaseAuth.getInstance()
-    private val database = Firebase.database.reference
-    private val storage = Firebase.storage
-    private val dbPath = "UserProfiles"
+    private val auth = FirebaseAuth.getInstance() //gets the currently signed-in user
+    private val database = Firebase.database.reference //accesses the root of Realtime Database
+    private val storage = Firebase.storage //accesses Firebase Storage
+    private val dbPath = "UserProfiles" //defines where user profiles are stored.
 
     /**
      * Get the current user's profile from Realtime Database
      */
-    override actual fun getCurrentUserProfile(callback: (DatabaseResult<UserProfile>) -> Unit) {
+    actual override fun getCurrentUserProfile(callback: (DatabaseResult<UserProfile>) -> Unit) {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             callback(DatabaseResult.Error("No user is signed in"))
@@ -34,7 +34,7 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
                 }
                 
                 try {
-                    val data = snapshot.value as? Map<*, *>
+                    val data = snapshot.value as? Map<*, *> // possible issue
                     if (data != null) {
                         val profile = UserProfile.fromMap(data, userId)
                         callback(DatabaseResult.Success(profile))
@@ -53,7 +53,7 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
     /**
      * Update the current user's profile in Realtime Database
      */
-    override actual fun updateUserProfile(userProfile: UserProfile, callback: (DatabaseResult<Unit>) -> Unit) {
+    actual override fun updateUserProfile(userProfile: UserProfile, callback: (DatabaseResult<Unit>) -> Unit) {
         val currentUser = auth.currentUser
         val userId = currentUser?.uid
         if (userId == null) {
@@ -68,14 +68,24 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
                 if (snapshot.exists()) {
                     val data = snapshot.value as? Map<*, *>
                     val existingUserType = data?.get("userType")?.toString() ?: "user"
-                    val existingEmail = data?.get("email")?.toString() ?: ""
+                    val existingEmail = data?.get("email")?.toString() ?.takeIf{ it.isNotBlank() } ?: currentUser.email.orEmpty()
                     
                     updates["userType"] = existingUserType
                     updates["email"] = existingEmail
                 } else {
-                    if (updates["email"] == null || (updates["email"] as String).isEmpty()) {
-                        updates["email"] = currentUser.email ?: ""
+                    val profileEmail = updates["email"] as? String
+
+                    if (profileEmail.isNullOrBlank()) {
+                        updates["email"] = currentUser.email.orEmpty()
                     }
+
+                    if (updates["userType"] == null) {
+                        updates["userType"] = "user"
+                    }
+
+                    //if (updates["email"] == null || (updates["email"] as String).isEmpty()) {
+                      //  updates["email"] = currentUser.email ?: ""
+                    //}
                 }
                 
                 database.child(dbPath).child(userId).updateChildren(updates)
@@ -94,7 +104,7 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
     /**
      * Get all users with userType = User
      */
-    override actual fun getAllUsers(callback: (DatabaseResult<List<UserProfile>>) -> Unit) {
+    actual override fun getAllUsers(callback: (DatabaseResult<List<UserProfile>>) -> Unit) {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             callback(DatabaseResult.Error("No user is signed in"))
@@ -117,7 +127,7 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
                 callback(DatabaseResult.Error("Authorization check failed: ${e.message}"))
             }
     }
-
+    
     private fun fetchAllUsers(callback: (DatabaseResult<List<UserProfile>>) -> Unit) {
         database.child(dbPath)
             .orderByChild("userType")
@@ -142,8 +152,14 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
     /**
      * Upload a profile image to Firebase Storage and return the download URL
      */
-    override actual fun uploadProfileImage(imageBytes: ByteArray, callback: (DatabaseResult<String>) -> Unit) {
+    actual override fun uploadProfileImage(imageBytes: ByteArray, callback: (DatabaseResult<String>) -> Unit) {
+        if (imageBytes.isEmpty()) {
+            callback(DatabaseResult.Error("The selected image is empty"))
+            return
+        }
+
         val userId = auth.currentUser?.uid
+
         if (userId == null) {
             callback(DatabaseResult.Error("No user is signed in"))
             return
@@ -152,15 +168,22 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
         val profileImageRef = storage.reference.child("profile_images/${userId}.jpg")
 
         profileImageRef.putBytes(imageBytes)
-            .addOnSuccessListener { _ ->
+            .addOnSuccessListener {
                 profileImageRef.downloadUrl.addOnSuccessListener { uri ->
                     val url = uri.toString()
+
                     database.child(dbPath).child(userId).child("profileImageUrl").setValue(url)
                         .addOnSuccessListener {
                             callback(DatabaseResult.Success(url))
                         }
                         .addOnFailureListener {
-                            callback(DatabaseResult.Success(url))
+                            //callback(DatabaseResult.Success(url)) //possible issue -> even when saving the image URL fails, the app still reports success.
+                            // possible fix
+                            e -> callback(
+                                DatabaseResult.Error(
+                                    "Image uploaded, but failed to save profile URL: ${e.message}"
+                                )
+                            )
                         }
                 }.addOnFailureListener { e ->
                     callback(DatabaseResult.Error("Failed to get download URL: ${e.message}"))
