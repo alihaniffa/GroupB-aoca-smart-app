@@ -10,7 +10,7 @@ import android.util.Log
  * Android implementation of UserProfileService using Firebase Realtime Database and Storage.
  * Migrated from Firestore to fix permission issues and ensure consistency.
  */
-actual class UserProfileService {
+actual class UserProfileService actual constructor() : UserProfileServiceInterface {
     private val auth = FirebaseAuth.getInstance() //gets the currently signed-in user
     private val database = Firebase.database.reference //accesses the root of Realtime Database
     private val storage = Firebase.storage //accesses Firebase Storage
@@ -19,7 +19,7 @@ actual class UserProfileService {
     /**
      * Get the current user's profile from Realtime Database
      */
-    actual fun getCurrentUserProfile(callback: (DatabaseResult<UserProfile>) -> Unit) {
+    actual override fun getCurrentUserProfile(callback: (DatabaseResult<UserProfile>) -> Unit) {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             callback(DatabaseResult.Error("No user is signed in"))
@@ -53,7 +53,7 @@ actual class UserProfileService {
     /**
      * Update the current user's profile in Realtime Database
      */
-    actual fun updateUserProfile(userProfile: UserProfile, callback: (DatabaseResult<Unit>) -> Unit) {
+    actual override fun updateUserProfile(userProfile: UserProfile, callback: (DatabaseResult<Unit>) -> Unit) {
         val currentUser = auth.currentUser
         val userId = currentUser?.uid
         if (userId == null) {
@@ -104,7 +104,7 @@ actual class UserProfileService {
     /**
      * Get all users with userType = User
      */
-    actual fun getAllUsers(callback: (DatabaseResult<List<UserProfile>>) -> Unit) {
+    actual override fun getAllUsers(callback: (DatabaseResult<List<UserProfile>>) -> Unit) {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             callback(DatabaseResult.Error("No user is signed in"))
@@ -152,7 +152,7 @@ actual class UserProfileService {
     /**
      * Upload a profile image to Firebase Storage and return the download URL
      */
-    actual fun uploadProfileImage(imageBytes: ByteArray, callback: (DatabaseResult<String>) -> Unit) {
+    actual override fun uploadProfileImage(imageBytes: ByteArray, callback: (DatabaseResult<String>) -> Unit) {
         if (imageBytes.isEmpty()) {
             callback(DatabaseResult.Error("The selected image is empty"))
             return
