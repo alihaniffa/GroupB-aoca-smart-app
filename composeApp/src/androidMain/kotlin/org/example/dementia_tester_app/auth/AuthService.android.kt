@@ -9,10 +9,10 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 /**
  * Android implementation of AuthService using Firebase Auth
  */
-actual class AuthService actual constructor() {
+actual class AuthService actual constructor() : AuthServiceInterface {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    actual fun signIn(email: String, password: String, callback: (AuthResult) -> Unit) {
+    override actual fun signIn(email: String, password: String, callback: (AuthResult) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -28,7 +28,7 @@ actual class AuthService actual constructor() {
             }
     }
 
-    actual fun signUp(email: String, password: String, callback: (AuthResult) -> Unit) {
+    override actual fun signUp(email: String, password: String, callback: (AuthResult) -> Unit) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -45,7 +45,7 @@ actual class AuthService actual constructor() {
             }
     }
 
-    actual fun sendPasswordResetEmail(email: String, callback: (AuthResult) -> Unit) {
+    override actual fun sendPasswordResetEmail(email: String, callback: (AuthResult) -> Unit) {
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -60,7 +60,7 @@ actual class AuthService actual constructor() {
             }
     }
 
-    actual fun sendEmailVerification(callback: (AuthResult) -> Unit) {
+    override actual fun sendEmailVerification(callback: (AuthResult) -> Unit) {
         val user = auth.currentUser
         if (user != null) {
             user.sendEmailVerification()
@@ -77,11 +77,11 @@ actual class AuthService actual constructor() {
         }
     }
 
-    actual fun isEmailVerified(): Boolean {
+    override actual fun isEmailVerified(): Boolean {
         return auth.currentUser?.isEmailVerified ?: false
     }
 
-    actual fun reloadUser(callback: (AuthResult) -> Unit) {
+    override actual fun reloadUser(callback: (AuthResult) -> Unit) {
         val user = auth.currentUser
         if (user != null) {
             user.reload()
@@ -98,22 +98,22 @@ actual class AuthService actual constructor() {
         }
     }
 
-    actual fun signOut() {
+    override actual fun signOut() {
         auth.signOut()
     }
 
-    actual fun isUserSignedIn(): Boolean {
+    override actual fun isUserSignedIn(): Boolean {
         return auth.currentUser != null
     }
 
-    actual fun getCurrentUserId(): String? {
+    override actual fun getCurrentUserId(): String? {
         return auth.currentUser?.uid
     }
 
-    actual fun getCurrentUserEmail(): String? {
+    override actual fun getCurrentUserEmail(): String? {
         return auth.currentUser?.email
     }
-    actual fun changePassword(newPassword: String, callback: (AuthResult) -> Unit) {
+    override actual fun changePassword(newPassword: String, callback: (AuthResult) -> Unit) {
         val user = auth.currentUser
 
         if (user != null) {
@@ -132,7 +132,7 @@ actual class AuthService actual constructor() {
         }
     }
 
-    actual fun deleteAccount(callback: (AuthResult) -> Unit) {
+    override actual fun deleteAccount(callback: (AuthResult) -> Unit) {
         val user = auth.currentUser
 
         if (user != null) {
