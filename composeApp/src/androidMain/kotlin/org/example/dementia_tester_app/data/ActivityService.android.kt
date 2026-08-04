@@ -21,7 +21,7 @@ import kotlinx.datetime.toInstant
  * Android implementation of ActivityService using Firebase Realtime Database.
  * Migrated from Firestore for consistency and to fix permission issues.
  */
-actual class ActivityService {
+actual class ActivityService actual constructor() : ActivityServiceInterface {
     private val auth = FirebaseAuth.getInstance()
     private val database = Firebase.database.reference
     private val dbPath = "Activities"
@@ -32,7 +32,7 @@ actual class ActivityService {
             database.child(dbPath).child(userId)
         }
 
-    actual fun logActivity(activity: Activity, callback: (DatabaseResult<Unit>) -> Unit) {
+    override actual fun logActivity(activity: Activity, callback: (DatabaseResult<Unit>) -> Unit) {
         val ref = getUserActivitiesRef()
         if (ref == null) {
             callback(DatabaseResult.Error("No user is signed in"))
@@ -54,7 +54,7 @@ actual class ActivityService {
             }
     }
 
-    actual fun getActivitiesFlow(): Flow<List<Activity>> = callbackFlow {
+    override actual fun getActivitiesFlow(): Flow<List<Activity>> = callbackFlow {
         val ref = getUserActivitiesRef()
         
         if (ref == null) {
@@ -85,7 +85,7 @@ actual class ActivityService {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    actual fun getTodaySummary(callback: (DatabaseResult<Map<String, Int>>) -> Unit) {
+    override actual fun getTodaySummary(callback: (DatabaseResult<Map<String, Int>>) -> Unit) {
         val ref = getUserActivitiesRef()
         if (ref == null) {
             callback(DatabaseResult.Error("No user is signed in"))

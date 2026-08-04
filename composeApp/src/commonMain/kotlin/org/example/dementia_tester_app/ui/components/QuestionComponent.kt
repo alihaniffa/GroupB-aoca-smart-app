@@ -1,6 +1,7 @@
 package org.example.dementia_tester_app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -145,6 +146,21 @@ fun QuestionComponent(
                 color = FormColors.green
             )
         }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Progress bar showing overall assessment completion
+        val progressFraction = questionNumber.toFloat() / totalQuestions.toFloat()
+        val animatedProgress by animateFloatAsState(targetValue = progressFraction)
+        LinearProgressIndicator(
+            progress = { animatedProgress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp),
+            color = FormColors.green,
+            trackColor = FormColors.green.copy(alpha = 0.2f),
+            strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Question text:

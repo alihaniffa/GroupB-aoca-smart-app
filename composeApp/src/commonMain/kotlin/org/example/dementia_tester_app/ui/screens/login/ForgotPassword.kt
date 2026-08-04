@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.sp
 import org.example.dementia_tester_app.ui.components.*
 import org.example.dementia_tester_app.auth.AuthResult
 import org.example.dementia_tester_app.auth.AuthService
+import org.example.dementia_tester_app.auth.AuthServiceInterface
 import org.example.dementia_tester_app.ui.components.LoadingSpinner
 import org.example.dementia_tester_app.ui.components.SuccessMessage
 import org.example.dementia_tester_app.utils.isEmptyTrimmed
@@ -20,7 +21,11 @@ import org.example.dementia_tester_app.utils.isEmptyTrimmed
  * @param onBack Callback to be invoked when the user wants to go back to the login screen
  */
 @Composable
-fun ForgotPassword(onBack: () -> Unit = {}) {
+fun ForgotPassword(
+    authService: AuthServiceInterface = remember { AuthService() },
+    onBack: () -> Unit = {},
+    onResetSent: () -> Unit = {}
+) {
     var email by remember { mutableStateOf("") }
     
     // Error states
@@ -31,8 +36,6 @@ fun ForgotPassword(onBack: () -> Unit = {}) {
     // Success message state
     var successMessage by remember { mutableStateOf<String?>(null) }
     var showSuccessMessage by remember { mutableStateOf(false) }
-    
-    val authService = remember { AuthService() }
 
     var isLoading by remember { mutableStateOf(false) }
 
