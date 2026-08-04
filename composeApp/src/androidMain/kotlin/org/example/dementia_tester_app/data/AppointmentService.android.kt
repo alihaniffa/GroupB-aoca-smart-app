@@ -11,9 +11,9 @@ import com.google.firebase.database.ValueEventListener
  * Nested under userId to match security rules and ensure consistency.
  */
 actual class AppointmentService {
-    private val auth = FirebaseAuth.getInstance()
-    private val database = FirebaseDatabase.getInstance().reference
-    private val collectionPath = "Appointments"
+    private val auth = FirebaseAuth.getInstance() // accesses Firebase Authentication and is used to identify the currently signed-in user.
+    private val database = FirebaseDatabase.getInstance().reference // gets a reference to the root of Firebase Realtime Database
+    private val collectionPath = "Appointments" // defines the main database location where appointment records are stored
 
     actual fun createAppointment(appointment: Appointment, callback: (DatabaseResult<Unit>) -> Unit) {
         val userId = auth.currentUser?.uid
@@ -22,9 +22,22 @@ actual class AppointmentService {
             return 
         }
 
+        // ensure required appointment details are provided
+        if (appointment.date.isBlank() || appointment.time.isBlank()) {
+            callback(DatabaseResult.Error("Appointment date and time are required"))
+            return
+        }
+
         // Generate a unique ID using push() under the user's specific node
         val newApptRef = database.child(collectionPath).child(userId).push()
-        val id = newApptRef.key ?: ""
+
+        // ensure a valid appointment ID was generated before saving
+        val id = newApptRef.key
+        // stop if firebase fails to generate an appointment ID
+        if (id == null) {
+            callback(DatabaseResult.Error("Failed to generate appointment ID"))
+            return
+        }
 
         val appt = appointment.copy(id = id, userId = userId)
         
@@ -42,7 +55,7 @@ actual class AppointmentService {
             return 
         }
 
-        database.child(collectionPath).child(userId)
+        database.child(collectionPath).child(userId).orderByChild("date")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     try {
@@ -67,6 +80,12 @@ actual class AppointmentService {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             callback(DatabaseResult.Error("No user is signed in"))
+            return
+        }
+
+        // ensure a valid appointment ID was provided
+        if (appointmentId.isBlank()) {
+            callback(DatabaseResult.Error("Invalid appointment ID"))
             return
         }
 

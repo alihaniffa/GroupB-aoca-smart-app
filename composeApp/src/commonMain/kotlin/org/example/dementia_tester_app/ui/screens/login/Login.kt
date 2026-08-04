@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import dementiatesterapp.composeapp.generated.resources.Res
 import dementiatesterapp.composeapp.generated.resources.icon_transparent
 import org.example.dementia_tester_app.auth.AuthResult
+import org.example.dementia_tester_app.auth.AuthServiceInterface
 import org.example.dementia_tester_app.auth.AuthService
 import org.example.dementia_tester_app.ui.components.LoadingSpinner
 import org.example.dementia_tester_app.utils.validateFields
@@ -51,6 +52,7 @@ fun LoginIcon() {
  */
 @Composable
 fun Login(
+    authService: AuthServiceInterface = remember { AuthService() },
     onLogin: (String) -> Unit = { _ -> },
     onSignUp: () -> Unit = {},
     onForgotPassword: () -> Unit = {}
@@ -76,8 +78,6 @@ fun Login(
 
     var showErrorMessage by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("Please enter all required fields") }
-
-    val authService = remember { AuthService() }
 
     var isLoading by remember { mutableStateOf(false) }
 

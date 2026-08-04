@@ -12,7 +12,7 @@ private const val WRONG_PASSWORD = 17009L
 private const val USER_NOT_FOUND = 17011L
 private const val WEAK_PASSWORD = 17026L
 
-actual class AuthService actual constructor() {
+actual class AuthService actual constructor() : AuthServiceInterface {
     /**
      * Sign in with email and password
      */

@@ -8,12 +8,12 @@ import com.google.firebase.ktx.Firebase
  * Android actual — reads/writes UserSettings/{userId} in Firebase Realtime DB.
  * Fixes issue #11: settings now persist across app restarts.
  */
-actual class UserSettingsService {
+actual class UserSettingsService actual constructor() : UserSettingsServiceInterface {
     private val auth     = FirebaseAuth.getInstance()
     private val database = Firebase.database.reference
     private val dbPath   = "UserSettings"
 
-    actual fun loadSettings(callback: (DatabaseResult<UserSettings>) -> Unit) {
+    override actual fun loadSettings(callback: (DatabaseResult<UserSettings>) -> Unit) {
         val userId = auth.currentUser?.uid
         if (userId == null) { callback(DatabaseResult.Error("No user is signed in")); return }
 
@@ -39,7 +39,7 @@ actual class UserSettingsService {
             }
     }
 
-    actual fun saveSettings(settings: UserSettings, callback: (DatabaseResult<Unit>) -> Unit) {
+    override actual fun saveSettings(settings: UserSettings, callback: (DatabaseResult<Unit>) -> Unit) {
         val userId = auth.currentUser?.uid
         if (userId == null) { callback(DatabaseResult.Error("No user is signed in")); return }
 
