@@ -5,7 +5,9 @@ package org.example.dementia_tester_app.data
  */
 enum class UserType(val value: String) {
     USER("user"),
-    DOCTOR("doctor");
+    DOCTOR("doctor"),
+    CAREGIVER("caregiver"),
+    ADMIN("admin");
     
     companion object {
         /**
@@ -20,8 +22,8 @@ enum class UserType(val value: String) {
 }
 
 /**
- * Data class representing a user profile
- * This class maps to documents in the 'UserProfiles' collection in Firestore
+ * Data class representing a user profile.
+ * This class maps to user records stored under 'UserProfile' in firebase realtime DB.
  */
 data class UserProfile(
     // User details
@@ -46,7 +48,7 @@ data class UserProfile(
     val profileImageUrl: String = ""
 ) {
     /**
-     * Convert the UserProfile to a map for Firestore
+     * Convert the UserProfile to a map for firebase realtime DB.
      */
     fun toMap(): Map<String, Any> {
         // Convert date from DD/MM/YYYY to DD-MMM-YYYY format
@@ -71,7 +73,47 @@ data class UserProfile(
         } else {
             dateStr
         }
+        // create combined address for backward compatibility
+        val fullAddress = listOf(
+            address,
+            suburb,
+            state,
+            postcode,
+            country
+        )
+            .filter { it.isNotEmpty() }
+            .joinToString(", ")
 
+        return mapOf(
+            "userId" to userId,
+            "fullName" to name,
+            "dateOfBirth" to formattedDate,
+            "email" to email,
+            "contactNumber" to phoneNumber,
+            "userType" to userType.value,
+
+            // keeping combined address for existing code/database records
+            "address" to fullAddress,
+
+            // store address components separately
+            "streetAddress" to address,
+            "suburb" to suburb,
+            "state" to state,
+            "postcode" to postcode,
+            "country" to country,
+
+            "gender" to gender,
+            "emergencyContactName" to emergencyName,
+            "emergencyEmail" to emergencyEmail,
+            "relation" to emergencyRelation,
+            "emergencyContactNumber" to emergencyPhoneNumber,
+            "profileImageUrl" to profileImageUrl
+
+            )
+    }
+
+// previous code
+/*
         val fullAddress = listOf(address, suburb, state, postcode, country)
             .filter { it.isNotEmpty() }
             .joinToString(", ")
@@ -90,8 +132,7 @@ data class UserProfile(
             "relation" to emergencyRelation,
             "emergencyContactNumber" to emergencyPhoneNumber,
             "profileImageUrl" to profileImageUrl
-        )
-    }
+ */
 
     companion object {
         /**
@@ -143,7 +184,8 @@ data class UserProfile(
         }
 
         /**
-         * Create a UserProfile from a Firestore document
+         * Create a UserProfile from a Firestore Realtime DB data.
+         *
          * @param map The map containing the user profile data
          * @param userId The ID of the user
          * @return A UserProfile object populated with data from the map
@@ -154,7 +196,7 @@ data class UserProfile(
             }
 
             val dobStr = getStringValue("dateOfBirth")
-            
+
             // Convert date from DD-MMM-YYYY to DD/MM/YYYY format for storage in UserProfile
             val formattedDate = if (dobStr.isNotEmpty()) {
                 try {
@@ -180,7 +222,69 @@ data class UserProfile(
             } else {
                 dobStr
             }
-            
+            // read the new separate address fields first
+            val streetAddress = getStringValue("streetAddress")
+            val storedSuburb = getStringValue("suburb")
+            val storedState = getStringValue("state")
+            val storedPostcode = getStringValue("postcode")
+            val storedCountry = getStringValue("country")
+
+            // read the old combined address for backward compatibility
+            val fullAddress = getStringValue("address")
+            val addressParts = fullAddress.split(", ")
+
+            // use separate fields when available.
+            // otherwise, fall back to the old combined address.
+            val addressComponent =
+                streetAddress.ifBlank {
+                    addressParts.getOrNull(0) ?: ""
+                }
+
+            val suburbComponent =
+                storedSuburb.ifBlank {
+                    addressParts.getOrNull(1) ?: ""
+                }
+
+            val stateComponent =
+                storedState.ifBlank {
+                    addressParts.getOrNull(2) ?: ""
+                }
+
+            val postcodeComponent =
+                storedPostcode.ifBlank {
+                    addressParts.getOrNull(3) ?: ""
+                }
+
+            val countryComponent =
+                storedCountry.ifBlank {
+                    addressParts.getOrNull(4) ?: ""
+                }
+
+            return UserProfile(
+                userId = userId,
+                name = getStringValue("fullName"),
+                dateOfBirth = formattedDate,
+                email = getStringValue("email"),
+                phoneNumber = getStringValue("contactNumber"),
+                userType = UserType.fromString(
+                    getStringValue("userType")
+                ),
+                address = addressComponent,
+                suburb = suburbComponent,
+                state = stateComponent,
+                postcode = postcodeComponent,
+                country = countryComponent,
+                gender = getStringValue("gender"),
+                emergencyName = getStringValue("emergencyContactName"),
+                emergencyEmail = getStringValue("emergencyEmail"),
+                emergencyRelation = getStringValue("relation"),
+                emergencyPhoneNumber = getStringValue("emergencyContactNumber"),
+                profileImageUrl = getStringValue("profileImageUrl")
+            )
+        }
+
+// previous code
+/*
             // Parse the address string from the database
             val fullAddress = getStringValue("address")
             val addressParts = fullAddress.split(", ")
@@ -211,6 +315,6 @@ data class UserProfile(
                 emergencyPhoneNumber = getStringValue("emergencyContactNumber"),
                 profileImageUrl = getStringValue("profileImageUrl")
             )
-        }
+ */
     }
 }
