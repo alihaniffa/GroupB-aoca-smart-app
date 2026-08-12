@@ -51,6 +51,14 @@ The objective of this manual testing activity was to review the main user workfl
 | T18 | Buttons        | Review button size and spacing    | Buttons are easy to identify      | Buttons were clearly visible and easy to tap        | Pass        |
 | T19 | Instructions   | Review assessment wording         | Instructions are simple and clear | Some assessment questions were lengthy              | Issue Found |
 | T20 | Error Handling | Submit incomplete reminder form   | Clear validation messages appear  | Missing fields were highlighted with clear messages | Pass        |
+| T21 | Health Survey | Select "None" together with another activity in Question 7 | "None" should not be selectable with another activity | "None" and another activity such as "Walking" can remain selected at the same time | Issue Found |
+| T22 | Health Survey | Leave a survey question unanswered and continue | User should be warned or prevented from completing with unanswered questions | Survey reached the Attempt Summary with a question marked "Not answered" | Issue Found |
+| T23 | Health Survey | Review the final survey question | Final action should clearly indicate survey completion | Question 11 of 11 still displayed a button labelled "Next" | Issue Found |
+| T24 | Appointment | Submit booking form with required information missing | Submission should be blocked and validation shown | Submission was blocked and "Please fill in all required fields" was displayed | Pass |
+| T25 | Appointment | Complete an appointment booking | Appointment should be saved and appear in appointment history | Booking was completed and appeared in Appointment History with doctor, date, time and status | Pass |
+| T26 | Settings | Enable Dark Mode and navigate away from Settings | Dark Mode should apply and remain enabled | Dark Mode applied successfully and remained enabled after returning to Settings | Pass |
+| T27 | Settings | Review system feedback messages | Status feedback should appear clearly without unnecessary duplication | "Settings loaded successfully." appeared more than once on the screen | Issue Found |
+| T28 | Chat | Start a new conversation and send a message | User should be able to select a contact and send a message | New conversation opened and the sent message appeared immediately | Pass |
 
 ## Issues Found
 
@@ -60,6 +68,10 @@ Additional usability testing identified the following areas for improvement:
 
 * Some smaller grey text may be difficult for older users to read.
 * Some assessment questions are lengthy and could be simplified for users with cognitive impairment.
+* Health Survey Question 7 allows "None" to be selected together with another activity, creating contradictory responses.
+* The Health Survey can reach the Attempt Summary with unanswered questions.
+* The final Health Survey question uses "Next" instead of a clearer final action such as "Finish" or "Submit".
+* The Settings screen can display the "Settings loaded successfully." message more than once.
 
 ## Recommendations
 
@@ -68,7 +80,11 @@ Additional usability testing identified the following areas for improvement:
 * Add UI tests for important screens such as Login, Sign Up, Settings, and Appointments.
 * Integrate automated testing into the CI/CD workflow.
 * Perform additional testing on physical Android devices in addition to the emulator.
+* Make the Health Survey "None" option mutually exclusive where multiple selections are allowed.
+* Add validation or a warning for unanswered Health Survey questions before completion.
 
 ## Conclusion
 
-The manual testing review confirmed that the main application screens were accessible and that key user workflows functioned correctly within the Android emulator. The additional usability review identified minor concerns relating to small grey text and lengthy assessment questions. Further automated and physical device testing is recommended to improve accessibility, reliability, and reduce the risk of future regressions.
+The manual testing review confirmed that the main application screens were accessible and that key user workflows functioned correctly within the Android emulator. The additional testing identified several minor usability issues, including small grey text, lengthy survey questions, contradictory Health Survey selections, unanswered survey questions reaching the summary screen, unclear final survey button wording, and duplicated settings feedback.
+
+No major blocking issues were identified. Further automated testing and testing on physical Android devices are recommended to improve accessibility, reliability, and reduce the risk of future regressions.
