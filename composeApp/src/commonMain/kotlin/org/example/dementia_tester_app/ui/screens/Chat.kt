@@ -52,9 +52,10 @@ fun Chat() {
 
     val chats = sessionChats
 
-    // Fetch latest messages from Firestore on startup to update previews
     LaunchedEffect(Unit) {
-        val currentUserId = Firebase.auth.currentUser?.uid ?: return@LaunchedEffect
+        val authUser = Firebase.auth.currentUser
+        if (authUser == null) return@LaunchedEffect
+        val currentUserId = authUser.uid
         val db = FirebaseFirestore.getInstance()
 
         chats.forEachIndexed { index, chat ->
@@ -68,6 +69,9 @@ fun Chat() {
                 .limit(1)
                 .get()
                 .addOnSuccessListener { snapshot ->
+                    // Guard: Verify user hasn't switched accounts while the network request was in flight
+                    if (Firebase.auth.currentUser?.uid != currentUserId) return@addOnSuccessListener
+
                     if (!snapshot.isEmpty) {
                         val latestDoc = snapshot.documents[0]
                         val text = latestDoc.getString("text")
@@ -106,13 +110,13 @@ fun Chat() {
     }
 
     if (selectedChat != null) {
-        // CLEAR UNREAD COUNT WHEN OPENING CHAT
         val chatIndex = chats.indexOfFirst { it.name == selectedChat!!.name }
         if (chatIndex != -1 && chats[chatIndex].unreadCount > 0) {
             chats[chatIndex] = chats[chatIndex].copy(unreadCount = 0)
         }
 
-        val currentUserId = Firebase.auth.currentUser?.uid ?: "anonymous_user"
+        val authUser = Firebase.auth.currentUser
+        val currentUserId = authUser?.uid ?: "anonymous_user"
         val sanitizedChatName = selectedChat!!.name.replace(Regex("[^A-Za-z0-9]"), "_")
         val roomId = "room_${currentUserId}_${sanitizedChatName}"
 
@@ -188,6 +192,20 @@ fun Chat() {
             }
         )
     }
+}
+
+fun clearChatSessionState() {
+    sessionMessages.clear()
+    sessionChats.clear()
+    sessionChats.addAll(
+        listOf(
+            ChatItem("Dr. Smith", "Your next appointment is scheduled for tomorrow at 10:00 AM.", "10:30 AM", 0),
+            ChatItem("Nurse Johnson", "How are you feeling today? Don't forget to take your medication.", "Yesterday", 0),
+            ChatItem("Caregiver Support", "We've sent you the resources we discussed during our last conversation.", "Jul 19", 0),
+            ChatItem("Memory Clinic", "Your test results have been uploaded to your profile.", "Jul 15", 0),
+            ChatItem("Medication Reminder", "It's time to take your evening medication.", "Jul 10", 0)
+        )
+    )
 }
 
 @Composable
