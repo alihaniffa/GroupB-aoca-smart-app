@@ -12,7 +12,7 @@ describe("Dementia Tester Realtime Database Security Rules", () => {
         testEnv = await initializeTestEnvironment({
             projectId: "demo-test-project",
             database: {
-                host: "127.0.0.1", // Explicitly use IPv4 to prevent ECONNREFUSED issues on CI runners
+                host: "127.0.0.1",
                 port: 9000,
                 rules: fs.readFileSync("database.rules.json", "utf8"),
             },
@@ -35,13 +35,13 @@ describe("Dementia Tester Realtime Database Security Rules", () => {
     });
 
     test("A regular user can read and write their own profile and records", async () => {
-        const userContext = testEnv.authenticatedContext("patient_123");
-        const db = userContext.database();
-
-        await userContext.withSecurityRulesDisabled(async (context) => {
-            // Seed profile info so userType lookups succeed if needed
+        // Correct usage: call it on testEnv, passing a callback context
+        await testEnv.withSecurityRulesDisabled(async (context) => {
             await context.database().ref("UserProfiles/patient_123").set({ userType: "user" });
         });
+
+        const userContext = testEnv.authenticatedContext("patient_123");
+        const db = userContext.database();
 
         await assertSucceeds(
             db.ref("Reminders/patient_123").set({ title: "Take meds" })
