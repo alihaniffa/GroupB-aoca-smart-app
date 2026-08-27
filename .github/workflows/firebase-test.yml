@@ -26,5 +26,4 @@ jobs:
 
       - name: Run RTDB Rules Tests via Emulator
         run: |
-          # Starts only the database emulator and runs Jest
           firebase emulators:exec --only database --project demo-test-project "npx jest database-rules.test.js"
