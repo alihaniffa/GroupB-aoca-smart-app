@@ -106,17 +106,26 @@ service cloud.firestore {
 
     // ─── CHAT SYSTEM ───────────────────────────────────────────────
     match /chatRooms/{roomId} {
-      // Only participants can see the room
-      allow read: if isAuthenticated() && request.auth.uid in resource.data.participants;
+      // 'get' allows fetching a single room document by its exact ID
+      allow get: if isAuthenticated();
+
+      // 'list' / queries: allow if user is authenticated
+      // (or scope it tightly to rooms where they are a participant)
+      allow list: if isAuthenticated();
+
+      // Allow creating or updating the room if authenticated
+      allow create, update: if isAuthenticated() &&
+      (request.resource.data.participants is list);
 
       match /messages/{messageId} {
         // Only participants can read messages
-        allow read: if isAuthenticated() && request.auth.uid in get(/databases/$(database)/documents/chatRooms/$(roomId)).data.participants;
+        allow read: if isAuthenticated() &&
+        request.auth.uid in get(/databases/$(database)/documents/chatRooms/$(roomId)).data.participants;
 
-        // Only participants can send messages, and cannot edit/delete (immutable history)
+        // Only participants can send messages, and cannot edit/delete
         allow create: if isAuthenticated()
-          && request.auth.uid in get(/databases/$(database)/documents/chatRooms/$(roomId)).data.participants
-          && request.resource.data.senderId == request.auth.uid;
+        && request.auth.uid in get(/databases/$(database)/documents/chatRooms/$(roomId)).data.participants
+        && request.resource.data.senderId == request.auth.uid;
 
         allow update, delete: if false;
       }

@@ -25,20 +25,25 @@ import androidx.compose.ui.unit.sp
 import org.example.dementia_tester_app.ui.components.FormColors
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+
 data class FirebaseChatMessage(
     val chatName: String = "",
     val text: String = "",
     val isFromUser: Boolean = false,
     val timestamp: Long = System.currentTimeMillis()
 )
+
 private val sessionChats = mutableStateListOf(
-    ChatItem("Dr. Smith", "Your next appointment is scheduled for tomorrow at 10:00 AM.", "10:30 AM", 1),
+    ChatItem("Dr. Smith", "Your next appointment is scheduled for tomorrow at 10:00 AM.", "10:30 AM", 0),
     ChatItem("Nurse Johnson", "How are you feeling today? Don't forget to take your medication.", "Yesterday", 0),
-    ChatItem("Caregiver Support", "We've sent you the resources we discussed during our last conversation.", "Jul 19", 3),
+    ChatItem("Caregiver Support", "We've sent you the resources we discussed during our last conversation.", "Jul 19", 0),
     ChatItem("Memory Clinic", "Your test results have been uploaded to your profile.", "Jul 15", 0),
     ChatItem("Medication Reminder", "It's time to take your evening medication.", "Jul 10", 0)
 )
 private val sessionMessages = mutableStateMapOf<String, SnapshotStateList<ChatMessage>>()
+
 @Composable
 fun Chat() {
     var searchQuery by remember { mutableStateOf("") }
@@ -46,6 +51,37 @@ fun Chat() {
     var showContactPicker by remember { mutableStateOf(false) }
 
     val chats = sessionChats
+
+    // Fetch latest messages from Firestore on startup to update previews
+    LaunchedEffect(Unit) {
+        val currentUserId = Firebase.auth.currentUser?.uid ?: return@LaunchedEffect
+        val db = FirebaseFirestore.getInstance()
+
+        chats.forEachIndexed { index, chat ->
+            val sanitizedChatName = chat.name.replace(Regex("[^A-Za-z0-9]"), "_")
+            val roomId = "room_${currentUserId}_${sanitizedChatName}"
+
+            db.collection("chatRooms")
+                .document(roomId)
+                .collection("messages")
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    if (!snapshot.isEmpty) {
+                        val latestDoc = snapshot.documents[0]
+                        val text = latestDoc.getString("text")
+
+                        if (text != null) {
+                            chats[index] = chats[index].copy(
+                                lastMessage = text,
+                                time = "Now"
+                            )
+                        }
+                    }
+                }
+        }
+    }
 
     fun updateLastMessage(chatName: String, newMessage: String) {
         val index = chats.indexOfFirst { it.name == chatName }
@@ -70,8 +106,19 @@ fun Chat() {
     }
 
     if (selectedChat != null) {
+        // CLEAR UNREAD COUNT WHEN OPENING CHAT
+        val chatIndex = chats.indexOfFirst { it.name == selectedChat!!.name }
+        if (chatIndex != -1 && chats[chatIndex].unreadCount > 0) {
+            chats[chatIndex] = chats[chatIndex].copy(unreadCount = 0)
+        }
+
+        val currentUserId = Firebase.auth.currentUser?.uid ?: "anonymous_user"
+        val sanitizedChatName = selectedChat!!.name.replace(Regex("[^A-Za-z0-9]"), "_")
+        val roomId = "room_${currentUserId}_${sanitizedChatName}"
+
         ChatConversationScreen(
             chat = selectedChat!!,
+            roomId = roomId,
             onBack = { selectedChat = null },
             onMessageSent = { chatName, message ->
                 updateLastMessage(chatName, message)
@@ -225,30 +272,81 @@ fun ChatListScreen(
 @Composable
 fun ChatConversationScreen(
     chat: ChatItem,
+    roomId: String,
     onBack: () -> Unit,
     onMessageSent: (String, String) -> Unit
 ) {
     var messageText by remember { mutableStateOf("") }
 
-    val messages = remember(chat.name) {
-        val existingMessages = sessionMessages[chat.name]
+    // Create a mutable state list for messages tied to this room
+    val messages = remember { mutableStateListOf<ChatMessage>() }
 
-        if (existingMessages != null) {
-            mutableStateListOf<ChatMessage>().apply {
-                addAll(existingMessages)
+    // Load messages from Firestore when the screen enters composition
+    LaunchedEffect(roomId) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .orderBy("timestamp") // Order messages chronologically
+            .get()
+            .addOnSuccessListener { result ->
+                messages.clear()
+                val currentUserId = Firebase.auth.currentUser?.uid ?: ""
+
+                for (document in result) {
+                    val text = document.getString("text") ?: ""
+                    val senderId = document.getString("senderId") ?: ""
+                    val isFromUser = (senderId == currentUserId)
+
+                    messages.add(ChatMessage(text, isFromUser))
+                }
+
+                // Fallback if empty
+                if (messages.isEmpty()) {
+                    messages.add(ChatMessage(chat.lastMessage.ifBlank { "Start a new conversation." }, false))
+                }
             }
-        } else {
-            mutableStateListOf(
-                ChatMessage(
-                    chat.lastMessage.ifBlank { "Start a new conversation." },
-                    false
-                )
-            ).also {
-                sessionMessages[chat.name] = it
+            .addOnFailureListener {
+                // Handle failure / fallback to local if needed
+                messages.add(ChatMessage("Failed to load message history.", false))
             }
-        }
     }
 
+    fun handleSend() {
+        if (messageText.isNotBlank()) {
+            val sentMessage = messageText.trim()
+            val currentUserId = Firebase.auth.currentUser?.uid ?: ""
+
+            // Optimistically update local UI state immediately
+            messages.add(ChatMessage(sentMessage, true))
+
+            val db = FirebaseFirestore.getInstance()
+            val roomRef = db.collection("chatRooms").document(roomId)
+
+            // Ensure room exists, then save message
+            roomRef.get().addOnSuccessListener { snapshot ->
+                if (!snapshot.exists()) {
+                    roomRef.set(
+                        mapOf(
+                            "participants" to listOf(currentUserId, chat.name),
+                            "createdAt" to com.google.firebase.Timestamp.now()
+                        )
+                    )
+                }
+
+                roomRef.collection("messages").add(
+                    mapOf(
+                        "senderId" to currentUserId,
+                        "text" to sentMessage,
+                        "timestamp" to com.google.firebase.Timestamp.now()
+                    )
+                )
+            }
+
+            onMessageSent(chat.name, sentMessage)
+            messageText = ""
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -261,7 +359,7 @@ fun ChatConversationScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 80.dp) // Space for the bottom input
+                .padding(bottom = 80.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -295,25 +393,6 @@ fun ChatConversationScreen(
                     ChatBubble(message)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
-            }
-        }
-
-        fun handleSend() {
-            if (messageText.isNotBlank()) {
-                val sentMessage = messageText.trim()
-                messages.add(ChatMessage(sentMessage, true))
-                sessionMessages[chat.name] = messages
-                FirebaseFirestore.getInstance()
-                    .collection("messages")
-                    .add(
-                        FirebaseChatMessage(
-                            chatName = chat.name,
-                            text = sentMessage,
-                            isFromUser = true
-                        )
-                    )
-                onMessageSent(chat.name, sentMessage)
-                messageText = ""
             }
         }
 
@@ -464,4 +543,3 @@ fun ChatListItem(
         }
     }
 }
-
