@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.dementia_tester_app.auth.AuthService
 import org.example.dementia_tester_app.data.Appointment
 import org.example.dementia_tester_app.data.AppointmentService
 import org.example.dementia_tester_app.data.AppointmentStatus
@@ -20,137 +21,629 @@ import org.example.dementia_tester_app.ui.components.FormColors
 
 /**
  * Appointment History screen.
- * Loads real data from Firebase (fixes issue #18 — was mock data).
- * Back navigation fixed so system back stays within the list/detail split (issue #24).
+ *
+ * Normal patient:
+ *
+ * AppointmentHistory()
+ *
+ * Caregiver:
+ *
+ * AppointmentHistory(
+ *     targetUserId = selectedPatient.userId,
+ *     targetUserName = selectedPatient.name
+ * )
+ *
+ * When targetUserId is provided, appointments are loaded
+ * from the selected patient's appointment node.
  */
 @Composable
-fun AppointmentHistory() {
-    var appointments      by remember { mutableStateOf<List<Appointment>>(emptyList()) }
-    var isLoading         by remember { mutableStateOf(true) }
-    var loadError         by remember { mutableStateOf<String?>(null) }
-    var selectedAppointment by remember { mutableStateOf<Appointment?>(null) }
+fun AppointmentHistory(
+    targetUserId: String? = null,
+    targetUserName: String? = null
+) {
 
-    // Load from Firebase on first composition
-    LaunchedEffect(Unit) {
-        AppointmentService().getAppointments { result ->
-            isLoading = false
-            when (result) {
-                is DatabaseResult.Success -> appointments = result.data
-                is DatabaseResult.Error   -> loadError  = result.message
+    var appointments by remember {
+        mutableStateOf<List<Appointment>>(
+            emptyList()
+        )
+    }
+
+    var isLoading by remember {
+        mutableStateOf(true)
+    }
+
+    var loadError by remember {
+        mutableStateOf<String?>(null)
+    }
+
+    var selectedAppointment by remember {
+        mutableStateOf<Appointment?>(null)
+    }
+
+    val appointmentService =
+        remember {
+            AppointmentService()
+        }
+
+    val authService =
+        remember {
+            AuthService()
+        }
+
+    val loggedInUserId =
+        authService.getCurrentUserId()
+
+    /*
+     * Determine whether the screen is being
+     * viewed by a caregiver on behalf of a patient.
+     */
+    val isActingOnBehalf =
+        targetUserId != null &&
+                targetUserId != loggedInUserId
+
+    val appointmentOwnerName =
+        targetUserName
+            ?.takeIf {
+                it.isNotBlank()
             }
+            ?: "Patient"
+
+    /*
+     * Load appointments whenever the selected
+     * target user changes.
+     */
+    LaunchedEffect(
+        targetUserId,
+        loggedInUserId
+    ) {
+
+        isLoading = true
+        loadError = null
+        appointments = emptyList()
+        selectedAppointment = null
+
+        /*
+         * Common result handler for both
+         * patient and caregiver modes.
+         */
+        val handleResult:
+                    (
+            DatabaseResult<List<Appointment>>
+        ) -> Unit =
+            { result ->
+
+                isLoading = false
+
+                when (result) {
+
+                    is DatabaseResult.Success -> {
+                        appointments =
+                            result.data
+                    }
+
+                    is DatabaseResult.Error -> {
+                        loadError =
+                            result.message
+                    }
+                }
+            }
+
+        /*
+         * Caregiver:
+         * load the selected patient's
+         * appointments.
+         *
+         * Patient:
+         * load the authenticated user's
+         * appointments.
+         */
+        if (isActingOnBehalf) {
+
+            appointmentService
+                .getAppointmentsForUser(
+                    userId =
+                        targetUserId!!,
+                    callback =
+                        handleResult
+                )
+
+        } else {
+
+            appointmentService
+                .getAppointments(
+                    callback =
+                        handleResult
+                )
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+
         if (selectedAppointment == null) {
-            // ── List / loading / empty / error ───────────────────────
-            Text("Appointment History", fontSize = 22.sp, fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 16.dp))
+
+            /*
+             * Caregiver context banner.
+             */
+            if (isActingOnBehalf) {
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            bottom = 16.dp
+                        ),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor =
+                                MaterialTheme
+                                    .colorScheme
+                                    .surfaceVariant
+                        )
+                ) {
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
+                    ) {
+
+                        Text(
+                            text =
+                                "Viewing appointments for",
+                            style =
+                                MaterialTheme
+                                    .typography
+                                    .bodyMedium
+                        )
+
+                        Text(
+                            text =
+                                appointmentOwnerName,
+                            style =
+                                MaterialTheme
+                                    .typography
+                                    .titleMedium,
+                            fontWeight =
+                                FontWeight.Bold,
+                            color =
+                                FormColors.green
+                        )
+                    }
+                }
+            }
+
+            Text(
+                text =
+                    if (isActingOnBehalf) {
+                        "$appointmentOwnerName's Appointments"
+                    } else {
+                        "Appointment History"
+                    },
+                fontSize =
+                    22.sp,
+                fontWeight =
+                    FontWeight.Bold,
+                color =
+                    MaterialTheme
+                        .colorScheme
+                        .onSurface,
+                modifier =
+                    Modifier.padding(
+                        bottom = 16.dp
+                    )
+            )
 
             when {
+
                 isLoading -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = FormColors.green)
+
+                    Box(
+                        modifier =
+                            Modifier.fillMaxSize(),
+                        contentAlignment =
+                            Alignment.Center
+                    ) {
+
+                        CircularProgressIndicator(
+                            color =
+                                FormColors.green
+                        )
                     }
                 }
+
                 loadError != null -> {
-                    Text("Failed to load appointments: $loadError",
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(top = 16.dp))
+
+                    Text(
+                        text =
+                            "Failed to load appointments: $loadError",
+                        color =
+                            MaterialTheme
+                                .colorScheme
+                                .error,
+                        modifier =
+                            Modifier.padding(
+                                top = 16.dp
+                            )
+                    )
                 }
+
                 appointments.isEmpty() -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No appointments found.", color = Color.Gray)
+
+                    Box(
+                        modifier =
+                            Modifier.fillMaxSize(),
+                        contentAlignment =
+                            Alignment.Center
+                    ) {
+
+                        Text(
+                            text =
+                                if (isActingOnBehalf) {
+                                    "No appointments found for $appointmentOwnerName."
+                                } else {
+                                    "No appointments found."
+                                },
+                            color =
+                                Color.Gray
+                        )
                     }
                 }
+
                 else -> {
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(appointments) { appt ->
-                            AppointmentItem(appointment = appt,
-                                onClick = { selectedAppointment = appt })
+
+                    LazyColumn(
+                        verticalArrangement =
+                            Arrangement.spacedBy(
+                                12.dp
+                            )
+                    ) {
+
+                        items(
+                            appointments
+                        ) { appointment ->
+
+                            AppointmentItem(
+                                appointment =
+                                    appointment,
+                                onClick = {
+                                    selectedAppointment =
+                                        appointment
+                                }
+                            )
                         }
                     }
                 }
             }
+
         } else {
-            // ── Detail view ──────────────────────────────────────────
-            // Issue #24 fix: onBack sets selectedAppointment = null, keeping
-            // the user inside AppointmentHistory rather than popping the nav stack.
+
+            /*
+             * Appointment detail view.
+             *
+             * Back returns to the appointment
+             * list instead of leaving the screen.
+             */
             AppointmentDetailView(
-                appointment = selectedAppointment!!,
-                onBack      = { selectedAppointment = null }
+                appointment =
+                    selectedAppointment!!,
+                onBack = {
+                    selectedAppointment =
+                        null
+                }
             )
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class
+)
 @Composable
-fun AppointmentItem(appointment: Appointment, onClick: () -> Unit) {
-    Card(onClick = onClick, modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
-        Row(modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(appointment.doctor, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
-                Text(appointment.type, color = Color.Gray, fontSize = 14.sp)
-                Text("${appointment.date} at ${appointment.time}", fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(top = 4.dp))
+fun AppointmentItem(
+    appointment: Appointment,
+    onClick: () -> Unit
+) {
+
+    Card(
+        onClick =
+            onClick,
+        modifier =
+            Modifier.fillMaxWidth(),
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation =
+                    2.dp
+            ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    MaterialTheme
+                        .colorScheme
+                        .surface
+            )
+    ) {
+
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement =
+                Arrangement.SpaceBetween,
+            verticalAlignment =
+                Alignment.CenterVertically
+        ) {
+
+            Column(
+                modifier =
+                    Modifier.weight(1f)
+            ) {
+
+                Text(
+                    text =
+                        appointment.doctor,
+                    fontWeight =
+                        FontWeight.Bold,
+                    fontSize =
+                        18.sp,
+                    color =
+                        MaterialTheme
+                            .colorScheme
+                            .onSurface
+                )
+
+                Text(
+                    text =
+                        appointment.type,
+                    color =
+                        Color.Gray,
+                    fontSize =
+                        14.sp
+                )
+
+                Text(
+                    text =
+                        "${appointment.date} at ${appointment.time}",
+                    fontSize =
+                        14.sp,
+                    color =
+                        MaterialTheme
+                            .colorScheme
+                            .onSurface,
+                    modifier =
+                        Modifier.padding(
+                            top = 4.dp
+                        )
+                )
             }
-            StatusBadge(status = appointment.status)
+
+            StatusBadge(
+                status =
+                    appointment.status
+            )
         }
     }
 }
 
 @Composable
-fun StatusBadge(status: AppointmentStatus) {
-    val bg   = when (status) {
-        AppointmentStatus.Upcoming   -> Color(0xFFE3F2FD)
-        AppointmentStatus.Completed  -> Color(0xFFE8F5E9)
-        AppointmentStatus.Cancelled  -> Color(0xFFFFEBEE)
-    }
-    val text = when (status) {
-        AppointmentStatus.Upcoming   -> Color(0xFF1976D2)
-        AppointmentStatus.Completed  -> Color(0xFF388E3C)
-        AppointmentStatus.Cancelled  -> Color(0xFFD32F2F)
-    }
-    Surface(color = bg, shape = RoundedCornerShape(16.dp)) {
-        Text(status.name, color = text, fontSize = 12.sp, fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp))
+fun StatusBadge(
+    status: AppointmentStatus
+) {
+
+    val bg =
+        when (status) {
+
+            AppointmentStatus.Upcoming ->
+                Color(0xFFE3F2FD)
+
+            AppointmentStatus.Completed ->
+                Color(0xFFE8F5E9)
+
+            AppointmentStatus.Cancelled ->
+                Color(0xFFFFEBEE)
+        }
+
+    val text =
+        when (status) {
+
+            AppointmentStatus.Upcoming ->
+                Color(0xFF1976D2)
+
+            AppointmentStatus.Completed ->
+                Color(0xFF388E3C)
+
+            AppointmentStatus.Cancelled ->
+                Color(0xFFD32F2F)
+        }
+
+    Surface(
+        color =
+            bg,
+        shape =
+            RoundedCornerShape(
+                16.dp
+            )
+    ) {
+
+        Text(
+            text =
+                status.name,
+            color =
+                text,
+            fontSize =
+                12.sp,
+            fontWeight =
+                FontWeight.Medium,
+            modifier =
+                Modifier.padding(
+                    horizontal = 12.dp,
+                    vertical = 4.dp
+                )
+        )
     }
 }
 
 @Composable
-fun AppointmentDetailView(appointment: Appointment, onBack: () -> Unit) {
+fun AppointmentDetailView(
+    appointment: Appointment,
+    onBack: () -> Unit
+) {
+
     Column {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 16.dp)) {
-            TextButton(onClick = onBack) {
-                Text("< Back", color = FormColors.green, fontWeight = FontWeight.Bold)
+
+        Row(
+            verticalAlignment =
+                Alignment.CenterVertically,
+            modifier =
+                Modifier.padding(
+                    bottom = 16.dp
+                )
+        ) {
+
+            TextButton(
+                onClick =
+                    onBack
+            ) {
+
+                Text(
+                    text =
+                        "< Back",
+                    color =
+                        FormColors.green,
+                    fontWeight =
+                        FontWeight.Bold
+                )
             }
-            Spacer(Modifier.width(8.dp))
-            Text("Appointment Details", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+
+            Spacer(
+                Modifier.width(
+                    8.dp
+                )
+            )
+
+            Text(
+                text =
+                    "Appointment Details",
+                fontSize =
+                    20.sp,
+                fontWeight =
+                    FontWeight.Bold,
+                color =
+                    MaterialTheme
+                        .colorScheme
+                        .onSurface
+            )
         }
-        Card(modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)) {
-            Column(Modifier.padding(16.dp)) {
-                DetailRow("Doctor", appointment.doctor)
-                DetailRow("Type",   appointment.type)
-                DetailRow("Date",   appointment.date)
-                DetailRow("Time",   appointment.time)
-                Row(Modifier.padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text("Status: ", fontWeight = FontWeight.Bold, modifier = Modifier.width(100.dp), color = MaterialTheme.colorScheme.onSurface)
-                    StatusBadge(status = appointment.status)
+
+        Card(
+            modifier =
+                Modifier.fillMaxWidth(),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor =
+                        MaterialTheme
+                            .colorScheme
+                            .surface
+                ),
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation =
+                        2.dp
+                )
+        ) {
+
+            Column(
+                modifier =
+                    Modifier.padding(
+                        16.dp
+                    )
+            ) {
+
+                DetailRow(
+                    "Doctor",
+                    appointment.doctor
+                )
+
+                DetailRow(
+                    "Type",
+                    appointment.type
+                )
+
+                DetailRow(
+                    "Date",
+                    appointment.date
+                )
+
+                DetailRow(
+                    "Time",
+                    appointment.time
+                )
+
+                Row(
+                    modifier =
+                        Modifier.padding(
+                            vertical = 8.dp
+                        ),
+                    verticalAlignment =
+                        Alignment.CenterVertically
+                ) {
+
+                    Text(
+                        text =
+                            "Status: ",
+                        fontWeight =
+                            FontWeight.Bold,
+                        modifier =
+                            Modifier.width(
+                                100.dp
+                            ),
+                        color =
+                            MaterialTheme
+                                .colorScheme
+                                .onSurface
+                    )
+
+                    StatusBadge(
+                        status =
+                            appointment.status
+                    )
                 }
-                if (appointment.reason.isNotEmpty()) {
-                    Spacer(Modifier.height(8.dp))
-                    Text("Reason:", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                    Text(appointment.reason, modifier = Modifier.padding(top = 4.dp), color = Color.DarkGray)
+
+                if (
+                    appointment.reason
+                        .isNotEmpty()
+                ) {
+
+                    Spacer(
+                        Modifier.height(
+                            8.dp
+                        )
+                    )
+
+                    Text(
+                        text =
+                            "Reason:",
+                        fontWeight =
+                            FontWeight.Bold,
+                        color =
+                            MaterialTheme
+                                .colorScheme
+                                .onSurface
+                    )
+
+                    Text(
+                        text =
+                            appointment.reason,
+                        modifier =
+                            Modifier.padding(
+                                top = 4.dp
+                            ),
+                        color =
+                            Color.DarkGray
+                    )
                 }
             }
         }
@@ -158,9 +651,40 @@ fun AppointmentDetailView(appointment: Appointment, onBack: () -> Unit) {
 }
 
 @Composable
-fun DetailRow(label: String, value: String) {
-    Row(Modifier.padding(vertical = 8.dp)) {
-        Text("$label:", fontWeight = FontWeight.Bold, modifier = Modifier.width(100.dp), color = MaterialTheme.colorScheme.onSurface)
-        Text(value, color = MaterialTheme.colorScheme.onSurface)
+fun DetailRow(
+    label: String,
+    value: String
+) {
+
+    Row(
+        modifier =
+            Modifier.padding(
+                vertical = 8.dp
+            )
+    ) {
+
+        Text(
+            text =
+                "$label:",
+            fontWeight =
+                FontWeight.Bold,
+            modifier =
+                Modifier.width(
+                    100.dp
+                ),
+            color =
+                MaterialTheme
+                    .colorScheme
+                    .onSurface
+        )
+
+        Text(
+            text =
+                value,
+            color =
+                MaterialTheme
+                    .colorScheme
+                    .onSurface
+        )
     }
 }

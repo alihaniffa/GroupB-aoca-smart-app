@@ -6,6 +6,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -76,10 +78,34 @@ val words = arrayOf(
     "mirage"
 )
 
+/**
+ * Word Recall mini game.
+ *
+ * Normal patient:
+ *
+ * WordRecall(
+ *     onReturn = { ... }
+ * )
+ *
+ * Caregiver:
+ *
+ * WordRecall(
+ *     onReturn = { ... },
+ *     targetUserId = selectedPatient.userId,
+ *     targetUserName = selectedPatient.name
+ * )
+ *
+ * If targetUserId is provided, both the score
+ * and activity are stored against the selected
+ * patient's UID.
+ */
 @Composable
 fun WordRecall(
-    onReturn: () -> Unit
+    onReturn: () -> Unit,
+    targetUserId: String? = null,
+    targetUserName: String? = null
 ) {
+
     var round by remember {
         mutableStateOf(1)
     }
@@ -159,6 +185,45 @@ fun WordRecall(
         AuthService()
     }
 
+    /*
+     * UID of the account actually logged in.
+     */
+    val loggedInUserId =
+        authService.getCurrentUserId()
+
+    /*
+     * UID that should own the game score
+     * and activity.
+     *
+     * Patient:
+     * targetUserId == null
+     * -> logged-in patient's UID
+     *
+     * Caregiver:
+     * targetUserId != null
+     * -> selected patient's UID
+     */
+    val userId =
+        targetUserId
+            ?: loggedInUserId
+
+    /*
+     * Detect caregiver-on-behalf mode.
+     */
+    val isActingOnBehalf =
+        targetUserId != null &&
+                targetUserId != loggedInUserId
+
+    /*
+     * Readable patient name for the UI.
+     */
+    val gameOwnerName =
+        targetUserName
+            ?.takeIf {
+                it.isNotBlank()
+            }
+            ?: "Patient"
+
     // Prevent submit() from firing twice.
     var submitted by remember {
         mutableStateOf(false)
@@ -172,19 +237,27 @@ fun WordRecall(
         }
     }
 
-    // Submit score
+    /*
+     * Submit score and activity.
+     *
+     * Both are saved under userId, which can
+     * be either the authenticated patient or
+     * the caregiver's selected patient.
+     */
     fun submit() {
+
         val scoreService =
             MiniGameScoresService()
 
         val activityService =
             ActivityService()
 
-        val userId =
-            authService.getCurrentUserId()
-
         userId?.let { uid ->
 
+            /*
+             * Save the Word Recall score under
+             * the correct patient's UID.
+             */
             scoreService.addUserGameAttempt(
                 uid,
                 GameType.LEARNING_AND_MEMORY,
@@ -193,21 +266,44 @@ fun WordRecall(
                 // Ignore result
             }
 
-            activityService.logActivity(
-                Activity(
-                    title =
-                        "Game Played: Word Recall",
-                    type =
-                        ActivityType.GAME,
-                    description =
-                        "Scored $score in Learning and Memory"
-                )
-            ) {
-                // Ignore result
-            }
+            /*
+             * Log the activity under the same
+             * patient's UID.
+             *
+             * Normal patient:
+             * uid = logged-in patient's UID
+             *
+             * Caregiver:
+             * uid = selected patient's UID
+             */
+            activityService
+                .logActivityForUser(
+                    userId = uid,
+                    activity = Activity(
+                        title =
+                            "Game Played: Word Recall",
+                        type =
+                            ActivityType.GAME,
+                        description =
+                            if (isActingOnBehalf) {
+                                "Scored $score in Learning and Memory with caregiver assistance"
+                            } else {
+                                "Scored $score in Learning and Memory"
+                            }
+                    )
+                ) {
+                    /*
+                     * Activity logging should not
+                     * prevent the score from being
+                     * submitted if it fails.
+                     */
+                }
         }
     }
 
+    /*
+     * Prevent duplicate submissions.
+     */
     fun submitOnce() {
         if (!submitted) {
             submitted = true
@@ -280,6 +376,9 @@ fun WordRecall(
         }
     }
 
+    /*
+     * Final score dialog.
+     */
     if (showbox) {
         AlertDialog(
             onDismissRequest = {
@@ -288,12 +387,22 @@ fun WordRecall(
             },
             title = {
                 Text(
-                    "Submit your score"
+                    text =
+                        if (isActingOnBehalf) {
+                            "Submit score for $gameOwnerName"
+                        } else {
+                            "Submit your score"
+                        }
                 )
             },
             text = {
                 Text(
-                    "Your score is $score. Submit score?"
+                    text =
+                        if (isActingOnBehalf) {
+                            "The score is $score. Submit this score for $gameOwnerName?"
+                        } else {
+                            "Your score is $score. Submit score?"
+                        }
                 )
             },
             confirmButton = {
@@ -314,6 +423,56 @@ fun WordRecall(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+
+        /*
+         * Show the selected patient when
+         * caregiver mode is active.
+         */
+        if (isActingOnBehalf) {
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        bottom = 12.dp
+                    ),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor =
+                            MaterialTheme
+                                .colorScheme
+                                .surfaceVariant
+                    )
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                ) {
+
+                    Text(
+                        text =
+                            "Playing on behalf of",
+                        style =
+                            MaterialTheme
+                                .typography
+                                .bodyMedium
+                    )
+
+                    Text(
+                        text =
+                            gameOwnerName,
+                        style =
+                            MaterialTheme
+                                .typography
+                                .titleMedium,
+                        fontWeight =
+                            FontWeight.Bold
+                    )
+                }
+            }
+        }
 
         Row {
 

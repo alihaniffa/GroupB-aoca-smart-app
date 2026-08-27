@@ -63,101 +63,152 @@ fun CognitiveIntroductionScreen(
                     fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
 
                 Text(
-                    text = "This cognitive assessment is designed to assess and track various aspects of your mental health.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    text =
+                        "This cognitive assessment is designed to assess and track various aspects of your mental health.",
+                    style =
+                        MaterialTheme.typography.bodyLarge,
+                    color =
+                        MaterialTheme.colorScheme.onSurface
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
 
                 Text(
-                    text = "The assessment consists of 24 questions, assessing the following psychiatric domains:",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    text =
+                        "The assessment consists of 24 questions, assessing the following psychiatric domains:",
+                    style =
+                        MaterialTheme.typography.bodyMedium,
+                    color =
+                        MaterialTheme.colorScheme.onSurface
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                val domains = listOf(
-                    "Anger",
-                    "Anxiety",
-                    "Depression",
-                    "Dissociation",
-                    "Mania",
-                    "Memory",
-                    "Personality functioning",
-                    "Psychosis",
-                    "Repetitive thoughts and behaviours",
-                    "Sleep problems",
-                    "Somatic symptoms",
-                    "Substance use",
-                    "Suicidal ideation"
+                Spacer(
+                    modifier = Modifier.height(4.dp)
                 )
+
+                val domains =
+                    listOf(
+                        "Anger",
+                        "Anxiety",
+                        "Depression",
+                        "Dissociation",
+                        "Mania",
+                        "Memory",
+                        "Personality functioning",
+                        "Psychosis",
+                        "Repetitive thoughts and behaviours",
+                        "Sleep problems",
+                        "Somatic symptoms",
+                        "Substance use",
+                        "Suicidal ideation"
+                    )
 
                 Column(
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier =
+                        Modifier.padding(
+                            start = 8.dp
+                        )
                 ) {
                     domains.forEach { domain ->
                         Text(
                             text = domain,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            style =
+                                MaterialTheme
+                                    .typography
+                                    .bodyMedium,
+                            color =
+                                MaterialTheme
+                                    .colorScheme
+                                    .onSurface
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Your responses will help us provide personalized recommendations for maintaining and improving your cognitive health.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                Spacer(
+                    modifier = Modifier.height(8.dp)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text =
+                        "Your responses will help us provide personalized recommendations for maintaining and improving your cognitive health.",
+                    style =
+                        MaterialTheme.typography.bodyMedium,
+                    color =
+                        MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
 
                 Text(
-                    text = "All information provided is confidential and will only be used to support your health journey.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    text =
+                        "All information provided is confidential and will only be used to support your health journey.",
+                    style =
+                        MaterialTheme.typography.bodyMedium,
+                    fontWeight =
+                        FontWeight.Bold,
+                    color =
+                        MaterialTheme.colorScheme.onSurface
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier =
+                Modifier.fillMaxWidth(),
+            horizontalArrangement =
+                Arrangement.SpaceBetween
         ) {
             Button(
-                onClick = onBackToDashboard,
+                onClick =
+                    onBackToDashboard,
                 modifier = Modifier
                     .height(48.dp)
                     .width(120.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.LightGray,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                )
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor =
+                            Color.LightGray,
+                        contentColor =
+                            MaterialTheme
+                                .colorScheme
+                                .onSurface
+                    )
             ) {
-                Text("Back")
+                Text(
+                    "Back"
+                )
             }
 
             Button(
-                onClick = onStartQuestions,
+                onClick =
+                    onStartQuestions,
                 modifier = Modifier
                     .height(48.dp)
                     .width(120.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = FormColors.green,
-                    contentColor = Color.White
-                )
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor =
+                            FormColors.green,
+                        contentColor =
+                            Color.White
+                    )
             ) {
-                Text("Start test")
+                Text(
+                    "Start test"
+                )
             }
         }
     }
@@ -165,6 +216,9 @@ fun CognitiveIntroductionScreen(
 
 /**
  * Cognitive assessment page with question cards.
+ *
+ * The userId supplied here determines which
+ * patient's assessment data is read and written.
  */
 @Composable
 fun QuestionsPage(
@@ -176,45 +230,75 @@ fun QuestionsPage(
     startQuestionIndex: Int = 0,
     readOnly: Boolean = false
 ) {
-    val userQuizService = remember {
-        UserQuizService(CognitiveAssessment)
-    }
+    val userQuizService =
+        remember {
+            UserQuizService(
+                CognitiveAssessment
+            )
+        }
 
     var questions by remember {
-        mutableStateOf<List<Question>>(emptyList())
+        mutableStateOf<List<Question>>(
+            emptyList()
+        )
     }
 
     var currentQuestionIndex by remember {
-        mutableStateOf(startQuestionIndex)
+        mutableStateOf(
+            startQuestionIndex
+        )
     }
 
     var errorMessage by remember {
-        mutableStateOf<String?>(null)
+        mutableStateOf<String?>(
+            null
+        )
     }
 
-    val answersMap = remember {
-        mutableStateMapOf<String, List<String>>()
+    val answersMap =
+        remember {
+            mutableStateMapOf<
+                    String,
+                    List<String>
+                    >()
+        }
+
+    prefilledAnswers.forEach {
+            (
+                questionId,
+                answerIds
+            ) ->
+
+        answersMap[
+            questionId
+        ] = answerIds
     }
 
-    prefilledAnswers.forEach { (questionId, answerIds) ->
-        answersMap[questionId] = answerIds
-    }
+    LaunchedEffect(
+        attemptNumber,
+        userId
+    ) {
+        userQuizService
+            .getAttemptDetails(
+                userId,
+                attemptNumber
+            ) { result ->
 
-    LaunchedEffect(attemptNumber, userId) {
-        userQuizService.getAttemptDetails(
-            userId,
-            attemptNumber
-        ) { result ->
-            when (result) {
-                is DatabaseResult.Success -> {
-                    questions = result.data
-                }
+                when (result) {
 
-                is DatabaseResult.Error -> {
-                    errorMessage = result.message
+                    is DatabaseResult.Success -> {
+
+                        questions =
+                            result.data
+                    }
+
+                    is DatabaseResult.Error -> {
+
+                        errorMessage =
+                            result.message
+                    }
                 }
             }
-        }
     }
 
     if (
@@ -225,99 +309,170 @@ fun QuestionsPage(
         return
     }
 
-    errorMessage?.let {
-        Text(
-            text = it,
-            color = Color.Red,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-    }
+    errorMessage
+        ?.let {
 
-    if (questions.isEmpty()) {
+            Text(
+                text = it,
+                color =
+                    Color.Red,
+                modifier =
+                    Modifier.padding(
+                        vertical = 8.dp
+                    )
+            )
+        }
+
+    if (
+        questions.isEmpty()
+    ) {
         return
     }
 
     val currentQuestion =
-        questions.getOrNull(currentQuestionIndex)
+        questions
+            .getOrNull(
+                currentQuestionIndex
+            )
             ?: return
 
     Column {
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
+                .padding(
+                    vertical = 4.dp
+                )
                 .wrapContentHeight(),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 2.dp
-            )
+            shape =
+                RoundedCornerShape(
+                    8.dp
+                ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor =
+                        MaterialTheme
+                            .colorScheme
+                            .surface
+                ),
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation =
+                        2.dp
+                )
         ) {
+
             QuestionComponent(
-                question = currentQuestion,
-                questionNumber = currentQuestionIndex + 1,
-                totalQuestions = questions.size,
+                question =
+                    currentQuestion,
+                questionNumber =
+                    currentQuestionIndex + 1,
+                totalQuestions =
+                    questions.size,
 
                 onAnswerSelected = { answer ->
 
                     answersMap[
-                        currentQuestion.id.toString()
-                    ] = listOf(answer)
-
-                    val updated =
-                        questions.toMutableList()
-
-                    updated[currentQuestionIndex] =
-                        currentQuestion.copy(
-                            selectedAnswer = answer
+                        currentQuestion
+                            .id
+                            .toString()
+                    ] =
+                        listOf(
+                            answer
                         )
 
-                    questions = updated
+                    val updated =
+                        questions
+                            .toMutableList()
+
+                    updated[
+                        currentQuestionIndex
+                    ] =
+                        currentQuestion.copy(
+                            selectedAnswer =
+                                answer
+                        )
+
+                    questions =
+                        updated
                 },
 
                 onBackClicked = {
-                    if (currentQuestionIndex > 0) {
+
+                    if (
+                        currentQuestionIndex > 0
+                    ) {
                         currentQuestionIndex--
                     }
                 },
 
                 onSaveAndExitClicked = {
-                    onSaveAndExit(answersMap)
+
+                    onSaveAndExit(
+                        answersMap
+                    )
                 },
 
                 onNextClicked = {
+
                     val question =
-                        questions[currentQuestionIndex]
+                        questions[
+                            currentQuestionIndex
+                        ]
 
-                    if (!readOnly) {
-                        userQuizService.saveUserAnswer(
-                            userId = userId,
-                            attemptNumber = attemptNumber,
-                            question = question
-                        ) { result ->
+                    if (
+                        !readOnly
+                    ) {
 
-                            when (result) {
-                                is DatabaseResult.Success -> {
+                        /*
+                         * Save against the supplied userId.
+                         *
+                         * For normal patient use this is their
+                         * own Firebase UID.
+                         *
+                         * For caregiver use this will be the
+                         * selected patient's Firebase UID.
+                         */
+                        userQuizService
+                            .saveUserAnswer(
+                                userId =
+                                    userId,
+                                attemptNumber =
+                                    attemptNumber,
+                                question =
+                                    question
+                            ) { result ->
 
-                                    if (
-                                        currentQuestionIndex <
-                                        questions.lastIndex
-                                    ) {
-                                        currentQuestionIndex++
-                                    } else {
-                                        onFinish(answersMap)
+                                when (
+                                    result
+                                ) {
+
+                                    is DatabaseResult.Success -> {
+
+                                        if (
+                                            currentQuestionIndex <
+                                            questions.lastIndex
+                                        ) {
+
+                                            currentQuestionIndex++
+
+                                        } else {
+
+                                            onFinish(
+                                                answersMap
+                                            )
+                                        }
+                                    }
+
+                                    is DatabaseResult.Error -> {
+
+                                        println(
+                                            "CognitiveAssessment: Failed to save answer: ${result.message}"
+                                        )
                                     }
                                 }
-
-                                is DatabaseResult.Error -> {
-                                    println(
-                                        "CognitiveAssessment: Failed to save answer: ${result.message}"
-                                    )
-                                }
                             }
-                        }
 
                     } else {
 
@@ -325,9 +480,14 @@ fun QuestionsPage(
                             currentQuestionIndex <
                             questions.lastIndex
                         ) {
+
                             currentQuestionIndex++
+
                         } else {
-                            onFinish(answersMap)
+
+                            onFinish(
+                                answersMap
+                            )
                         }
                     }
                 }
@@ -337,14 +497,35 @@ fun QuestionsPage(
 }
 
 /**
- * TestView screen to display cognitive assessment introduction,
- * assessment questions/test, and attempt list.
+ * TestView screen.
+ *
+ * Normal patient usage:
+ *
+ * TestView()
+ *
+ * The logged-in user's UID is used.
+ *
+ * Caregiver usage:
+ *
+ * TestView(
+ *     targetUserId = selectedPatient.userId,
+ *     targetUserName = selectedPatient.name
+ * )
+ *
+ * In caregiver mode, assessment data is read/written
+ * against the selected patient's UID rather than the
+ * caregiver's authenticated UID.
  */
 @Composable
-fun TestView() {
+fun TestView(
+    targetUserId: String? = null,
+    targetUserName: String? = null
+) {
 
     val authService =
-        remember { AuthService() }
+        remember {
+            AuthService()
+        }
 
     val userQuizService =
         remember {
@@ -358,8 +539,48 @@ fun TestView() {
             ActivityService()
         }
 
+    /*
+     * UID belonging to the person
+     * who is actually authenticated.
+     */
+    val loggedInUserId =
+        authService
+            .getCurrentUserId()
+
+    /*
+     * UID whose assessment data should
+     * actually be accessed.
+     *
+     * Patient:
+     * targetUserId == null
+     * -> logged-in patient UID
+     *
+     * Caregiver:
+     * targetUserId == selected patient's UID
+     * -> patient UID
+     */
     val userId =
-        authService.getCurrentUserId()
+        targetUserId
+            ?: loggedInUserId
+
+    /*
+     * True when a caregiver is operating
+     * on behalf of another user.
+     */
+    val isActingOnBehalf =
+        targetUserId != null &&
+                targetUserId != loggedInUserId
+
+    /*
+     * Human-readable target name used
+     * in caregiver UI messages.
+     */
+    val assessmentOwnerName =
+        targetUserName
+            ?.takeIf {
+                it.isNotBlank()
+            }
+            ?: "Patient"
 
     var showQuestionsPage by remember {
         mutableStateOf(false)
@@ -371,7 +592,10 @@ fun TestView() {
 
     var answersMap by remember {
         mutableStateOf(
-            mapOf<String, List<String>>()
+            mapOf<
+                    String,
+                    List<String>
+                    >()
         )
     }
 
@@ -382,11 +606,15 @@ fun TestView() {
     }
 
     var currentAttemptNumber by remember {
-        mutableStateOf<Int?>(null)
+        mutableStateOf<Int?>(
+            null
+        )
     }
 
     var inProgressAttemptNumber by remember {
-        mutableStateOf<Int?>(null)
+        mutableStateOf<Int?>(
+            null
+        )
     }
 
     var startQuestionIndex by remember {
@@ -394,7 +622,9 @@ fun TestView() {
     }
 
     var errorMessage by remember {
-        mutableStateOf<String?>(null)
+        mutableStateOf<String?>(
+            null
+        )
     }
 
     var isLoading by remember {
@@ -415,23 +645,70 @@ fun TestView() {
         )
     }
 
-    LaunchedEffect(userId) {
+    /*
+     * Reload attempts whenever the target
+     * patient UID changes.
+     */
+    LaunchedEffect(
+        userId
+    ) {
 
-        if (userId != null) {
+        /*
+         * Reset state when switching patients.
+         */
+        isLoading =
+            true
+
+        errorMessage =
+            null
+
+        showQuestionsPage =
+            false
+
+        showSummary =
+            false
+
+        showCognitiveIntroduction =
+            false
+
+        attemptSummaries =
+            emptyList()
+
+        currentAttemptNumber =
+            null
+
+        inProgressAttemptNumber =
+            null
+
+        startQuestionIndex =
+            0
+
+        answersMap =
+            emptyMap()
+
+        if (
+            userId != null
+        ) {
 
             userQuizService
                 .getLatestAttemptNumber(
                     userId
                 ) { result ->
 
-                    when (result) {
+                    when (
+                        result
+                    ) {
+
                         is DatabaseResult.Success -> {
+
                             currentAttemptNumber =
                                 result.data
                         }
 
                         is DatabaseResult.Error -> {
-                            currentAttemptNumber = 1
+
+                            currentAttemptNumber =
+                                1
 
                             errorMessage =
                                 "Failed to fetch latest attempt: ${result.message}"
@@ -444,18 +721,22 @@ fun TestView() {
                     userId
                 ) { result ->
 
-                    when (result) {
+                    when (
+                        result
+                    ) {
 
                         is DatabaseResult.Success -> {
 
                             attemptSummaries =
                                 result.data
 
-                            isLoading = false
+                            isLoading =
+                                false
 
                             if (
                                 result.data.isEmpty()
                             ) {
+
                                 showCognitiveIntroduction =
                                     true
 
@@ -476,8 +757,67 @@ fun TestView() {
                 }
 
         } else {
+
             errorMessage =
                 "User not logged in"
+
+            isLoading =
+                false
+        }
+    }
+
+    /*
+     * Show a clear caregiver context message.
+     */
+    if (
+        isActingOnBehalf
+    ) {
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    bottom = 12.dp
+                ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor =
+                        MaterialTheme
+                            .colorScheme
+                            .surfaceVariant
+                )
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        12.dp
+                    )
+            ) {
+
+                Text(
+                    text =
+                        "Completing assessment on behalf of",
+                    style =
+                        MaterialTheme
+                            .typography
+                            .bodyMedium
+                )
+
+                Text(
+                    text =
+                        assessmentOwnerName,
+                    style =
+                        MaterialTheme
+                            .typography
+                            .titleMedium,
+                    fontWeight =
+                        FontWeight.Bold,
+                    color =
+                        FormColors.green
+                )
+            }
         }
     }
 
@@ -485,23 +825,36 @@ fun TestView() {
         showQuestionsPage &&
         userId != null
     ) {
+
         val attemptToLoad =
             inProgressAttemptNumber
                 ?: currentAttemptNumber
 
-        if (attemptToLoad != null) {
+        if (
+            attemptToLoad != null
+        ) {
 
             Column {
 
                 Text(
                     text =
-                        "Cognitive Assessment",
+                        if (
+                            isActingOnBehalf
+                        ) {
+                            "Cognitive Assessment - $assessmentOwnerName"
+                        } else {
+                            "Cognitive Assessment"
+                        },
                     style =
-                        MaterialTheme.typography.headlineSmall,
+                        MaterialTheme
+                            .typography
+                            .headlineSmall,
                     fontWeight =
                         FontWeight.Bold,
                     color =
-                        MaterialTheme.colorScheme.onSurface,
+                        MaterialTheme
+                            .colorScheme
+                            .onSurface,
                     modifier =
                         Modifier.padding(
                             bottom = 12.dp
@@ -509,7 +862,8 @@ fun TestView() {
                 )
 
                 QuestionsPage(
-                    userId = userId,
+                    userId =
+                        userId,
                     attemptNumber =
                         attemptToLoad,
 
@@ -519,13 +873,16 @@ fun TestView() {
                         answersMap =
                             savedAnswers
 
-                        if (!questionReadOnly) {
+                        if (
+                            !questionReadOnly
+                        ) {
 
                             userQuizService
                                 .markAttemptIncomplete(
                                     userId,
                                     attemptToLoad
                                 ) {
+
                                     userQuizService
                                         .getUserAttempts(
                                             userId
@@ -535,6 +892,7 @@ fun TestView() {
                                                 result
                                                         is DatabaseResult.Success
                                             ) {
+
                                                 attemptSummaries =
                                                     result.data
                                             }
@@ -563,7 +921,9 @@ fun TestView() {
                         answersMap =
                             savedAnswers
 
-                        if (!questionReadOnly) {
+                        if (
+                            !questionReadOnly
+                        ) {
 
                             userQuizService
                                 .finalizeAttempt(
@@ -571,7 +931,9 @@ fun TestView() {
                                     attemptToLoad
                                 ) { result ->
 
-                                    when (result) {
+                                    when (
+                                        result
+                                    ) {
 
                                         is DatabaseResult.Success -> {
 
@@ -584,19 +946,39 @@ fun TestView() {
                                             showQuestionsPage =
                                                 false
 
-                                            // Log completed assessment activity.
-                                            activityService.logActivity(
-                                                Activity(
-                                                    title =
-                                                        "Cognitive Assessment Completed",
-                                                    type =
-                                                        ActivityType.TEST,
-                                                    description =
-                                                        "Completed attempt #$attemptToLoad"
-                                                )
-                                            ) {
-                                                /* Ignore result */
-                                            }
+                                            /*
+                                             * Log the completed assessment against
+                                             * the person whose assessment was
+                                             * actually completed.
+                                             *
+                                             * Normal patient:
+                                             * userId = logged-in patient's UID
+                                             *
+                                             * Caregiver:
+                                             * userId = selected patient's UID
+                                             */
+                                            activityService
+                                                .logActivityForUser(
+                                                    userId = userId,
+                                                    activity = Activity(
+                                                        title =
+                                                            "Cognitive Assessment Completed",
+                                                        type =
+                                                            ActivityType.TEST,
+                                                        description =
+                                                            if (isActingOnBehalf) {
+                                                                "Assessment completed with caregiver assistance - attempt #$attemptToLoad"
+                                                            } else {
+                                                                "Completed attempt #$attemptToLoad"
+                                                            }
+                                                    )
+                                                ) {
+                                                    /*
+                                                     * Activity logging should not prevent
+                                                     * the assessment from completing if
+                                                     * the activity record fails.
+                                                     */
+                                                }
 
                                             userQuizService
                                                 .getAttemptDetails(
@@ -604,7 +986,9 @@ fun TestView() {
                                                     attemptToLoad
                                                 ) { details ->
 
-                                                    when (details) {
+                                                    when (
+                                                        details
+                                                    ) {
 
                                                         is DatabaseResult.Success -> {
 
@@ -632,6 +1016,7 @@ fun TestView() {
                                                                 attemptsResult
                                                                         is DatabaseResult.Success
                                                             ) {
+
                                                                 attemptSummaries =
                                                                     attemptsResult.data
                                                             }
@@ -688,7 +1073,9 @@ fun TestView() {
 
         CognitiveIntroductionScreen(
             onBackToDashboard = {
-                // No-op for now
+                /*
+                 * No-op for now.
+                 */
             },
 
             onStartQuestions = {
@@ -707,7 +1094,8 @@ fun TestView() {
                             attemptSummaries
                                 .maxOfOrNull {
                                     it.attemptNumber
-                                } ?: 0
+                                }
+                                ?: 0
                             ) + 1
 
                 inProgressAttemptNumber =
@@ -721,7 +1109,9 @@ fun TestView() {
             }
         )
 
-    } else if (showSummary) {
+    } else if (
+        showSummary
+    ) {
 
         QuizSummary(
             questions =
@@ -732,22 +1122,24 @@ fun TestView() {
                 showSummary =
                     false
 
-                userId?.let { uid ->
+                userId
+                    ?.let { uid ->
 
-                    userQuizService
-                        .getUserAttempts(
-                            uid
-                        ) { result ->
+                        userQuizService
+                            .getUserAttempts(
+                                uid
+                            ) { result ->
 
-                            if (
-                                result
-                                        is DatabaseResult.Success
-                            ) {
-                                attemptSummaries =
-                                    result.data
+                                if (
+                                    result
+                                            is DatabaseResult.Success
+                                ) {
+
+                                    attemptSummaries =
+                                        result.data
+                                }
                             }
-                        }
-                }
+                    }
             }
         )
 
@@ -760,13 +1152,23 @@ fun TestView() {
 
             Text(
                 text =
-                    "Your Assessments",
+                    if (
+                        isActingOnBehalf
+                    ) {
+                        "$assessmentOwnerName's Assessments"
+                    } else {
+                        "Your Assessments"
+                    },
                 style =
-                    MaterialTheme.typography.headlineMedium,
+                    MaterialTheme
+                        .typography
+                        .headlineMedium,
                 fontWeight =
                     FontWeight.Bold,
                 color =
-                    MaterialTheme.colorScheme.onSurface,
+                    MaterialTheme
+                        .colorScheme
+                        .onSurface,
                 modifier =
                     Modifier.padding(
                         horizontal = 8.dp,
@@ -776,27 +1178,43 @@ fun TestView() {
 
             Text(
                 text =
-                    "View your assessment results or start a new assessment.",
+                    if (
+                        isActingOnBehalf
+                    ) {
+                        "View $assessmentOwnerName's assessment results or start a new assessment on their behalf."
+                    } else {
+                        "View your assessment results or start a new assessment."
+                    },
                 style =
-                    MaterialTheme.typography.bodyMedium,
+                    MaterialTheme
+                        .typography
+                        .bodyMedium,
                 fontWeight =
                     FontWeight.SemiBold,
                 color =
-                    MaterialTheme.colorScheme.onSurfaceVariant,
+                    MaterialTheme
+                        .colorScheme
+                        .onSurfaceVariant,
                 modifier =
                     Modifier.padding(
                         horizontal = 8.dp
                     )
             )
 
-            errorMessage?.let { message ->
+            errorMessage
+                ?.let { message ->
 
-                org.example.dementia_tester_app
-                    .ui.components.ErrorMessage(
-                        show = true,
-                        message = message
-                    )
-            }
+                    org.example
+                        .dementia_tester_app
+                        .ui
+                        .components
+                        .ErrorMessage(
+                            show =
+                                true,
+                            message =
+                                message
+                        )
+                }
 
             AttemptsListScreen(
                 attempts =
@@ -824,7 +1242,8 @@ fun TestView() {
                                 attemptSummaries
                                     .maxOfOrNull {
                                         it.attemptNumber
-                                    } ?: 0
+                                    }
+                                    ?: 0
                                 ) + 1
 
                     inProgressAttemptNumber =
@@ -837,7 +1256,9 @@ fun TestView() {
                 onViewAttempt = {
                         attemptNum ->
 
-                    if (userId != null) {
+                    if (
+                        userId != null
+                    ) {
 
                         userQuizService
                             .getAttemptDetails(
@@ -845,7 +1266,9 @@ fun TestView() {
                                 attemptNum
                             ) { result ->
 
-                                when (result) {
+                                when (
+                                    result
+                                ) {
 
                                     is DatabaseResult.Success -> {
 
@@ -872,7 +1295,9 @@ fun TestView() {
                 onContinueAttempt = {
                         attemptNum ->
 
-                    if (userId != null) {
+                    if (
+                        userId != null
+                    ) {
 
                         userQuizService
                             .getAttemptDetails(
@@ -880,7 +1305,9 @@ fun TestView() {
                                 attemptNum
                             ) { result ->
 
-                                when (result) {
+                                when (
+                                    result
+                                ) {
 
                                     is DatabaseResult.Success -> {
 
@@ -890,12 +1317,16 @@ fun TestView() {
                                         val map =
                                             list.associate { question ->
 
-                                                question.id
+                                                question
+                                                    .id
                                                     .toString() to
                                                         (
-                                                                question.selectedAnswer
+                                                                question
+                                                                    .selectedAnswer
                                                                     ?.let {
-                                                                        listOf(it)
+                                                                        listOf(
+                                                                            it
+                                                                        )
                                                                     }
                                                                     ?: emptyList()
                                                                 )
@@ -912,7 +1343,9 @@ fun TestView() {
                                             ) { indexResult ->
 
                                                 val index =
-                                                    when (indexResult) {
+                                                    when (
+                                                        indexResult
+                                                    ) {
 
                                                         is DatabaseResult.Success ->
                                                             indexResult.data

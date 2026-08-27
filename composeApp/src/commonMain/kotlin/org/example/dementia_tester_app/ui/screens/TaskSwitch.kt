@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
@@ -25,18 +28,38 @@ import org.example.dementia_tester_app.data.MiniGameScoresService
 import kotlin.random.Random
 
 @Composable
-fun Triangle(colour: String) {
-    Canvas(
-        modifier = Modifier.size(100.dp)
-    ) {
-        val path = Path().apply {
-            moveTo(size.width / 2, 0f)
-            lineTo(0f, size.height)
-            lineTo(size.width, size.height)
-            close()
-        }
+fun Triangle(
+    colour: String
+) {
 
-        var c = Color.Red
+    Canvas(
+        modifier =
+            Modifier.size(100.dp)
+    ) {
+
+        val path =
+            Path().apply {
+
+                moveTo(
+                    size.width / 2,
+                    0f
+                )
+
+                lineTo(
+                    0f,
+                    size.height
+                )
+
+                lineTo(
+                    size.width,
+                    size.height
+                )
+
+                close()
+            }
+
+        var c =
+            Color.Red
 
         if (colour == "Red") {
             c = Color.Red
@@ -62,20 +85,48 @@ fun Triangle(colour: String) {
 }
 
 @Composable
-fun Square(colour: String) {
-    Canvas(
-        modifier = Modifier.size(100.dp)
-    ) {
-        val path = Path().apply {
-            moveTo(0f, 0f)
-            lineTo(0f, size.height)
-            lineTo(size.width, size.height)
-            lineTo(size.width, 0f)
-            lineTo(0f, 0f)
-            close()
-        }
+fun Square(
+    colour: String
+) {
 
-        var c = Color.Red
+    Canvas(
+        modifier =
+            Modifier.size(100.dp)
+    ) {
+
+        val path =
+            Path().apply {
+
+                moveTo(
+                    0f,
+                    0f
+                )
+
+                lineTo(
+                    0f,
+                    size.height
+                )
+
+                lineTo(
+                    size.width,
+                    size.height
+                )
+
+                lineTo(
+                    size.width,
+                    0f
+                )
+
+                lineTo(
+                    0f,
+                    0f
+                )
+
+                close()
+            }
+
+        var c =
+            Color.Red
 
         if (colour == "Red") {
             c = Color.Red
@@ -101,11 +152,17 @@ fun Square(colour: String) {
 }
 
 @Composable
-fun Circle(colour: String) {
+fun Circle(
+    colour: String
+) {
+
     Canvas(
-        modifier = Modifier.size(100.dp)
+        modifier =
+            Modifier.size(100.dp)
     ) {
-        var c = Color.Red
+
+        var c =
+            Color.Red
 
         if (colour == "Red") {
             c = Color.Red
@@ -127,10 +184,34 @@ fun Circle(colour: String) {
     }
 }
 
+/**
+ * Task Switch mini game.
+ *
+ * Normal patient:
+ *
+ * TaskSwitch(
+ *     onReturn = { ... }
+ * )
+ *
+ * Caregiver:
+ *
+ * TaskSwitch(
+ *     onReturn = { ... },
+ *     targetUserId = selectedPatient.userId,
+ *     targetUserName = selectedPatient.name
+ * )
+ *
+ * If targetUserId is provided, both the score
+ * and activity are stored against the selected
+ * patient's UID.
+ */
 @Composable
 fun TaskSwitch(
-    onReturn: () -> Unit
+    onReturn: () -> Unit,
+    targetUserId: String? = null,
+    targetUserName: String? = null
 ) {
+
     var showbox by remember {
         mutableStateOf(false)
     }
@@ -179,94 +260,229 @@ fun TaskSwitch(
         mutableStateOf(true)
     }
 
-    val authService = remember {
-        AuthService()
-    }
+    val authService =
+        remember {
+            AuthService()
+        }
 
-    // Prevent submit() from firing twice.
+    /*
+     * UID belonging to the account that
+     * is currently authenticated.
+     */
+    val loggedInUserId =
+        authService.getCurrentUserId()
+
+    /*
+     * UID that should own this game score
+     * and activity.
+     *
+     * Normal patient:
+     * targetUserId == null
+     * -> logged-in patient's UID
+     *
+     * Caregiver:
+     * targetUserId != null
+     * -> selected patient's UID
+     */
+    val userId =
+        targetUserId
+            ?: loggedInUserId
+
+    /*
+     * Detect whether someone is playing
+     * on behalf of another user.
+     */
+    val isActingOnBehalf =
+        targetUserId != null &&
+                targetUserId != loggedInUserId
+
+    /*
+     * Name displayed when caregiver mode
+     * is active.
+     */
+    val gameOwnerName =
+        targetUserName
+            ?.takeIf {
+                it.isNotBlank()
+            }
+            ?: "Patient"
+
+    /*
+     * Prevent submit() from firing twice.
+     */
     var submitted by remember {
         mutableStateOf(false)
     }
 
+    /**
+     * Save the Task Switch score and activity.
+     *
+     * The score and activity are both saved
+     * using userId, which can be either the
+     * authenticated patient or the caregiver's
+     * selected patient.
+     */
     fun submit() {
+
         val scoreService =
             MiniGameScoresService()
 
         val activityService =
             ActivityService()
 
-        val userId =
-            authService.getCurrentUserId()
-
         userId?.let { uid ->
 
-            scoreService.addUserGameAttempt(
-                uid,
-                GameType.EXECUTIVE_FUNCTION,
-                score
-            ) {
-                // Ignore result
-            }
+            /*
+             * Save game score against the
+             * correct patient UID.
+             */
+            scoreService
+                .addUserGameAttempt(
+                    uid,
+                    GameType.EXECUTIVE_FUNCTION,
+                    score
+                ) {
+                    /*
+                     * Ignore result for now.
+                     */
+                }
 
-            activityService.logActivity(
-                Activity(
-                    title = "Game Played: Task Switch",
-                    type = ActivityType.GAME,
-                    description =
-                        "Scored $score in Executive Function"
-                )
-            ) {
-                // Ignore result
-            }
+            /*
+             * Save activity against the same
+             * patient UID.
+             *
+             * Normal patient:
+             * uid = logged-in patient's UID
+             *
+             * Caregiver:
+             * uid = selected patient's UID
+             */
+            activityService
+                .logActivityForUser(
+                    userId = uid,
+                    activity = Activity(
+                        title =
+                            "Game Played: Task Switch",
+                        type =
+                            ActivityType.GAME,
+                        description =
+                            if (isActingOnBehalf) {
+                                "Scored $score in Executive Function with caregiver assistance"
+                            } else {
+                                "Scored $score in Executive Function"
+                            }
+                    )
+                ) {
+                    /*
+                     * Activity logging should not
+                     * prevent the game score from
+                     * being submitted if it fails.
+                     */
+                }
         }
     }
 
+    /**
+     * Ensure a score is submitted only once.
+     */
     fun submitOnce() {
+
         if (!submitted) {
-            submitted = true
+
+            submitted =
+                true
+
             submit()
         }
     }
 
-    // Run the countdown once.
+    /*
+     * Run the countdown once.
+     */
     LaunchedEffect(Unit) {
+
         for (i in 30 downTo 0) {
-            timeleft = i
-            delay(1000)
+
+            timeleft =
+                i
+
+            delay(
+                1000
+            )
         }
 
-        showbox = true
+        showbox =
+            true
     }
 
+    /*
+     * Score submission dialog.
+     */
     if (showbox) {
+
         AlertDialog(
             onDismissRequest = {
+
                 submitOnce()
+
                 onReturn()
             },
+
             title = {
-                Text("Submit your score")
-            },
-            text = {
+
                 Text(
-                    "Your score is $score. Submit score?"
+                    text =
+                        if (isActingOnBehalf) {
+
+                            "Submit score for $gameOwnerName"
+
+                        } else {
+
+                            "Submit your score"
+                        }
                 )
             },
+
+            text = {
+
+                Text(
+                    text =
+                        if (isActingOnBehalf) {
+
+                            "The score is $score. Submit this score for $gameOwnerName?"
+
+                        } else {
+
+                            "Your score is $score. Submit score?"
+                        }
+                )
+            },
+
             confirmButton = {
+
                 TextButton(
                     onClick = {
+
                         submitOnce()
+
                         onReturn()
                     }
                 ) {
-                    Text("OK")
+
+                    Text(
+                        "OK"
+                    )
                 }
             }
         )
     }
 
-    // Generate the next shape and colour combination.
+    /*
+     * Generate the next shape and
+     * colour combination.
+     */
     LaunchedEffect(shapenumber) {
+
         val shapes =
             arrayOf(
                 "Square",
@@ -286,11 +502,17 @@ fun TaskSwitch(
 
         colours.shuffle()
 
-        shape = shapes[0]
-        wrongshape = shapes[1]
+        shape =
+            shapes[0]
 
-        colour = colours[0]
-        wrongcolour = colours[1]
+        wrongshape =
+            shapes[1]
+
+        colour =
+            colours[0]
+
+        wrongcolour =
+            colours[1]
 
         match =
             arrayOf(
@@ -299,14 +521,24 @@ fun TaskSwitch(
             ).random()
 
         if (match == "shape") {
-            correctchoice = shape
-            incorrectchoice = wrongshape
+
+            correctchoice =
+                shape
+
+            incorrectchoice =
+                wrongshape
+
         } else {
-            correctchoice = colour
-            incorrectchoice = wrongcolour
+
+            correctchoice =
+                colour
+
+            incorrectchoice =
+                wrongcolour
         }
 
-        order = Random.nextBoolean()
+        order =
+            Random.nextBoolean()
     }
 
     Column(
@@ -315,21 +547,80 @@ fun TaskSwitch(
             .padding(16.dp)
     ) {
 
+        /*
+         * Caregiver patient context.
+         */
+        if (isActingOnBehalf) {
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        bottom = 12.dp
+                    ),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor =
+                            MaterialTheme
+                                .colorScheme
+                                .surfaceVariant
+                    )
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                ) {
+
+                    Text(
+                        text =
+                            "Playing on behalf of",
+                        style =
+                            MaterialTheme
+                                .typography
+                                .bodyMedium
+                    )
+
+                    Text(
+                        text =
+                            gameOwnerName,
+                        style =
+                            MaterialTheme
+                                .typography
+                                .titleMedium,
+                        fontWeight =
+                            FontWeight.Bold
+                    )
+                }
+            }
+        }
+
         Row {
 
-            // Time display
+            /*
+             * Time display.
+             */
             Text(
-                text = "Time: ",
-                fontSize = 16.sp,
+                text =
+                    "Time: ",
+                fontSize =
+                    16.sp,
                 modifier =
-                    Modifier.padding(top = 4.dp)
+                    Modifier.padding(
+                        top = 4.dp
+                    )
             )
 
             Text(
-                text = "$timeleft",
-                fontWeight = FontWeight.Bold,
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center
+                text =
+                    "$timeleft",
+                fontWeight =
+                    FontWeight.Bold,
+                fontSize =
+                    32.sp,
+                textAlign =
+                    TextAlign.Center
             )
 
             Spacer(
@@ -337,9 +628,12 @@ fun TaskSwitch(
                     Modifier.weight(1f)
             )
 
-            // Quit button
+            /*
+             * Quit button.
+             */
             Button(
-                onClick = onReturn,
+                onClick =
+                    onReturn,
                 modifier =
                     Modifier.size(
                         110.dp,
@@ -351,62 +645,96 @@ fun TaskSwitch(
                             Color.Red
                     )
             ) {
-                Text("Quit")
+
+                Text(
+                    "Quit"
+                )
             }
         }
 
         Row {
 
-            // Score display
+            /*
+             * Score display.
+             */
             Text(
-                text = "Score: ",
-                fontSize = 16.sp,
+                text =
+                    "Score: ",
+                fontSize =
+                    16.sp,
                 modifier =
-                    Modifier.padding(top = 4.dp)
+                    Modifier.padding(
+                        top = 4.dp
+                    )
             )
 
             Text(
-                text = "$score",
-                fontWeight = FontWeight.Bold,
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center
+                text =
+                    "$score",
+                fontWeight =
+                    FontWeight.Bold,
+                fontSize =
+                    32.sp,
+                textAlign =
+                    TextAlign.Center
             )
         }
 
         Row(
             modifier =
-                Modifier.padding(16.dp)
+                Modifier.padding(
+                    16.dp
+                )
         ) {
+
             Text(
                 text =
                     "Match by: $match",
                 textAlign =
                     TextAlign.Center,
-                fontSize = 20.sp,
+                fontSize =
+                    20.sp,
                 modifier =
                     Modifier.fillMaxWidth()
             )
         }
 
+        /*
+         * Display the target shape.
+         */
         Row(
             horizontalArrangement =
                 Arrangement.Center,
             modifier =
                 Modifier.fillMaxWidth()
         ) {
+
             if (shape == "Triangle") {
-                Triangle(colour)
+
+                Triangle(
+                    colour
+                )
             }
 
             if (shape == "Square") {
-                Square(colour)
+
+                Square(
+                    colour
+                )
             }
 
             if (shape == "Circle") {
-                Circle(colour)
+
+                Circle(
+                    colour
+                )
             }
         }
 
+        /*
+         * Randomise which button position
+         * contains the correct answer.
+         */
         if (order) {
 
             Row(
@@ -414,25 +742,38 @@ fun TaskSwitch(
                     Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(
+                        10.dp
+                    )
             ) {
+
                 Button(
                     onClick = {
-                        score += 1
-                        shapenumber += 1
+
+                        if (timeleft > 0) {
+
+                            score += 1
+
+                            shapenumber += 1
+                        }
                     },
+
                     modifier =
                         Modifier.size(
                             110.dp,
                             35.dp
                         ),
+
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor =
                                 Color.DarkGray
                         )
                 ) {
-                    Text(correctchoice)
+
+                    Text(
+                        correctchoice
+                    )
                 }
             }
 
@@ -441,24 +782,36 @@ fun TaskSwitch(
                     Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp)
+                    .padding(
+                        5.dp
+                    )
             ) {
+
                 Button(
                     onClick = {
-                        shapenumber += 1
+
+                        if (timeleft > 0) {
+
+                            shapenumber += 1
+                        }
                     },
+
                     modifier =
                         Modifier.size(
                             110.dp,
                             35.dp
                         ),
+
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor =
                                 Color.DarkGray
                         )
                 ) {
-                    Text(incorrectchoice)
+
+                    Text(
+                        incorrectchoice
+                    )
                 }
             }
 
@@ -469,24 +822,36 @@ fun TaskSwitch(
                     Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(
+                        10.dp
+                    )
             ) {
+
                 Button(
                     onClick = {
-                        shapenumber += 1
+
+                        if (timeleft > 0) {
+
+                            shapenumber += 1
+                        }
                     },
+
                     modifier =
                         Modifier.size(
                             110.dp,
                             35.dp
                         ),
+
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor =
                                 Color.DarkGray
                         )
                 ) {
-                    Text(incorrectchoice)
+
+                    Text(
+                        incorrectchoice
+                    )
                 }
             }
 
@@ -495,25 +860,38 @@ fun TaskSwitch(
                     Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp)
+                    .padding(
+                        5.dp
+                    )
             ) {
+
                 Button(
                     onClick = {
-                        score += 1
-                        shapenumber += 1
+
+                        if (timeleft > 0) {
+
+                            score += 1
+
+                            shapenumber += 1
+                        }
                     },
+
                     modifier =
                         Modifier.size(
                             110.dp,
                             35.dp
                         ),
+
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor =
                                 Color.DarkGray
                         )
                 ) {
-                    Text(correctchoice)
+
+                    Text(
+                        correctchoice
+                    )
                 }
             }
         }

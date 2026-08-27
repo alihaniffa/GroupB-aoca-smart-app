@@ -21,8 +21,27 @@ import org.example.dementia_tester_app.ui.components.LoadingSpinner
 import org.example.dementia_tester_app.ui.components.ProgressSummary
 import org.example.dementia_tester_app.ui.components.UserTestResults
 
+/**
+ * Progress screen.
+ *
+ * Normal patient:
+ * ProgressView()
+ *
+ * Caregiver:
+ * ProgressView(
+ *     targetUserId = selectedPatient.userId,
+ *     targetUserName = selectedPatient.name
+ * )
+ *
+ * When a target user is supplied, all progress
+ * and recent activity belongs to that patient.
+ */
 @Composable
-fun ProgressView() {
+fun ProgressView(
+    targetUserId: String? = null,
+    targetUserName: String? = null
+) {
+
     val tabs = listOf(
         "Assessments",
         "Health Surveys",
@@ -37,8 +56,37 @@ fun ProgressView() {
         AuthService()
     }
 
-    val userId =
+    /*
+     * UID of the account actually logged in.
+     */
+    val loggedInUserId =
         authService.getCurrentUserId()
+
+    /*
+     * UID whose progress should be displayed.
+     *
+     * Patient:
+     * targetUserId == null
+     * -> logged-in patient's UID
+     *
+     * Caregiver:
+     * targetUserId != null
+     * -> selected patient's UID
+     */
+    val userId =
+        targetUserId
+            ?: loggedInUserId
+
+    val isActingOnBehalf =
+        targetUserId != null &&
+                targetUserId != loggedInUserId
+
+    val progressOwnerName =
+        targetUserName
+            ?.takeIf {
+                it.isNotBlank()
+            }
+            ?: "Patient"
 
     val cognitiveService = remember {
         UserQuizService(
@@ -56,6 +104,10 @@ fun ProgressView() {
         MiniGameScoresService()
     }
 
+    val activityService = remember {
+        ActivityService()
+    }
+
     var assessmentResults by remember {
         mutableStateOf<List<UserResults>>(
             emptyList()
@@ -71,11 +123,9 @@ fun ProgressView() {
     var gameResults by remember {
         mutableStateOf<
                 Map<GameType, List<GameAttempts>>
-                >(emptyMap())
-    }
-
-    val activityService = remember {
-        ActivityService()
+                >(
+            emptyMap()
+        )
     }
 
     var recentActivities by remember {
@@ -88,94 +138,196 @@ fun ProgressView() {
         mutableStateOf(true)
     }
 
+    var errorMessage by remember {
+        mutableStateOf<String?>(null)
+    }
+
+    /*
+     * Reload all assessment, survey and game
+     * progress whenever the selected patient
+     * changes.
+     */
     LaunchedEffect(userId) {
+
+        assessmentResults =
+            emptyList()
+
+        healthResults =
+            emptyList()
+
+        gameResults =
+            emptyMap()
+
+        errorMessage =
+            null
+
         if (userId == null) {
+
+            isLoading =
+                false
+
+            errorMessage =
+                "Unable to determine user."
+
             return@LaunchedEffect
         }
 
-        isLoading = true
+        isLoading =
+            true
 
-        cognitiveService.getUserScores(
-            userId
-        ) { result ->
-
-            if (
-                result is DatabaseResult.Success
-            ) {
-                assessmentResults =
-                    result.data
-            }
-
-            healthService.getUserScores(
+        /*
+         * Load cognitive assessment scores
+         * for the target user.
+         */
+        cognitiveService
+            .getUserScores(
                 userId
-            ) { healthResult ->
+            ) { result ->
 
-                if (
-                    healthResult
-                            is DatabaseResult.Success
-                ) {
-                    healthResults =
-                        healthResult.data
+                when (result) {
+
+                    is DatabaseResult.Success -> {
+
+                        assessmentResults =
+                            result.data
+                    }
+
+                    is DatabaseResult.Error -> {
+
+                        errorMessage =
+                            "Failed to load assessment results: ${result.message}"
+                    }
                 }
 
-                // Fetch mini-game results
-                val gamesMap =
-                    mutableMapOf<
-                            GameType,
-                            List<GameAttempts>
-                            >()
+                /*
+                 * Load health survey scores
+                 * for the same target user.
+                 */
+                healthService
+                    .getUserScores(
+                        userId
+                    ) { healthResult ->
 
-                var gamesLoaded = 0
+                        when (healthResult) {
 
-                val totalGames =
-                    GameType.entries.size
+                            is DatabaseResult.Success -> {
 
-                GameType.entries.forEach {
-                        type ->
-
-                    gameService
-                        .getUserGameAttempts(
-                            userId,
-                            type
-                        ) { gameResult ->
-
-                            if (
-                                gameResult
-                                        is DatabaseResult.Success
-                            ) {
-                                gamesMap[type] =
-                                    gameResult.data
+                                healthResults =
+                                    healthResult.data
                             }
 
-                            gamesLoaded++
+                            is DatabaseResult.Error -> {
 
-                            if (
-                                gamesLoaded ==
-                                totalGames
-                            ) {
-                                gameResults =
-                                    gamesMap
+                                if (
+                                    errorMessage == null
+                                ) {
 
-                                isLoading =
-                                    false
+                                    errorMessage =
+                                        "Failed to load health survey results: ${healthResult.message}"
+                                }
                             }
                         }
-                }
+
+                        /*
+                         * Load all mini-game attempts
+                         * for the target user.
+                         */
+                        val gamesMap =
+                            mutableMapOf<
+                                    GameType,
+                                    List<GameAttempts>
+                                    >()
+
+                        var gamesLoaded =
+                            0
+
+                        val totalGames =
+                            GameType.entries.size
+
+                        if (
+                            totalGames == 0
+                        ) {
+
+                            gameResults =
+                                emptyMap()
+
+                            isLoading =
+                                false
+                        }
+
+                        GameType.entries
+                            .forEach { type ->
+
+                                gameService
+                                    .getUserGameAttempts(
+                                        userId,
+                                        type
+                                    ) { gameResult ->
+
+                                        when (gameResult) {
+
+                                            is DatabaseResult.Success -> {
+
+                                                gamesMap[type] =
+                                                    gameResult.data
+                                            }
+
+                                            is DatabaseResult.Error -> {
+
+                                                if (
+                                                    errorMessage == null
+                                                ) {
+
+                                                    errorMessage =
+                                                        "Failed to load game results: ${gameResult.message}"
+                                                }
+                                            }
+                                        }
+
+                                        gamesLoaded++
+
+                                        if (
+                                            gamesLoaded ==
+                                            totalGames
+                                        ) {
+
+                                            gameResults =
+                                                gamesMap
+
+                                            isLoading =
+                                                false
+                                        }
+                                    }
+                            }
+                    }
             }
-        }
     }
 
-    // Collect the user's activity history.
+    /*
+     * Load recent activity for the user whose
+     * progress is currently being displayed.
+     *
+     * Patient:
+     * -> current patient's activities
+     *
+     * Caregiver:
+     * -> selected patient's activities
+     */
     LaunchedEffect(userId) {
+
+        recentActivities =
+            emptyList()
+
         if (userId == null) {
             return@LaunchedEffect
         }
 
         activityService
-            .getActivitiesFlow()
+            .getActivitiesFlowForUser(
+                userId
+            )
             .collect { activities ->
 
-                // Show only the latest five activities.
                 recentActivities =
                     activities.take(5)
             }
@@ -191,10 +343,69 @@ fun ProgressView() {
                 rememberScrollState()
             )
     ) {
+
+        /*
+         * Caregiver context indicator.
+         */
+        if (isActingOnBehalf) {
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 12.dp
+                    ),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor =
+                            MaterialTheme
+                                .colorScheme
+                                .surfaceVariant
+                    )
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                ) {
+
+                    Text(
+                        text =
+                            "Viewing progress for",
+                        style =
+                            MaterialTheme
+                                .typography
+                                .bodyMedium
+                    )
+
+                    Text(
+                        text =
+                            progressOwnerName,
+                        style =
+                            MaterialTheme
+                                .typography
+                                .titleMedium,
+                        fontWeight =
+                            FontWeight.Bold,
+                        color =
+                            FormColors.green
+                    )
+                }
+            }
+        }
+
         Text(
-            text = "Progress Analytics",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+            text =
+                if (isActingOnBehalf) {
+                    "$progressOwnerName's Progress"
+                } else {
+                    "Progress Analytics"
+                },
+            fontSize =
+                24.sp,
+            fontWeight =
+                FontWeight.Bold,
             color =
                 MaterialTheme
                     .colorScheme
@@ -205,15 +416,19 @@ fun ProgressView() {
                 )
         )
 
-        // Statistic cards
+        /*
+         * Summary statistic cards.
+         */
         Row(
             modifier =
                 Modifier.fillMaxWidth(),
             horizontalArrangement =
                 Arrangement.spacedBy(8.dp)
         ) {
+
             StatCard(
-                label = "Tests",
+                label =
+                    "Tests",
                 value =
                     assessmentResults
                         .flatMap {
@@ -226,7 +441,8 @@ fun ProgressView() {
             )
 
             StatCard(
-                label = "Surveys",
+                label =
+                    "Surveys",
                 value =
                     healthResults
                         .flatMap {
@@ -239,7 +455,8 @@ fun ProgressView() {
             )
 
             StatCard(
-                label = "Games",
+                label =
+                    "Games",
                 value =
                     gameResults
                         .values
@@ -256,16 +473,33 @@ fun ProgressView() {
 
         Spacer(
             modifier =
-                Modifier.height(24.dp)
+                Modifier.height(
+                    24.dp
+                )
         )
 
-        // Recent activity preview
+        /*
+         * Recent activity.
+         *
+         * In normal mode this belongs to the
+         * logged-in patient.
+         *
+         * In caregiver mode this belongs to
+         * the selected patient.
+         */
         if (
             recentActivities.isNotEmpty()
         ) {
+
             Text(
-                text = "Recent Activity",
-                fontSize = 18.sp,
+                text =
+                    if (isActingOnBehalf) {
+                        "$progressOwnerName's Recent Activity"
+                    } else {
+                        "Recent Activity"
+                    },
+                fontSize =
+                    18.sp,
                 fontWeight =
                     FontWeight.Bold,
                 color =
@@ -276,22 +510,45 @@ fun ProgressView() {
 
             Spacer(
                 modifier =
-                    Modifier.height(8.dp)
+                    Modifier.height(
+                        8.dp
+                    )
             )
 
-            recentActivities.forEach {
-                    activity ->
+            recentActivities
+                .forEach { activity ->
 
-                RecentActivityItem(
-                    activity
-                )
-            }
+                    RecentActivityItem(
+                        activity
+                    )
+                }
 
             Spacer(
                 modifier =
-                    Modifier.height(16.dp)
+                    Modifier.height(
+                        16.dp
+                    )
             )
         }
+
+        errorMessage
+            ?.let { message ->
+
+                Text(
+                    text =
+                        message,
+                    color =
+                        Color.Red,
+                    style =
+                        MaterialTheme
+                            .typography
+                            .bodyMedium,
+                    modifier =
+                        Modifier.padding(
+                            bottom = 12.dp
+                        )
+                )
+            }
 
         TabRow(
             selectedTabIndex =
@@ -302,6 +559,7 @@ fun ProgressView() {
                 FormColors.green,
             divider = {}
         ) {
+
             tabs.forEachIndexed {
                     index,
                     title ->
@@ -311,19 +569,25 @@ fun ProgressView() {
                         selectedTab ==
                                 index,
                     onClick = {
+
                         selectedTab =
                             index
                     },
                     text = {
+
                         Text(
-                            text = title,
+                            text =
+                                title,
                             fontWeight =
                                 if (
                                     selectedTab ==
                                     index
                                 ) {
+
                                     FontWeight.Bold
+
                                 } else {
+
                                     FontWeight.Normal
                                 },
                             color =
@@ -331,8 +595,11 @@ fun ProgressView() {
                                     selectedTab ==
                                     index
                                 ) {
+
                                     FormColors.green
+
                                 } else {
+
                                     MaterialTheme
                                         .colorScheme
                                         .onSurface
@@ -345,42 +612,60 @@ fun ProgressView() {
 
         Spacer(
             modifier =
-                Modifier.height(16.dp)
+                Modifier.height(
+                    16.dp
+                )
         )
 
         if (isLoading) {
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .height(
+                        200.dp
+                    ),
                 contentAlignment =
                     Alignment.Center
             ) {
+
                 LoadingSpinner()
             }
 
         } else {
-            when (selectedTab) {
-                0 ->
+
+            when (
+                selectedTab
+            ) {
+
+                0 -> {
+
                     AssessmentTab(
                         assessmentResults
                     )
+                }
 
-                1 ->
+                1 -> {
+
                     HealthSurveyTab(
                         healthResults
                     )
+                }
 
-                2 ->
+                2 -> {
+
                     GamesTab(
                         gameResults
                     )
+                }
             }
         }
 
         Spacer(
             modifier =
-                Modifier.height(32.dp)
+                Modifier.height(
+                    32.dp
+                )
         )
     }
 }
@@ -389,6 +674,7 @@ fun ProgressView() {
 fun RecentActivityItem(
     activity: Activity
 ) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -398,12 +684,15 @@ fun RecentActivityItem(
         verticalAlignment =
             Alignment.CenterVertically
     ) {
+
         Box(
             modifier = Modifier
                 .size(8.dp)
                 .clip(
-                    androidx.compose.foundation
-                        .shape.CircleShape
+                    androidx.compose
+                        .foundation
+                        .shape
+                        .CircleShape
                 )
                 .background(
                     FormColors.green
@@ -412,13 +701,18 @@ fun RecentActivityItem(
 
         Spacer(
             modifier =
-                Modifier.width(12.dp)
+                Modifier.width(
+                    12.dp
+                )
         )
 
         Column {
+
             Text(
-                text = activity.title,
-                fontSize = 14.sp,
+                text =
+                    activity.title,
+                fontSize =
+                    14.sp,
                 fontWeight =
                     FontWeight.Medium,
                 color =
@@ -429,9 +723,12 @@ fun RecentActivityItem(
 
             Text(
                 text =
-                    activity.type.value
+                    activity
+                        .type
+                        .value
                         .capitalize(),
-                fontSize = 12.sp,
+                fontSize =
+                    12.sp,
                 color =
                     MaterialTheme
                         .colorScheme
@@ -447,11 +744,15 @@ fun StatCard(
     value: String,
     modifier: Modifier = Modifier
 ) {
+
     Card(
-        modifier = modifier,
+        modifier =
+            modifier,
         elevation =
             CardDefaults
-                .cardElevation(2.dp),
+                .cardElevation(
+                    2.dp
+                ),
         colors =
             CardDefaults
                 .cardColors(
@@ -460,19 +761,26 @@ fun StatCard(
                             .colorScheme
                             .surfaceVariant
                             .copy(
-                                alpha = 0.5f
+                                alpha =
+                                    0.5f
                             )
                 )
     ) {
+
         Column(
             modifier =
-                Modifier.padding(12.dp),
+                Modifier.padding(
+                    12.dp
+                ),
             horizontalAlignment =
                 Alignment.CenterHorizontally
         ) {
+
             Text(
-                text = value,
-                fontSize = 20.sp,
+                text =
+                    value,
+                fontSize =
+                    20.sp,
                 fontWeight =
                     FontWeight.Bold,
                 color =
@@ -480,8 +788,10 @@ fun StatCard(
             )
 
             Text(
-                text = label,
-                fontSize = 12.sp,
+                text =
+                    label,
+                fontSize =
+                    12.sp,
                 color =
                     MaterialTheme
                         .colorScheme
@@ -495,27 +805,37 @@ fun StatCard(
 fun AssessmentTab(
     results: List<UserResults>
 ) {
+
     val attempts =
         results.flatMap {
             it.attempts
         }
 
-    if (attempts.isEmpty()) {
+    if (
+        attempts.isEmpty()
+    ) {
+
         EmptyState(
             "No assessments completed yet."
         )
+
     } else {
+
         ProgressSummary(
             attempts.last()
         )
 
         Spacer(
             modifier =
-                Modifier.height(16.dp)
+                Modifier.height(
+                    16.dp
+                )
         )
 
         UserTestResults(
-            GraphableAttempts(results)
+            GraphableAttempts(
+                results
+            )
         )
     }
 }
@@ -524,27 +844,37 @@ fun AssessmentTab(
 fun HealthSurveyTab(
     results: List<UserResults>
 ) {
+
     val attempts =
         results.flatMap {
             it.attempts
         }
 
-    if (attempts.isEmpty()) {
+    if (
+        attempts.isEmpty()
+    ) {
+
         EmptyState(
             "No health surveys completed yet."
         )
+
     } else {
+
         ProgressSummary(
             attempts.last()
         )
 
         Spacer(
             modifier =
-                Modifier.height(16.dp)
+                Modifier.height(
+                    16.dp
+                )
         )
 
         UserTestResults(
-            GraphableAttempts(results)
+            GraphableAttempts(
+                results
+            )
         )
     }
 }
@@ -554,17 +884,22 @@ fun GamesTab(
     gameResults:
     Map<GameType, List<GameAttempts>>
 ) {
+
     val allAttempts =
         gameResults
             .values
             .flatten()
 
-    if (allAttempts.isEmpty()) {
+    if (
+        allAttempts.isEmpty()
+    ) {
+
         EmptyState(
             "No games played yet."
         )
 
     } else {
+
         var selectedGame by remember {
             mutableStateOf(
                 GameType.COMPLEX_ATTENTION
@@ -581,60 +916,74 @@ fun GamesTab(
                 Color.Transparent,
             contentColor =
                 FormColors.green,
-            edgePadding = 0.dp
+            edgePadding =
+                0.dp
         ) {
-            GameType.entries.forEach {
-                    type ->
 
-                Tab(
-                    selected =
-                        selectedGame ==
-                                type,
-                    onClick = {
-                        selectedGame =
-                            type
-                    },
-                    text = {
-                        Text(
-                            text =
-                                type.name
-                                    .replace(
-                                        "_",
-                                        " "
-                                    )
-                                    .lowercase()
-                                    .capitalize(),
-                            color =
-                                if (
-                                    selectedGame ==
-                                    type
-                                ) {
-                                    FormColors.green
-                                } else {
-                                    MaterialTheme
-                                        .colorScheme
-                                        .onSurface
-                                }
-                        )
-                    }
-                )
-            }
+            GameType.entries
+                .forEach { type ->
+
+                    Tab(
+                        selected =
+                            selectedGame ==
+                                    type,
+                        onClick = {
+
+                            selectedGame =
+                                type
+                        },
+                        text = {
+
+                            Text(
+                                text =
+                                    type.name
+                                        .replace(
+                                            "_",
+                                            " "
+                                        )
+                                        .lowercase()
+                                        .capitalize(),
+                                color =
+                                    if (
+                                        selectedGame ==
+                                        type
+                                    ) {
+
+                                        FormColors.green
+
+                                    } else {
+
+                                        MaterialTheme
+                                            .colorScheme
+                                            .onSurface
+                                    }
+                            )
+                        }
+                    )
+                }
         }
 
         val specificResults =
-            gameResults[selectedGame]
+            gameResults[
+                selectedGame
+            ]
                 ?: emptyList()
 
         if (
             specificResults.isEmpty()
         ) {
+
             EmptyState(
                 "No data for this game."
             )
+
         } else {
+
             Spacer(
                 modifier =
-                    Modifier.height(16.dp)
+                    Modifier.height(
+                        16.dp
+                    )
             )
 
             UserTestResults(
@@ -650,16 +999,22 @@ fun GamesTab(
 fun EmptyState(
     message: String
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp),
+            .height(
+                150.dp
+            ),
         contentAlignment =
             Alignment.Center
     ) {
+
         Text(
-            text = message,
-            color = Color.Gray,
+            text =
+                message,
+            color =
+                Color.Gray,
             textAlign =
                 TextAlign.Center
         )
@@ -670,10 +1025,17 @@ fun EmptyState(
  * Capitalize the first character of a string.
  */
 fun String.capitalize(): String {
+
     return replaceFirstChar {
-        if (it.isLowerCase()) {
+
+        if (
+            it.isLowerCase()
+        ) {
+
             it.titlecase()
+
         } else {
+
             it.toString()
         }
     }
