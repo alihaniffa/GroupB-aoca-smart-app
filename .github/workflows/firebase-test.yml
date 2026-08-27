@@ -26,5 +26,5 @@ jobs:
 
       - name: Run Firestore Rules Tests via Emulator
         run: |
-          # Added --project demo-project-id to bypass authentication/active project requirements
-          firebase emulators:exec --project demo-test-project "npx jest security.test.js"
+          # Only start firestore so it doesn't look for functions or storage dependencies
+          firebase emulators:exec --only firestore --project demo-test-project "npx jest security.test.js"
