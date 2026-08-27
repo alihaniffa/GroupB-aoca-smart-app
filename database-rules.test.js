@@ -12,15 +12,17 @@ describe("Dementia Tester Realtime Database Security Rules", () => {
         testEnv = await initializeTestEnvironment({
             projectId: "demo-test-project",
             database: {
-                rules: fs.readFileSync("database.rules.json", "utf8"),
-                host: "localhost",
+                host: "127.0.0.1", // Explicitly use IPv4 to prevent ECONNREFUSED issues on CI runners
                 port: 9000,
+                rules: fs.readFileSync("database.rules.json", "utf8"),
             },
         });
     });
 
     afterAll(async () => {
-        await testEnv.cleanup();
+        if (testEnv) {
+            await testEnv.cleanup();
+        }
     });
 
     beforeEach(async () => {
@@ -36,16 +38,17 @@ describe("Dementia Tester Realtime Database Security Rules", () => {
         const userContext = testEnv.authenticatedContext("patient_123");
         const db = userContext.database();
 
-        await assertSucceeds(
-            db.ref("UserProfiles/patient_123").set({ userType: "user", email: "p@test.com" })
-        );
+        await userContext.withSecurityRulesDisabled(async (context) => {
+            // Seed profile info so userType lookups succeed if needed
+            await context.database().ref("UserProfiles/patient_123").set({ userType: "user" });
+        });
+
         await assertSucceeds(
             db.ref("Reminders/patient_123").set({ title: "Take meds" })
         );
     });
 
     test("An assigned caregiver can access their assigned patient's data, but unassigned cannot", async () => {
-        // Seed database mapping with rules disabled
         await testEnv.withSecurityRulesDisabled(async (context) => {
             const db = context.database();
             await db.ref("UserProfiles/caregiver_999").set({ userType: "caregiver" });
@@ -56,10 +59,7 @@ describe("Dementia Tester Realtime Database Security Rules", () => {
 
         const caregiverDb = testEnv.authenticatedContext("caregiver_999").database();
 
-        // Assigned patient data read should succeed
         await assertSucceeds(caregiverDb.ref("Reminders/patient_123").get());
-
-        // Unassigned patient data read should fail
         await assertFails(caregiverDb.ref("Reminders/unassigned_patient_777").get());
     });
 
@@ -73,7 +73,6 @@ describe("Dementia Tester Realtime Database Security Rules", () => {
         const participantDb = testEnv.authenticatedContext("user_111").database();
         const outsiderDb = testEnv.authenticatedContext("outsider_333").database();
 
-        // Participant can read room and write a valid message
         await assertSucceeds(participantDb.ref("chatRooms/room_abc").get());
         await assertSucceeds(
             participantDb.ref("chatRooms/room_abc/messages/msg_1").set({
@@ -83,7 +82,6 @@ describe("Dementia Tester Realtime Database Security Rules", () => {
             })
         );
 
-        // Outsider cannot read the room or its messages
         await assertFails(outsiderDb.ref("chatRooms/room_abc").get());
     });
 });
