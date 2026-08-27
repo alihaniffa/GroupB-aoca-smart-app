@@ -1,0 +1,124 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "UserProfiles": {
+      ".read": "auth != null && (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')",
+
+      ".indexOn": [
+        "userType",
+        "assignedDoctorId",
+        "assignedCaregiverId"
+      ],
+
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true) || data.child('assignedCaregiverId').val() === auth.uid)",
+
+        ".write": "auth != null && auth.uid === $uid",
+
+        "assignedDoctorId": {
+          ".write": "auth != null && (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver') && newData.val() === auth.uid"
+        },
+
+        "assignedCaregiverId": {
+          ".write": "auth != null && (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')"
+        }
+      }
+    },
+
+    "CaregiverPatients": {
+      "$caregiverId": {
+        ".read": "auth != null && (auth.uid === $caregiverId || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
+
+        "$patientId": {
+          ".write": "auth != null && root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'"
+        }
+      }
+    },
+
+    "MiniGameScores": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
+
+        ".write": "auth != null && (auth.uid === $uid || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
+      }
+    },
+
+    "HealthSurvey": {
+      "Questions": {
+        ".read": "auth != null",
+        ".write": false
+      },
+
+      "UserResponses": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
+
+          ".write": "auth != null && (auth.uid === $uid || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
+        }
+      }
+    },
+
+    "CognitiveAssessment": {
+      "Questions": {
+        ".read": "auth != null",
+        ".write": false
+      },
+
+      "UserResponses": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
+
+          ".write": "auth != null && (auth.uid === $uid || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
+        }
+      }
+    },
+
+    "Reminders": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
+
+        ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
+      }
+    },
+
+    "Appointments": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
+
+        ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
+      }
+    },
+
+    "UserSettings": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
+        ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
+      }
+    },
+
+    "Activities": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
+
+        ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
+      }
+    },
+
+    "chatRooms": {
+      "$roomId": {
+        ".read": "auth != null && (data.child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')",
+        ".write": "auth != null && (data.child('participants').child(auth.uid).val() === true || newData.child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')",
+        ".indexOn": ["timestamp"],
+        "messages": {
+          "$messageId": {
+            ".read": "auth != null && (root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')",
+            ".write": "auth != null && ((root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver') && newData.child('senderId').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['senderId', 'text', 'timestamp'])"
+          }
+        }
+      }
+    }
+  }
+}

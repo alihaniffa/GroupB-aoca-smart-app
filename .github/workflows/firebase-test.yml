@@ -1,4 +1,4 @@
-name: Firebase Security Rules CI
+name: RTDB Security Rules CI
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
           npm install -g firebase-tools
           npm install --save-dev @firebase/rules-unit-testing jest
 
-      - name: Run Firestore Rules Tests via Emulator
+      - name: Run RTDB Rules Tests via Emulator
         run: |
-          # Only start firestore so it doesn't look for functions or storage dependencies
-          firebase emulators:exec --only firestore --project demo-test-project "npx jest security.test.js"
+          # Starts only the database emulator and runs Jest
+          firebase emulators:exec --only database --project demo-test-project "npx jest database-rules.test.js"
