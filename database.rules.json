@@ -22,7 +22,7 @@
         },
 
         "assignedCaregiverId": {
-          ".write": "auth != null && (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')"
+          ".write": "auth != null && root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'"
         }
       }
     },
@@ -108,13 +108,15 @@
 
     "chatRooms": {
       "$roomId": {
-        ".read": "auth != null && (data.child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')",
-        ".write": "auth != null && (data.child('participants').child(auth.uid).val() === true || newData.child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')",
+        ".read": "auth != null && (data.child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
+        ".write": "auth != null && (data.child('participants').child(auth.uid).val() === true || newData.child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
+
         ".indexOn": ["timestamp"],
+
         "messages": {
           "$messageId": {
-            ".read": "auth != null && (root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')",
-            ".write": "auth != null && ((root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver') && newData.child('senderId').val() === auth.uid)",
+            ".read": "auth != null && (root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
+            ".write": "auth != null && ((root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor') && newData.child('senderId').val() === auth.uid)",
             ".validate": "newData.hasChildren(['senderId', 'text', 'timestamp'])"
           }
         }
