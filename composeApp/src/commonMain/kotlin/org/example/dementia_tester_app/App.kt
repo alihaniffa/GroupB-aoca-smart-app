@@ -47,6 +47,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.toInstant
 import org.example.dementia_tester_app.data.UserSettingsService
+import org.example.dementia_tester_app.ui.screens.clearChatSessionState
 
 @Composable
 fun App() {
@@ -323,6 +324,7 @@ fun App() {
                         )
                         "logout" -> {
                             authService.signOut()
+                            clearChatSessionState()
                             // Reset userType to default when logging out
                             userType = UserType.USER
                             currentScreen = "Login"

@@ -20,6 +20,7 @@ composeApp/google-services.json
 composeApp/google-services (1).json
 **/google-services*.json
 iosApp/iosApp/GoogleService-Info.plist
+iosApp/GoogleService-Info.plist
 keystore.properties
 upload.jks
 iosApp/Pods/
