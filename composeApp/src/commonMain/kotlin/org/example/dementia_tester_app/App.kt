@@ -36,6 +36,7 @@ import org.example.dementia_tester_app.ui.screens.AppointmentHistory
 import org.example.dementia_tester_app.ui.screens.BookAppointment
 import org.example.dementia_tester_app.ui.screens.Chat
 import org.example.dementia_tester_app.ui.screens.Contact
+import org.example.dementia_tester_app.ui.screens.clearChatSessionState
 import org.example.dementia_tester_app.ui.screens.HealthSurvey
 import org.example.dementia_tester_app.ui.screens.Help
 import org.example.dementia_tester_app.ui.screens.Profile
@@ -691,6 +692,8 @@ fun App() {
                                     authService
                                         .signOut()
 
+                                    clearChatSessionState()
+
                                     userType =
                                         UserType.USER
 
@@ -731,6 +734,8 @@ fun App() {
 
                             authService
                                 .signOut()
+
+                            clearChatSessionState()
 
                             userType =
                                 UserType.USER

@@ -59,6 +59,9 @@ The objective of this manual testing activity was to review the main user workfl
 | T26 | Settings | Enable Dark Mode and navigate away from Settings | Dark Mode should apply and remain enabled | Dark Mode applied successfully and remained enabled after returning to Settings | Pass |
 | T27 | Settings | Review system feedback messages | Status feedback should appear clearly without unnecessary duplication | "Settings loaded successfully." appeared more than once on the screen | Issue Found |
 | T28 | Chat | Start a new conversation and send a message | User should be able to select a contact and send a message | New conversation opened and the sent message appeared immediately | Pass |
+| T29 | Appointment | Complete full appointment booking workflow | Appointment should save with the selected doctor, type, date, time and reason | Appointment was created successfully and all entered details appeared correctly in Appointment History | Pass |
+| T30 | Appointment | Reopen appointment details from Appointment History | Saved appointment information should be displayed correctly | Doctor, appointment type, date, time, status and reason were displayed correctly | Pass |
+| T31 | Appointment | Restart the app and reopen Appointment History | Saved appointment should remain available after restart | Appointment remained available after restarting the application | Pass |
 
 ## Issues Found
 
