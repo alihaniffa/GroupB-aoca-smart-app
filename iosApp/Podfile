@@ -1,9 +1,23 @@
 source 'https://cdn.cocoapods.org'
+
 platform :ios, '18.0'
+
 use_frameworks! :linkage => :static
 
 target 'iosApp' do
   pod 'ComposeApp', :path => '../composeApp'
+
+  pod 'FirebaseAuth'
+  pod 'FirebaseCore'
+  pod 'FirebaseDatabase'
+
+  pod 'FirebaseDatabaseBridge',
+      :path => '/Users/michelle/Documents/SCHOOL/UNE/T2 2026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/iosApp/iosApp'
+
   pod 'FirebaseFirestore'
+
+  pod 'FirebaseFirestoreBridge',
+      :path => '/Users/michelle/Documents/SCHOOL/UNE/T2 2026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/iosApp/iosApp'
+
   pod 'FirebaseStorage'
 end

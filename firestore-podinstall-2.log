@@ -1,0 +1,34 @@
+Reusing configuration cache.
+> Task :composeApp:generateDummyFramework UP-TO-DATE
+> Task :composeApp:podspec UP-TO-DATE
+> Task :composeApp:podInstall FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':composeApp:podInstall'.
+> 'pod install' command failed with code 1.
+  Error message:
+  
+          Please, check that podfile contains following lines in header:
+          source 'https://cdn.cocoapods.org'
+  
+          Please, check that each target depended on ComposeApp contains following dependencies:
+          pod 'FirebaseAuth'
+  pod 'FirebaseCore'
+  pod 'FirebaseDatabase'
+  pod 'FirebaseDatabaseBridge', :path => '/Users/michelle/Documents/SCHOOL/UNE/T2 2026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/iosApp/iosApp'
+  pod 'FirebaseFirestore'
+  pod 'FirebaseFirestoreBridge', :path => '/Users/michelle/Documents/SCHOOL/UNE/T2 2026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/iosApp/iosApp'
+  pod 'FirebaseStorage'
+          
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1s
+3 actionable tasks: 1 executed, 2 up-to-date
+Configuration cache entry reused.

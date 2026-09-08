@@ -1,0 +1,257 @@
+Reusing configuration cache.
+> Task :composeApp:generateDefFirebaseAuth UP-TO-DATE
+> Task :composeApp:kmpPartiallyResolvedDependenciesChecker
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:generateDefFirebaseDatabase UP-TO-DATE
+> Task :composeApp:generateDefFirebaseCore UP-TO-DATE
+> Task :composeApp:generateDefFirebaseFirestore UP-TO-DATE
+> Task :composeApp:xcodeVersion UP-TO-DATE
+> Task :composeApp:generateDefFirebaseDatabaseBridge UP-TO-DATE
+> Task :composeApp:generateDefFirebaseStorage UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :composeApp:podGenIos UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:podInstallSyntheticIos UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAppleMain NO-SOURCE
+> Task :composeApp:podSetupBuildFirebaseDatabaseIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseAuthIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseDatabaseBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseCoreIosSimulator UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:podSetupBuildFirebaseFirestoreIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseStorageIosSimulator UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForNativeMain NO-SOURCE
+> Task :composeApp:generateComposeResClass UP-TO-DATE
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateActualResourceCollectorsForIosSimulatorArm64Main UP-TO-DATE
+> Task :composeApp:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :composeApp:podBuildFirebaseDatabaseIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseDatabaseIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseAuthIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseAuthIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseCoreIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseCoreIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseDatabaseBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseDatabaseBridgeIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseFirestoreIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseFirestoreIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseStorageIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseStorageIosSimulatorArm64 UP-TO-DATE
+
+> Task :composeApp:compileKotlinIosSimulatorArm64 FAILED
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:4:36 Unresolved reference 'FIRDocumentSnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:5:36 Unresolved reference 'FIRFirestore'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:6:36 Unresolved reference 'FIRQuerySnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:26:29 Unresolved reference 'FIRFirestore'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:43:37 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:159:31 Unresolved reference 'FIRQuerySnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:168:34 Unresolved reference 'documents'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:169:33 Cannot infer type for value parameter 'docAny'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:172:43 Unresolved reference 'FIRDocumentSnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:176:37 Unresolved reference 'data'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:182:41 Unresolved reference 'documentID'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:268:31 Unresolved reference 'FIRQuerySnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:295:30 None of the following candidates is applicable:
+
+fun <T> Array<out T>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Array<out T>.count(): Int
+
+fun ByteArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ByteArray.count(): Int
+
+fun ShortArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ShortArray.count(): Int
+
+fun IntArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun IntArray.count(): Int
+
+fun LongArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun LongArray.count(): Int
+
+fun FloatArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun FloatArray.count(): Int
+
+fun DoubleArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun DoubleArray.count(): Int
+
+fun BooleanArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun BooleanArray.count(): Int
+
+fun CharArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun CharArray.count(): Int
+
+fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int
+
+fun ByteArray.count(predicate: (Byte) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ByteArray.count(predicate: (Byte) -> Boolean): Int
+
+fun ShortArray.count(predicate: (Short) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ShortArray.count(predicate: (Short) -> Boolean): Int
+
+fun IntArray.count(predicate: (Int) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun IntArray.count(predicate: (Int) -> Boolean): Int
+
+fun LongArray.count(predicate: (Long) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun LongArray.count(predicate: (Long) -> Boolean): Int
+
+fun FloatArray.count(predicate: (Float) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun FloatArray.count(predicate: (Float) -> Boolean): Int
+
+fun DoubleArray.count(predicate: (Double) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun DoubleArray.count(predicate: (Double) -> Boolean): Int
+
+fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int
+
+fun CharArray.count(predicate: (Char) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun CharArray.count(predicate: (Char) -> Boolean): Int
+
+fun <T> Iterable<T>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Iterable<T>.count(): Int
+
+fun <T> Collection<T>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Collection<T>.count(): Int
+
+fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int
+
+fun <K, V> Map<out K, V>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <K, V> Map<out K, V>.count(): Int
+
+fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int
+
+fun UIntArray.count(predicate: (UInt) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun UIntArray.count(predicate: (UInt) -> Boolean): Int
+
+fun ULongArray.count(predicate: (ULong) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ULongArray.count(predicate: (ULong) -> Boolean): Int
+
+fun UByteArray.count(predicate: (UByte) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun UByteArray.count(predicate: (UByte) -> Boolean): Int
+
+fun UShortArray.count(predicate: (UShort) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun UShortArray.count(predicate: (UShort) -> Boolean): Int
+
+fun <T> Sequence<T>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Sequence<T>.count(): Int
+
+fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int
+
+fun CharSequence.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun CharSequence.count(): Int
+
+fun CharSequence.count(predicate: (Char) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun CharSequence.count(predicate: (Char) -> Boolean): Int
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:297:26 Unresolved reference 'documents'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:298:25 Cannot infer type for value parameter 'docAny'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:301:35 Unresolved reference 'FIRDocumentSnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:304:29 Unresolved reference 'data'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:310:33 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:310:33 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:310:33 Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:14:14 'actual class AppointmentService : Any' has no corresponding members for expected class members:
+
+    expect fun createAppointmentForUser(userId: String, appointment: Appointment, callback: (DatabaseResult<Unit>) -> Unit): Unit
+
+    expect fun getAppointmentsForUser(userId: String, callback: (DatabaseResult<List<Appointment>>) -> Unit): Unit
+
+    expect fun updateAppointmentStatusForUser(userId: String, appointmentId: String, newStatus: AppointmentStatus, callback: (DatabaseResult<Unit>) -> Unit): Unit
+
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:25:30 Unresolved reference 'childByAutoID'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:35:40 Cannot infer type for value parameter 'error'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:35:47 Cannot infer type for implicit value parameter 'it'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:37:85 Unresolved reference 'localizedDescription'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:48:65 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:55:35 Unresolved reference 'allObjects'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:55:56 Cannot infer type for value parameter 'child'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:56:70 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:57:64 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:91:25 Unresolved reference 'allKeys'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:38:29 Argument type mismatch: actual type is 'UInt', but 'FIRDataEventType' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:46:49 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'FIRDataSnapshot?'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:74:34 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'NSError?'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:98:25 Argument type mismatch: actual type is 'UInt', but 'FIRDataEventType' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:107:45 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'FIRDataSnapshot?'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:132:30 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'NSError?'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ReminderService.ios.kt:14:14 'actual class ReminderService : Any' has no corresponding members for expected class members:
+
+    expect fun createReminderForUser(userId: String, reminder: Reminder, callback: (ReminderResult<Unit>) -> Unit): Unit
+
+    expect fun updateReminderForUser(userId: String, reminderId: String, updates: Map<String, Any?>, callback: (ReminderResult<Unit>) -> Unit): Unit
+
+    expect fun deleteReminderForUser(userId: String, reminderID: String, callback: (ReminderResult<Unit>) -> Unit): Unit
+
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserSettingsService.ios.kt:14:14 The 'expect' and the 'actual' declarations are incompatible.
+  expect: public final expect class UserSettingsService : UserSettingsServiceInterface
+  actual: public final actual class UserSettingsService : Any
+  reason: some supertypes are missing in the 'actual' declaration
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserSettingsService.ios.kt:70:25 Unresolved reference 'allKeys'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:22:55 Argument type mismatch: actual type is 'UIImage.Companion', but 'NSItemProviderReadingProtocol' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:23:52 Argument type mismatch: actual type is 'UIImage.Companion', but 'NSItemProviderReadingProtocol' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:50:33 Unresolved reference 'memcpy'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':composeApp:compileKotlinIosSimulatorArm64'.
+> Compilation finished with errors
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 8s
+36 actionable tasks: 2 executed, 34 up-to-date
+Configuration cache entry reused.

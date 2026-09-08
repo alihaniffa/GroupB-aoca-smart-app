@@ -83,7 +83,7 @@ fun Login(
 
     fun handleLogin() {
         val trimmedEmail = email.trim()
-        // Step 1: Check for empty fields using the shared validation utility
+
         fieldErrors = validateFields(
             mapOf(
                 EMAIL to trimmedEmail,
@@ -94,20 +94,27 @@ fun Login(
         if (fieldErrors.isNotEmpty()) {
             errorMessage = "Please enter all required fields"
             showErrorMessage = true
-            // Step 2: Check email format before making any network call using shared utility
+
         } else if (!trimmedEmail.isValidEmail()) {
             fieldErrors = mapOf(EMAIL to true)
             errorMessage = "Please enter a valid email address"
             showErrorMessage = true
+
         } else {
-            // All fields are valid, proceed with login
             isLoading = true
-            authService.signIn(trimmedEmail, password) { result ->
+
+            authService.signIn(
+                trimmedEmail,
+                password
+            ) { result ->
+
                 isLoading = false
+
                 when (result) {
                     is AuthResult.Success -> {
                         onLogin(trimmedEmail)
                     }
+
                     is AuthResult.Error -> {
                         errorMessage = result.message
                         showErrorMessage = true
@@ -130,22 +137,21 @@ fun Login(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 32.dp)
-                .padding(bottom = 240.dp), // Space for the bottom buttons
+                .padding(bottom = 240.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top // Changed to Top for better scrolling
+            verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(80.dp))
-            
-            // App Title
-            Text(
-                text = "AoCA Smart App",
-                fontSize = 24.sp,
+            Spacer(
+                modifier = Modifier.height(80.dp)
             )
 
-            // App Icon
+            Text(
+                text = "AoCA Smart App",
+                fontSize = 24.sp
+            )
+
             LoginIcon()
 
-            // Email Field
             FormTextField(
                 value = email,
                 onValueChange = {
@@ -159,7 +165,6 @@ fun Login(
                 imeAction = ImeAction.Next
             )
 
-            // Password Field
             FormTextField(
                 value = password,
                 onValueChange = {
@@ -172,13 +177,17 @@ fun Login(
                 keyboardType = KeyboardType.Password,
                 isPassword = true,
                 imeAction = ImeAction.Done,
-    keyboardActions = KeyboardActions(
-        onDone = { handleLogin() } 
-    )
-)
-            // Forgot Password Link
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        handleLogin()
+                    }
+                )
+            )
+
             TextButton(
-                onClick = { onForgotPassword() },
+                onClick = {
+                    onForgotPassword()
+                },
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(bottom = 16.dp)
@@ -188,14 +197,17 @@ fun Login(
                     color = FormColors.green
                 )
             }
-            
-            // General Error Message
-            ErrorMessage(show = showErrorMessage, message = errorMessage)
-            
-            Spacer(modifier = Modifier.height(32.dp))
+
+            ErrorMessage(
+                show = showErrorMessage,
+                message = errorMessage
+            )
+
+            Spacer(
+                modifier = Modifier.height(32.dp)
+            )
         }
 
-        // Bottom section with Login and Sign Up buttons
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -205,11 +217,15 @@ fun Login(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 32.dp, vertical = 24.dp)
+                    .padding(
+                        horizontal = 32.dp,
+                        vertical = 24.dp
+                    )
             ) {
-                // Login Button
                 Button(
-                    onClick = { handleLogin() },
+                    onClick = {
+                        handleLogin()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -221,15 +237,20 @@ fun Login(
                     if (isLoading) {
                         LoadingSpinner()
                     } else {
-                        Text("Login")
+                        Text(
+                            "Login"
+                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
 
-                // Sign Up Button
                 OutlinedButton(
-                    onClick = { onSignUp() },
+                    onClick = {
+                        onSignUp()
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
@@ -238,15 +259,21 @@ fun Login(
                     ),
                     enabled = !isLoading
                 ) {
-                    Text("Sign Up")
+                    Text(
+                        "Sign Up"
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
 
-                // Google OAuth Button
                 GoogleSignInButton(
                     onSignInSuccess = {
-                        onLogin(authService.getCurrentUserEmail() ?: "")
+                        onLogin(
+                            authService.getCurrentUserEmail()
+                                ?: ""
+                        )
                     },
                     onSignInError = { error ->
                         errorMessage = error

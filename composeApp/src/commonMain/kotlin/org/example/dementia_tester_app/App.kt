@@ -1,7 +1,5 @@
 package org.example.dementia_tester_app
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
@@ -198,9 +196,6 @@ fun App() {
                     )
                 )
 
-            @RequiresApi(
-                Build.VERSION_CODES.O
-            )
             fun nextSunday6pmUtcMillis(): Long {
 
                 val tz =

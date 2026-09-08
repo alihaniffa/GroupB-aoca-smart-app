@@ -1,0 +1,138 @@
+Reusing configuration cache.
+> Task :composeApp:kmpPartiallyResolvedDependenciesChecker
+> Task :composeApp:generateDefFirebaseAuth UP-TO-DATE
+> Task :composeApp:generateDefFirebaseDatabase UP-TO-DATE
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:generateDefFirebaseCore UP-TO-DATE
+> Task :composeApp:xcodeVersion UP-TO-DATE
+> Task :composeApp:generateDefFirebaseDatabaseBridge UP-TO-DATE
+> Task :composeApp:generateDefFirebaseFirestoreBridge UP-TO-DATE
+> Task :composeApp:generateDefFirebaseFirestore UP-TO-DATE
+> Task :composeApp:generateDefFirebaseStorage UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:podGenIos UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAppleMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:podInstallSyntheticIos UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseCoreIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseDatabaseBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseDatabaseIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseAuthIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseFirestoreIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseFirestoreBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :composeApp:podSetupBuildFirebaseStorageIosSimulator UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForNativeMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :composeApp:generateComposeResClass UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateActualResourceCollectorsForIosSimulatorArm64Main UP-TO-DATE
+> Task :composeApp:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :composeApp:podBuildFirebaseCoreIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseCoreIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseAuthIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseAuthIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseDatabaseIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseDatabaseIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseDatabaseBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseDatabaseBridgeIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseFirestoreIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseFirestoreIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseFirestoreBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseFirestoreBridgeIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseStorageIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseStorageIosSimulatorArm64 UP-TO-DATE
+
+> Task :composeApp:compileKotlinIosSimulatorArm64
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/App.kt:260:25 'when' is exhaustive so 'else' is redundant here.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/GraphableAttempts.kt:32:30 Unchecked cast of 'List<*>' to 'List<UserResults>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/GraphableAttempts.kt:34:30 Unchecked cast of 'List<*>' to 'List<GameAttempts>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/GraphableAttempts.kt:39:45 Unchecked cast of 'List<Any>' to 'List<UserResults>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/GraphableAttempts.kt:54:30 Unchecked cast of 'List<Any>' to 'List<UserResults>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/GraphableAttempts.kt:59:30 Unchecked cast of 'List<Any>' to 'List<GameAttempts>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/GraphableAttempts.kt:69:30 Unchecked cast of 'List<Any>' to 'List<GameAttempts>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/components/UserTestResults.kt:1186:21 Unnecessary non-null assertion (!!) on a non-null receiver of type 'List<UserResults>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/components/UserTestResults.kt:1507:42 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/components/UserTestResults.kt:1509:42 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/AppointmentHistory.kt:145:37 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/HealthSurvey.kt:547:51 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:26:13 Condition is always 'false'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:47:38 Redundant call of conversion method.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:78:13 Condition is always 'false'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:96:38 Redundant call of conversion method.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:124:13 Condition is always 'false'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:139:36 Redundant call of conversion method.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:156:34 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:186:13 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:197:34 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:227:13 Elvis operator (?:) always returns the left operand of non-nullable type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:238:30 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:246:13 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:255:13 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:266:34 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:297:34 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:38:13 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:31:13 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:40:13 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:131:36 Elvis operator (?:) always returns the left operand of non-nullable type 'Any'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:245:29 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:408:23 Unchecked cast of 'Map<*, *>' to 'Map<String, Any?>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:13:13 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:19:13 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/MiniGameScoresService.ios.kt:24:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/MiniGameScoresService.ios.kt:135:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/MiniGameScoresService.ios.kt:149:13 Condition is always 'false'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/MiniGameScoresService.ios.kt:208:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/MiniGameScoresService.ios.kt:225:21 Condition is always 'true'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/MiniGameScoresService.ios.kt:230:56 No cast needed.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/MiniGameScoresService.ios.kt:235:91 Unnecessary safe call on a non-null receiver of type 'FIRDataSnapshot'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/MiniGameScoresService.ios.kt:236:103 Unnecessary safe call on a non-null receiver of type 'FIRDataSnapshot'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ReminderService.ios.kt:30:13 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ReminderService.ios.kt:39:13 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:28:23 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:31:31 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:41:23 Unchecked cast of 'Map<*, *>' to 'Map<String, Any?>'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:207:27 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:347:36 Elvis operator (?:) always returns the left operand of non-nullable type 'Any'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:547:33 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:650:41 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:867:29 Unnecessary safe call on a non-null receiver of type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:1102:41 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:25:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:45:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:89:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:227:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:318:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:354:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:374:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:390:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:467:37 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:568:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:588:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:624:41 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:671:36 Elvis operator (?:) always returns the left operand of non-nullable type 'NSEnumerator'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:678:31 Unnecessary safe call on a non-null receiver of type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:719:36 Elvis operator (?:) always returns the left operand of non-nullable type 'NSEnumerator'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserQuizService.ios.kt:725:31 Unnecessary safe call on a non-null receiver of type 'String'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserSettingsService.ios.kt:26:13 Unnecessary safe call on a non-null receiver of type 'FIRAuth'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserSettingsService.ios.kt:35:13 Unnecessary safe call on a non-null receiver of type 'FIRDatabase'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserSettingsService.ios.kt:161:36 Elvis operator (?:) always returns the left operand of non-nullable type 'Any'.
+w: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:26:9 'val LocalUIViewController: ProvidableCompositionLocal<UIViewController>' is deprecated. LocalUIViewController was moved to androidx.compose.ui.uikit.
+
+BUILD SUCCESSFUL in 15s
+40 actionable tasks: 2 executed, 38 up-to-date
+Configuration cache entry reused.

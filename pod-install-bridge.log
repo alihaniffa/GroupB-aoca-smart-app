@@ -1,0 +1,14 @@
+Reusing configuration cache.
+> Task :composeApp:generateDummyFramework UP-TO-DATE
+
+> Task :composeApp:podspec
+Generated a podspec file at: /Users/michelle/Documents/SCHOOL/UNE/T2 2026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/ComposeApp.podspec.
+To include it in your Xcode project, check that the following dependency snippet exists in your Podfile:
+
+pod 'ComposeApp', :path => '/Users/michelle/Documents/SCHOOL/UNE/T2 2026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp'
+
+> Task :composeApp:podInstall
+
+BUILD SUCCESSFUL in 32s
+3 actionable tasks: 2 executed, 1 up-to-date
+Configuration cache entry reused.

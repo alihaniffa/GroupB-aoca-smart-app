@@ -1,6 +1,5 @@
 package org.example.dementia_tester_app.ui.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -9,16 +8,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.example.dementia_tester_app.data.Question
 
 /**
- * Summary view component to display all questions and answers (Reusable for any quiz)
+ * Summary view component to display all questions and answers
+ * (Reusable for any quiz)
  */
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun QuizSummary(
     questions: List<Question>,
@@ -30,7 +28,7 @@ fun QuizSummary(
         modifier = Modifier.fillMaxSize()
     ) {
         val screenHeight = maxHeight
-        val contentHeight = screenHeight - 72.dp // Reserve less space for the button
+        val contentHeight = screenHeight - 72.dp
 
         Box(
             modifier = Modifier.fillMaxSize()
@@ -40,7 +38,7 @@ fun QuizSummary(
                     .fillMaxWidth()
                     .height(contentHeight)
                     .padding(8.dp)
-                    .padding(bottom = 56.dp) // Smaller bottom padding to reduce the gap
+                    .padding(bottom = 56.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
@@ -48,9 +46,11 @@ fun QuizSummary(
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurface // Applied change
+                    color = MaterialTheme.colorScheme.onSurface
                 )
+
                 Spacer(modifier = Modifier.height(6.dp))
+
                 Text(
                     text = "Total Score: $totalScore / ${questions.size * 4}",
                     style = MaterialTheme.typography.titleMedium,
@@ -67,7 +67,7 @@ fun QuizSummary(
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface // Applied change
+                            containerColor = MaterialTheme.colorScheme.surface
                         )
                     ) {
                         Column(
@@ -86,7 +86,7 @@ fun QuizSummary(
                             Text(
                                 text = question.questionText,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface // Applied change
+                                color = MaterialTheme.colorScheme.onSurface
                             )
 
                             Spacer(modifier = Modifier.height(8.dp))
@@ -97,25 +97,31 @@ fun QuizSummary(
                                         text = "Your answers:",
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface // Applied change
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
+
                                     if (question.selectedAnswers.isEmpty()) {
                                         Text(
                                             text = "Not answered",
                                             style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurface // Applied change
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                     } else {
                                         question.selectedAnswers.forEach { answer ->
                                             Text(
                                                 text = "• $answer",
                                                 style = MaterialTheme.typography.bodyMedium,
-                                                modifier = Modifier.padding(start = 8.dp, top = 4.dp),
-                                                color = MaterialTheme.colorScheme.onSurface // Applied change
+                                                modifier = Modifier.padding(
+                                                    start = 8.dp,
+                                                    top = 4.dp
+                                                ),
+                                                color = MaterialTheme.colorScheme.onSurface
                                             )
                                         }
                                     }
+
                                     Spacer(modifier = Modifier.height(6.dp))
+
                                     Text(
                                         text = "Score: ${question.score}",
                                         style = MaterialTheme.typography.bodyMedium,
@@ -129,20 +135,23 @@ fun QuizSummary(
                                             text = "Your answer: ",
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onSurface // Applied change
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
+
                                         Text(
                                             text = question.selectedAnswer ?: "Not answered",
                                             style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurface // Applied change
+                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                     }
+
                                     Spacer(modifier = Modifier.height(6.dp))
+
                                     Text(
                                         text = "Score: ${question.score}",
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface // Applied change
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
@@ -156,7 +165,7 @@ fun QuizSummary(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .background(MaterialTheme.colorScheme.surface) // Applied change
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(12.dp)
             ) {
                 Button(
