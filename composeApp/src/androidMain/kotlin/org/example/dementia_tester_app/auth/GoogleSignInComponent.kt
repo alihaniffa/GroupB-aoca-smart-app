@@ -24,6 +24,92 @@ import com.google.firebase.ktx.Firebase
 import org.example.dementia_tester_app.data.UserProfile
 import org.example.dementia_tester_app.data.UserType
 
+object GoogleSignInHelper {
+    /**
+     * Create the default user profile for a newly signed-in Google user.
+     */
+    fun createInitialUserProfile(
+        userId: String,
+        displayName: String?,
+        email: String?
+    ): UserProfile {
+        return UserProfile(
+            userId = userId,
+            name = displayName.orEmpty(),
+            email = email.orEmpty(),
+            userType = UserType.USER
+        )
+    }
+
+    /**
+     * Prepare the profile map with server timestamps to persist into Realtime Database.
+     */
+    fun buildProfileUpdateMap(
+        profile: UserProfile,
+        timestamp: Any = ServerValue.TIMESTAMP
+    ): Map<String, Any> {
+        val updates = profile.toMap().toMutableMap()
+        updates["createdAt"] = timestamp
+        updates["updatedAt"] = timestamp
+        return updates
+    }
+}
+
+object GoogleSignInResultHandler {
+    fun getErrorMessageForApiException(e: ApiException?): String {
+        return "Google sign in canceled or failed."
+    }
+
+    fun getErrorMessageForAuthFailure(exception: Exception?): String {
+        return exception?.localizedMessage ?: "Auth failed"
+    }
+}
+
+class GoogleSignInProfileHandler(
+    private val checkProfileExists: (userId: String, onResult: (Boolean, Exception?) -> Unit) -> Unit,
+    private val saveProfile: (userId: String, data: Map<String, Any>, onComplete: (Exception?) -> Unit) -> Unit,
+    private val logDebug: (String) -> Unit = { msg -> runCatching { Log.d("GoogleAuth", msg) } },
+    private val logError: (String, Throwable?) -> Unit = { msg, tr -> runCatching { Log.e("GoogleAuth", msg, tr) } }
+) {
+    fun syncUserProfile(
+        userId: String,
+        displayName: String?,
+        email: String?,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        checkProfileExists(userId) { exists, checkError ->
+            if (checkError != null) {
+                logError("Failed to check RTDB profile", checkError)
+                onSuccess()
+                return@checkProfileExists
+            }
+
+            if (!exists) {
+                val newProfile = GoogleSignInHelper.createInitialUserProfile(
+                    userId = userId,
+                    displayName = displayName,
+                    email = email
+                )
+                val updates = GoogleSignInHelper.buildProfileUpdateMap(newProfile)
+
+                saveProfile(userId, updates) { saveError ->
+                    if (saveError == null) {
+                        logDebug("RTDB profile created")
+                        onSuccess()
+                    } else {
+                        logError("Failed to create RTDB profile", saveError)
+                        onError("Failed to setup user profile: ${saveError.message}")
+                    }
+                }
+            } else {
+                logDebug("Existing RTDB profile found")
+                onSuccess()
+            }
+        }
+    }
+}
+
 @Composable
 fun GoogleSignInComponent(
     onSignInSuccess: () -> Unit,
@@ -33,6 +119,21 @@ fun GoogleSignInComponent(
     val context = LocalContext.current
     val auth = remember { FirebaseAuth.getInstance() }
     val database = remember { Firebase.database.reference }
+
+    val profileHandler = remember {
+        GoogleSignInProfileHandler(
+            checkProfileExists = { uid, callback ->
+                database.child("UserProfiles").child(uid).get()
+                    .addOnSuccessListener { snapshot -> callback(snapshot.exists(), null) }
+                    .addOnFailureListener { error -> callback(false, error) }
+            },
+            saveProfile = { uid, data, callback ->
+                database.child("UserProfiles").child(uid).setValue(data)
+                    .addOnSuccessListener { callback(null) }
+                    .addOnFailureListener { error -> callback(error) }
+            }
+        )
+    }
 
     val webClientId = "238088670555-acth1uvst0h3ka9nh9g1o8ke1n4poddn.apps.googleusercontent.com"
 
@@ -60,43 +161,19 @@ fun GoogleSignInComponent(
                             if (authResult.isSuccessful) {
                                 val user = auth.currentUser
                                 if (user != null) {
-                                    val profileRef = database.child("UserProfiles").child(user.uid)
-                                    profileRef.get().addOnSuccessListener { snapshot ->
-                                        if (!snapshot.exists()) {
-                                            val newProfile = UserProfile(
-                                                userId = user.uid,
-                                                name = user.displayName ?: (account.displayName ?: ""),
-                                                email = user.email ?: (account.email ?: ""),
-                                                userType = UserType.USER
-                                            )
-                                            val updates = newProfile.toMap().toMutableMap()
-                                            updates["createdAt"] = ServerValue.TIMESTAMP
-                                            updates["updatedAt"] = ServerValue.TIMESTAMP
-
-                                            profileRef.setValue(updates)
-                                                .addOnSuccessListener {
-                                                    Log.d("GoogleAuth", "RTDB profile created")
-                                                    onSignInSuccess()
-                                                }
-                                                .addOnFailureListener { e ->
-                                                    Log.e("GoogleAuth", "Failed to create RTDB profile", e)
-                                                    onSignInError("Failed to setup user profile: ${e.message}")
-                                                }
-                                        } else {
-                                            Log.d("GoogleAuth", "Existing RTDB profile found")
-                                            onSignInSuccess()
-                                        }
-                                    }.addOnFailureListener { e ->
-                                        Log.e("GoogleAuth", "Failed to check RTDB profile", e)
-                                        // Still allow sign-in if snapshot check failed
-                                        onSignInSuccess()
-                                    }
+                                    profileHandler.syncUserProfile(
+                                        userId = user.uid,
+                                        displayName = user.displayName ?: account.displayName,
+                                        email = user.email ?: account.email,
+                                        onSuccess = onSignInSuccess,
+                                        onError = onSignInError
+                                    )
                                 } else {
                                     onSignInError("User not found after sign in.")
                                 }
                             } else {
                                 Log.e("GoogleAuth", "Firebase auth failed", authResult.exception)
-                                onSignInError(authResult.exception?.localizedMessage ?: "Auth failed")
+                                onSignInError(GoogleSignInResultHandler.getErrorMessageForAuthFailure(authResult.exception))
                             }
                         }
                 } ?: run {
@@ -104,7 +181,7 @@ fun GoogleSignInComponent(
                 }
             } catch (e: ApiException) {
                 Log.e("GoogleAuth", "Google sign in failed", e)
-                onSignInError("Google sign in canceled or failed.")
+                onSignInError(GoogleSignInResultHandler.getErrorMessageForApiException(e))
             }
         }
     }
