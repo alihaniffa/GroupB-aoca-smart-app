@@ -17,9 +17,11 @@ This report supplements the original Manual Test Report by documenting automated
 | T12 | Appointment          | Appointment page loads correctly  | Reviewed        | Automated       | `ActivityLogicTest.kt` |
 | T13 | Appointment History  | History page accessible           | Reviewed        | Automated       | `ActivityLogicTest.kt` |
 | T14 | Notifications        | Reminder feature availability     | Reviewed        | Automated       | `ActivityLogicTest.kt` |
+| T16 | Google Sign-In       | Google profile sync & RTDB schema | Reviewed        | Automated       | `GoogleSignInLogicTest.kt` |
 
 ## Supporting Infrastructure Added
 
+- `GoogleSignInHelper` / `GoogleSignInProfileHandler` / `GoogleSignInResultHandler` — enables testing Google account profile generation, Realtime Database schema alignment, new vs. existing user branch handling, and network failure resilience.
 - `ActivityServiceInterface` / `FakeActivityService` — enables testing activity logging, real-time flow updates, and today's-summary grouping without a live Firebase connection.
 - `UserSettingsServiceInterface` / `FakeUserSettingsService` — enables testing settings load/save persistence across simulated app restarts.
 - `AuthServiceInterface` / `FakeAuthService` — enables testing sign in, sign up, password reset, and password change flows, with support for stubbed results via `signInResult` for isolated scenario testing.
@@ -30,7 +32,7 @@ All tests run via:
 `./gradlew clean build`
 
 or specifically:
-`./gradlew test`
+`./gradlew testDebugUnitTest`
 
 
 ## Remaining Manual-Only Cases
