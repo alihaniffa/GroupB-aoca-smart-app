@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -30,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import org.example.dementia_tester_app.data.DatabaseResult
 import org.example.dementia_tester_app.data.UserProfile
 import org.example.dementia_tester_app.data.UserProfileService
-import org.example.dementia_tester_app.ui.components.HorizontalMenu
 import org.example.dementia_tester_app.ui.components.LoadingSpinner
 import org.example.dementia_tester_app.ui.screens.AppointmentHistory
 import org.example.dementia_tester_app.ui.screens.BookAppointment
@@ -472,43 +473,42 @@ fun CaregiverDashboard() {
                 /*
                  * Caregiver feature navigation.
                  */
-                HorizontalMenu(
-                    menuItems =
-                        menuItems,
-                    selectedMenuItem =
-                        selectedMenuItem,
-                    activeColor =
-                        activeMenuColor,
-                    onMenuItemSelected = {
+                ScrollableTabRow(
+                    selectedTabIndex =
+                        menuItems.indexOf(selectedMenuItem),
+                    edgePadding = 0.dp,
+                    containerColor = Color.Transparent,
+                    contentColor = activeMenuColor,
+                    divider = {}
+                ) {
 
-                        selectedMenuItem =
-                            it
+                    menuItems.forEach { item ->
 
-                        /*
-                         * Leaving Games resets
-                         * the current game.
-                         */
-                        if (
-                            it != "Games"
-                        ) {
+                        Tab(
+                            selected =
+                                selectedMenuItem == item,
+                            onClick = {
 
-                            currentGame =
-                                ""
-                        }
+                                selectedMenuItem = item
 
-                        /*
-                         * Leaving Appointments resets
-                         * appointment view to history.
-                         */
-                        if (
-                            it != "Appointments"
-                        ) {
+                                if (item != "Games") {
+                                    currentGame = ""
+                                }
 
-                            showBookAppointment =
-                                false
-                        }
+                                if (item != "Appointments") {
+                                    showBookAppointment = false
+                                }
+                            },
+                            text = {
+
+                                Text(
+                                    text = item,
+                                    maxLines = 1
+                                )
+                            }
+                        )
                     }
-                )
+                }
 
                 /*
                  * Caregiver feature content.
