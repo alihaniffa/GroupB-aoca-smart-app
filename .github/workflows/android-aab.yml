@@ -27,14 +27,22 @@ jobs:
             distribution: temurin
             java-version: '17'
 
-        #Restore the google-services.json file, required for the "com.google.gms.google-services" plugin
+        # Restore the google-services.json file, required for the "com.google.gms.google-services" plugin
         - name: Restore google-services.json
           run: echo "${GOOGLE_SERVICES_JSON}" | base64 -d > composeApp/google-services.json
           env:
             GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
-      # Setup Gradle
+        # Setup Gradle
         - uses: gradle/actions/setup-gradle@v4
+
+        # Grant execute permission for gradlew
+        - name: Grant execute permission for gradlew
+          run: chmod +x ./gradlew
+
+        # Run unit tests before bundling
+        - name: Run unit tests
+          run: ./gradlew testDebugUnitTest --no-daemon
 
         # Restore upload.jks from base64 (stored in GitHub Secrets)
         - name: Restore Keystore

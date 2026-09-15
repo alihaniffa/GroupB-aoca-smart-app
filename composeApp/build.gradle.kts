@@ -43,7 +43,6 @@ kotlin {
             implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.16.0"))
             implementation("com.google.firebase:firebase-auth:22.3.1")
             implementation("com.google.android.gms:play-services-auth:21.2.0")
-            implementation("com.google.firebase:firebase-firestore:24.10.0")
             implementation("com.google.firebase:firebase-database-ktx")
             implementation("com.google.firebase:firebase-storage-ktx")
             implementation(compose.components.uiToolingPreview)
@@ -174,6 +173,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
     }
 }
 
