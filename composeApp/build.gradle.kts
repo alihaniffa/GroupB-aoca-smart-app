@@ -208,10 +208,6 @@ kotlin {
             extraOpts += moduleFlags
         }
 
-        pod("FirebaseFirestore") {
-            extraOpts += moduleFlags
-        }
-
         pod("FirebaseDatabaseBridge") {
             source = path(
                 project.file("../iosApp/iosApp")
@@ -219,16 +215,6 @@ kotlin {
 
             interopBindingDependencies.add(
                 "FirebaseDatabase"
-            )
-        }
-
-        pod("FirebaseFirestoreBridge") {
-            source = path(
-                project.file("../iosApp/iosApp")
-            )
-
-            interopBindingDependencies.add(
-                "FirebaseFirestore"
             )
         }
     }

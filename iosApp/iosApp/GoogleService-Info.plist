@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>238088670555-q3s1elu0g2aflnk9283a2r87o54r9ad1.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.238088670555-q3s1elu0g2aflnk9283a2r87o54r9ad1</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>238088670555-4e9qdmg449t2vvsqc2m4hk5vtd1ss50t.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBZ1DvcgcF-cz5GStqxwxL8zcJST7Uxjmk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>238088670555</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.example.dementia-tester-app.DementiaTesterapp</string>
+	<key>PROJECT_ID</key>
+	<string>dementia-tester-4bfbe</string>
+	<key>STORAGE_BUCKET</key>
+	<string>dementia-tester-4bfbe.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:238088670555:ios:a04e50ea5bc50e91735e7e</string>
+	<key>DATABASE_URL</key>
+	<string>https://dementia-tester-4bfbe-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

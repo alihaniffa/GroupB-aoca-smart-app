@@ -1,7 +1,9 @@
 package org.example.dementia_tester_app.data
 
 import cocoapods.FirebaseAuth.FIRAuth
-import cocoapods.FirebaseFirestoreBridge.FirebaseFirestoreBridge
+import cocoapods.FirebaseDatabase.FIRDataSnapshot
+import cocoapods.FirebaseDatabase.FIRDatabase
+import cocoapods.FirebaseDatabase.FIRDatabaseReference
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -12,26 +14,23 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import platform.Foundation.NSDictionary
-import platform.Foundation.NSError
 
 /**
- * iOS implementation of ActivityService using the
- * FirebaseFirestoreBridge Objective-C bridge.
+ * iOS implementation of ActivityService
+ * using Firebase Realtime Database.
  *
  * Activities are stored under:
  *
- * UserProfiles/{userId}/activities/{activityId}
+ * Activities/{userId}/{activityId}
  *
- * Supports both the currently authenticated user and a selected
- * user/patient for caregiver and doctor functionality.
+ * This matches the Android implementation.
  */
 @OptIn(ExperimentalForeignApi::class)
 actual class ActivityService actual constructor() :
     ActivityServiceInterface {
 
-    // ------------------------------------------------------------------
-    // Firebase Auth helper
-    // ------------------------------------------------------------------
+    private val dbPath =
+        "Activities"
 
     private fun currentUserId(): String? {
         return FIRAuth.auth()
@@ -39,12 +38,31 @@ actual class ActivityService actual constructor() :
             ?.uid()
     }
 
-    // ------------------------------------------------------------------
-    // logActivity
-    // ------------------------------------------------------------------
+    private fun getActivitiesRefForUser(
+        userId: String
+    ): FIRDatabaseReference? {
+
+        if (currentUserId() == null) {
+            return null
+        }
+
+        if (userId.isBlank()) {
+            return null
+        }
+
+        val database =
+            FIRDatabase.database()
+                ?: return null
+
+        return database
+            .reference()
+            .child(dbPath)
+            .child(userId)
+    }
 
     /**
-     * Log an activity for the currently authenticated user.
+     * Log an activity for the currently
+     * authenticated user.
      */
     actual override fun logActivity(
         activity: Activity,
@@ -69,42 +87,63 @@ actual class ActivityService actual constructor() :
         )
     }
 
-    // ------------------------------------------------------------------
-    // logActivityForUser
-    // ------------------------------------------------------------------
-
     /**
      * Log an activity for a specific user.
+     *
+     * In caregiver mode, userId is the
+     * selected patient's UID.
      */
     actual override fun logActivityForUser(
         userId: String,
         activity: Activity,
         callback: (DatabaseResult<Unit>) -> Unit
     ) {
-        if (userId.isBlank()) {
+        val activitiesRef =
+            getActivitiesRefForUser(
+                userId
+            )
+
+        if (activitiesRef == null) {
             callback(
                 DatabaseResult.Error(
-                    "User ID cannot be empty"
+                    "No user is signed in or target user is invalid"
                 )
             )
             return
         }
 
-        val kotlinMap =
-            activity.toMap()
+        val newActivityRef =
+            activitiesRef.childByAutoId()
 
-        val objcMap =
+        val activityId =
+            newActivityRef.key()
+                ?: run {
+                    callback(
+                        DatabaseResult.Error(
+                            "Failed to generate activity ID"
+                        )
+                    )
+                    return
+                }
+
+        val activityWithId =
+            activity.copy(
+                id = activityId,
+                userId = userId
+            )
+
+        val data =
             mutableMapOf<Any?, Any?>()
 
-        kotlinMap.forEach { (key, value) ->
-            objcMap[key] = value
-        }
+        activityWithId
+            .toMap()
+            .forEach { (key, value) ->
+                data[key] = value
+            }
 
-        FirebaseFirestoreBridge.addActivityForUser(
-            userId = userId,
-            data = objcMap,
-            completion = {
-                    error: NSError? ->
+        newActivityRef.setValue(
+            value = data,
+            withCompletionBlock = { error, _ ->
 
                 if (error == null) {
                     callback(
@@ -124,12 +163,9 @@ actual class ActivityService actual constructor() :
         )
     }
 
-    // ------------------------------------------------------------------
-    // getActivitiesFlow
-    // ------------------------------------------------------------------
-
     /**
-     * Get activities for the currently authenticated user.
+     * Get activities for the currently
+     * authenticated user.
      */
     actual override fun getActivitiesFlow():
             Flow<List<Activity>> {
@@ -142,7 +178,6 @@ actual class ActivityService actual constructor() :
                 trySend(
                     emptyList()
                 )
-
                 close()
 
                 awaitClose {
@@ -155,99 +190,53 @@ actual class ActivityService actual constructor() :
         )
     }
 
-    // ------------------------------------------------------------------
-    // getActivitiesFlowForUser
-    // ------------------------------------------------------------------
-
     /**
      * Get activities for a specific user.
-     *
-     * Firestore access is performed through the Objective-C bridge
-     * because the Firestore Objective-C classes are not currently
-     * exposed correctly through Kotlin/Native cinterop.
      */
     actual override fun getActivitiesFlowForUser(
         userId: String
     ): Flow<List<Activity>> =
         callbackFlow {
 
-            if (userId.isBlank()) {
+            val ref =
+                getActivitiesRefForUser(
+                    userId
+                )
+
+            if (ref == null) {
                 trySend(
                     emptyList()
                 )
-
                 close()
 
                 return@callbackFlow
             }
 
-            FirebaseFirestoreBridge.getActivitiesForUser(
-                userId = userId,
-                completion = {
-                        activities,
-                        error ->
+            FirebaseDatabaseIosHelper.observeValueOnce(
+                query = ref,
+                callback = { snapshot ->
 
-                    if (error != null) {
+                    if (snapshot == null) {
                         trySend(
                             emptyList()
                         )
-
                         close()
 
-                        return@getActivitiesForUser
-                    }
-
-                    if (activities == null) {
-                        trySend(
-                            emptyList()
-                        )
-
-                        close()
-
-                        return@getActivitiesForUser
+                        return@observeValueOnce
                     }
 
                     try {
-                        val result =
-                            mutableListOf<Activity>()
-
-                        val count =
-                            activities.size
-
-                        for (index in 0 until count) {
-
-                            val rawActivity =
-                                activities[index]
-
-                            val dictionary =
-                                rawActivity as? NSDictionary
-                                    ?: continue
-
-                            val data =
-                                nsDictionaryToMap(
-                                    dictionary
-                                )
-
-                            val documentId =
-                                data["_documentId"]
-                                    ?.toString()
-                                    ?: ""
-
-                            val activityData =
-                                data.filterKeys { key ->
-                                    key != "_documentId"
+                        val activities =
+                            parseActivities(
+                                snapshot
+                            )
+                                .sortedByDescending {
+                                    it.timestamp
+                                        .toEpochMilliseconds()
                                 }
 
-                            result.add(
-                                Activity.fromMap(
-                                    activityData,
-                                    documentId
-                                )
-                            )
-                        }
-
                         trySend(
-                            result
+                            activities
                         )
 
                     } catch (_: Throwable) {
@@ -264,12 +253,9 @@ actual class ActivityService actual constructor() :
             }
         }
 
-    // ------------------------------------------------------------------
-    // getTodaySummary
-    // ------------------------------------------------------------------
-
     /**
-     * Get today's activity summary for the currently authenticated user.
+     * Get today's activity summary for the
+     * currently authenticated user.
      */
     actual override fun getTodaySummary(
         callback:
@@ -295,12 +281,9 @@ actual class ActivityService actual constructor() :
         )
     }
 
-    // ------------------------------------------------------------------
-    // getTodaySummaryForUser
-    // ------------------------------------------------------------------
-
     /**
-     * Get today's activity summary for a specific user.
+     * Get today's activity summary for a
+     * specific user.
      */
     actual override fun getTodaySummaryForUser(
         userId: String,
@@ -309,10 +292,15 @@ actual class ActivityService actual constructor() :
             DatabaseResult<Map<String, Int>>
         ) -> Unit
     ) {
-        if (userId.isBlank()) {
+        val ref =
+            getActivitiesRefForUser(
+                userId
+            )
+
+        if (ref == null) {
             callback(
                 DatabaseResult.Error(
-                    "User ID cannot be empty"
+                    "No user is signed in or target user is invalid"
                 )
             )
             return
@@ -333,17 +321,10 @@ actual class ActivityService actual constructor() :
 
         val startOfToday =
             LocalDateTime(
-                year =
-                    today.year,
-
-                monthNumber =
-                    today.monthNumber,
-
-                dayOfMonth =
-                    today.dayOfMonth,
-
+                year = today.year,
+                monthNumber = today.monthNumber,
+                dayOfMonth = today.dayOfMonth,
                 hour = 0,
-
                 minute = 0
             )
                 .toInstant(
@@ -351,66 +332,51 @@ actual class ActivityService actual constructor() :
                 )
                 .toEpochMilliseconds()
 
-        FirebaseFirestoreBridge.getActivitiesForUser(
-            userId = userId,
-            fromTimestamp = startOfToday,
-            completion = {
-                    activities,
-                    error ->
+        FirebaseDatabaseIosHelper.observeValueOnce(
+            query = ref,
+            callback = { snapshot ->
 
-                if (error != null) {
+                if (snapshot == null) {
                     callback(
                         DatabaseResult.Error(
-                            "Failed to get summary: " +
-                                    error.localizedDescription
+                            "Failed to get activity summary"
                         )
                     )
 
-                    return@getActivitiesForUser
-                }
-
-                if (activities == null) {
-                    callback(
-                        DatabaseResult.Success(
-                            emptyMap()
-                        )
-                    )
-
-                    return@getActivitiesForUser
+                    return@observeValueOnce
                 }
 
                 try {
+                    val activities =
+                        parseActivities(
+                            snapshot
+                        )
+
                     val summary =
                         mutableMapOf<String, Int>()
 
-                    val count =
-                        activities.size
+                    var total =
+                        0
+
+                    activities.forEach { activity ->
+
+                        if (
+                            activity.timestamp
+                                .toEpochMilliseconds() >=
+                            startOfToday
+                        ) {
+                            total++
+
+                            val type =
+                                activity.type.value
+
+                            summary[type] =
+                                (summary[type] ?: 0) + 1
+                        }
+                    }
 
                     summary["total"] =
-                        count
-
-                    for (index in 0 until count) {
-
-                        val rawActivity =
-                            activities[index]
-
-                        val dictionary =
-                            rawActivity as? NSDictionary
-                                ?: continue
-
-                        val data =
-                            nsDictionaryToMap(
-                                dictionary
-                            )
-
-                        val type =
-                            data["type"]
-                                ?.toString()
-                                ?: "other"
-
-                        summary[type] =
-                            (summary[type] ?: 0) + 1
-                    }
+                        total
 
                     callback(
                         DatabaseResult.Success(
@@ -430,9 +396,54 @@ actual class ActivityService actual constructor() :
         )
     }
 
-    // ------------------------------------------------------------------
-    // Map conversion helper
-    // ------------------------------------------------------------------
+    /**
+     * Convert an Activities snapshot into
+     * Activity objects.
+     */
+    private fun parseActivities(
+        snapshot: FIRDataSnapshot
+    ): List<Activity> {
+
+        val rootValue =
+            snapshot.value()
+                    as? NSDictionary
+                ?: return emptyList()
+
+        val result =
+            mutableListOf<Activity>()
+
+        val keyEnumerator =
+            rootValue.keyEnumerator()
+
+        while (true) {
+            val rawKey =
+                keyEnumerator.nextObject()
+                    ?: break
+
+            val activityId =
+                rawKey.toString()
+
+            val rawActivity =
+                rootValue.objectForKey(
+                    rawKey
+                ) as? NSDictionary
+                    ?: continue
+
+            val data =
+                nsDictionaryToMap(
+                    rawActivity
+                )
+
+            result.add(
+                Activity.fromMap(
+                    data,
+                    activityId
+                )
+            )
+        }
+
+        return result
+    }
 
     private fun nsDictionaryToMap(
         dictionary: NSDictionary
@@ -445,13 +456,9 @@ actual class ActivityService actual constructor() :
             dictionary.keyEnumerator()
 
         while (true) {
-
             val rawKey =
                 keyEnumerator.nextObject()
                     ?: break
-
-            val key =
-                rawKey.toString()
 
             val rawValue =
                 dictionary.objectForKey(
@@ -459,8 +466,9 @@ actual class ActivityService actual constructor() :
                 )
                     ?: continue
 
-            result[key] =
-                rawValue
+            result[
+                rawKey.toString()
+            ] = rawValue
         }
 
         return result
