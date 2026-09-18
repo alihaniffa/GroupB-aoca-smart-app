@@ -10,7 +10,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import org.example.dementia_tester_app.R
+import com.aoca.dementiatester.R
 
 /**
  * BroadcastReceiver for handling notification alarms.
