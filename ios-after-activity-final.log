@@ -1,0 +1,79 @@
+Reusing configuration cache.
+> Task :composeApp:kmpPartiallyResolvedDependenciesChecker
+> Task :composeApp:generateDefFirebaseDatabaseBridge UP-TO-DATE
+> Task :composeApp:generateDefFirebaseAuth UP-TO-DATE
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:generateDefFirebaseDatabase UP-TO-DATE
+> Task :composeApp:generateDefFirebaseCore UP-TO-DATE
+> Task :composeApp:generateDefFirebaseFirestoreBridge UP-TO-DATE
+> Task :composeApp:generateDefFirebaseStorage UP-TO-DATE
+> Task :composeApp:generateDefFirebaseFirestore UP-TO-DATE
+> Task :composeApp:xcodeVersion UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :composeApp:podGenIos UP-TO-DATE
+> Task :composeApp:podInstallSyntheticIos UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAppleMain NO-SOURCE
+> Task :composeApp:podSetupBuildFirebaseAuthIosSimulator UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseCoreIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseDatabaseIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseDatabaseBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseFirestoreBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseFirestoreIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseStorageIosSimulator UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateComposeResClass UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForNativeMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:generateActualResourceCollectorsForIosSimulatorArm64Main UP-TO-DATE
+> Task :composeApp:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :composeApp:podBuildFirebaseAuthIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseAuthIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseCoreIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseCoreIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseDatabaseIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseDatabaseIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseDatabaseBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseDatabaseBridgeIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseFirestoreIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseFirestoreIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseFirestoreBridgeIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseFirestoreBridgeIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseStorageIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseStorageIosSimulatorArm64 UP-TO-DATE
+
+> Task :composeApp:compileKotlinIosSimulatorArm64 FAILED
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:22:55 Argument type mismatch: actual type is 'UIImage.Companion', but 'NSItemProviderReadingProtocol' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:23:52 Argument type mismatch: actual type is 'UIImage.Companion', but 'NSItemProviderReadingProtocol' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:50:33 Unresolved reference 'memcpy'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':composeApp:compileKotlinIosSimulatorArm64'.
+> Compilation finished with errors
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 7s
+40 actionable tasks: 2 executed, 38 up-to-date
+Configuration cache entry reused.

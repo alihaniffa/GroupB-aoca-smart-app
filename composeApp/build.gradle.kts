@@ -13,7 +13,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     id("com.google.gms.google-services")
-//  id("org.jetbrains.kotlin.native.cocoapods")
+    id("org.jetbrains.kotlin.native.cocoapods")
 }
 
 kotlin {
@@ -22,20 +22,18 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
-    
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
-    /*
+
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-    */
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -51,6 +49,7 @@ kotlin {
             implementation("androidx.activity:activity-compose:1.10.1")
             implementation("androidx.fragment:fragment-ktx:1.8.9")
             implementation("androidx.exifinterface:exifinterface:1.3.7")
+            implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -60,7 +59,6 @@ kotlin {
             implementation(compose.components.resources)
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
             implementation("io.coil-kt.coil3:coil-compose:3.0.4")
-            implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
             implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
         }
@@ -76,7 +74,6 @@ kotlin {
             implementation("org.robolectric:robolectric:4.12.1")
             implementation("junit:junit:4.13.2")
         }
-        /*
         val iosArm64Main by getting {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
@@ -86,10 +83,8 @@ kotlin {
         val iosX64Main by getting {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
-        */
     }
 
-    /*
     cocoapods {
         name = "ComposeApp"
         summary = "Shared code"
@@ -119,8 +114,14 @@ kotlin {
         pod("FirebaseDatabase") {
             extraOpts += moduleFlags
         }
+        pod("FirebaseStorage") {
+            extraOpts += moduleFlags
+        }
+        pod("FirebaseDatabaseBridge") {
+            source = path(project.file("../iosApp/iosApp"))
+            interopBindingDependencies.add("FirebaseDatabase")
+        }
     }
-    */
 }
 
 android {

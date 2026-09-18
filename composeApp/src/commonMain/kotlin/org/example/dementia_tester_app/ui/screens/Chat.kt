@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,16 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.dementia_tester_app.data.ChatResult
+import org.example.dementia_tester_app.data.ChatService
 import org.example.dementia_tester_app.ui.components.FormColors
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.database.database
-import com.google.firebase.database.ServerValue
 
 data class ChatItem(
-    val id: String,          // Unique ID (prevents name collision crashes and keeps RTDB paths safe)
-    val name: String,        // Display name (e.g. "Dr. Smith")
+    val id: String,
+    val name: String,
     val lastMessage: String,
     val time: String,
     val unreadCount: Int
@@ -42,26 +40,87 @@ data class ChatMessage(
 )
 
 private val sessionChats = mutableStateListOf(
-    ChatItem("doc_smith_id", "Dr. Smith", "Your next appointment is scheduled for tomorrow at 10:00 AM.", "10:30 AM", 0),
-    ChatItem("nurse_johnson_id", "Nurse Johnson", "How are you feeling today? Don't forget to take your medication.", "Yesterday", 0),
-    ChatItem("caregiver_support_id", "Caregiver Support", "We've sent you the resources we discussed during our last conversation.", "Jul 19", 0),
-    ChatItem("memory_clinic_id", "Memory Clinic", "Your test results have been uploaded to your profile.", "Jul 15", 0),
-    ChatItem("med_reminder_id", "Medication Reminder", "It's time to take your evening medication.", "Jul 10", 0)
+    ChatItem(
+        "doc_smith_id",
+        "Dr. Smith",
+        "Your next appointment is scheduled for tomorrow at 10:00 AM.",
+        "10:30 AM",
+        0
+    ),
+    ChatItem(
+        "nurse_johnson_id",
+        "Nurse Johnson",
+        "How are you feeling today? Don't forget to take your medication.",
+        "Yesterday",
+        0
+    ),
+    ChatItem(
+        "caregiver_support_id",
+        "Caregiver Support",
+        "We've sent you the resources we discussed during our last conversation.",
+        "Jul 19",
+        0
+    ),
+    ChatItem(
+        "memory_clinic_id",
+        "Memory Clinic",
+        "Your test results have been uploaded to your profile.",
+        "Jul 15",
+        0
+    ),
+    ChatItem(
+        "med_reminder_id",
+        "Medication Reminder",
+        "It's time to take your evening medication.",
+        "Jul 10",
+        0
+    )
 )
 
-private val sessionMessages = mutableStateMapOf<String, SnapshotStateList<ChatMessage>>()
+private val sessionMessages =
+    mutableStateMapOf<String, SnapshotStateList<ChatMessage>>()
 
-// Global reset helper to prevent state leakage between accounts upon logout
 fun clearChatSessionState() {
     sessionMessages.clear()
     sessionChats.clear()
+
     sessionChats.addAll(
         listOf(
-            ChatItem("doc_smith_id", "Dr. Smith", "Your next appointment is scheduled for tomorrow at 10:00 AM.", "10:30 AM", 0),
-            ChatItem("nurse_johnson_id", "Nurse Johnson", "How are you feeling today? Don't forget to take your medication.", "Yesterday", 0),
-            ChatItem("caregiver_support_id", "Caregiver Support", "We've sent you the resources we discussed during our last conversation.", "Jul 19", 0),
-            ChatItem("memory_clinic_id", "Memory Clinic", "Your test results have been uploaded to your profile.", "Jul 15", 0),
-            ChatItem("med_reminder_id", "Medication Reminder", "It's time to take your evening medication.", "Jul 10", 0)
+            ChatItem(
+                "doc_smith_id",
+                "Dr. Smith",
+                "Your next appointment is scheduled for tomorrow at 10:00 AM.",
+                "10:30 AM",
+                0
+            ),
+            ChatItem(
+                "nurse_johnson_id",
+                "Nurse Johnson",
+                "How are you feeling today? Don't forget to take your medication.",
+                "Yesterday",
+                0
+            ),
+            ChatItem(
+                "caregiver_support_id",
+                "Caregiver Support",
+                "We've sent you the resources we discussed during our last conversation.",
+                "Jul 19",
+                0
+            ),
+            ChatItem(
+                "memory_clinic_id",
+                "Memory Clinic",
+                "Your test results have been uploaded to your profile.",
+                "Jul 15",
+                0
+            ),
+            ChatItem(
+                "med_reminder_id",
+                "Medication Reminder",
+                "It's time to take your evening medication.",
+                "Jul 10",
+                0
+            )
         )
     )
 }
@@ -73,41 +132,54 @@ fun Chat() {
     var showContactPicker by remember { mutableStateOf(false) }
 
     val chats = sessionChats
+    val chatService = remember { ChatService() }
 
-    // Fetch latest messages from Realtime Database on startup to populate list previews
     LaunchedEffect(Unit) {
-        val authUser = Firebase.auth.currentUser
-        if (authUser == null) return@LaunchedEffect
-        val currentUserId = authUser.uid
-        val dbRef = Firebase.database.reference
+        val currentUserId =
+            chatService.getCurrentUserId()
+                ?: return@LaunchedEffect
 
-        chats.forEachIndexed { index, chat ->
+        chats.toList().forEach { chat ->
             val roomId = "room_${currentUserId}_${chat.id}"
 
-            dbRef.child("chatRooms").child(roomId).child("messages")
-                .orderByChild("timestamp")
-                .limitToLast(1)
-                .get()
-                .addOnSuccessListener { snapshot ->
-                    if (Firebase.auth.currentUser?.uid != currentUserId) return@addOnSuccessListener
+            chatService.getLatestMessage(roomId) { result ->
+                if (chatService.getCurrentUserId() != currentUserId) {
+                    return@getLatestMessage
+                }
 
-                    if (snapshot.exists() && snapshot.children.any()) {
-                        for (child in snapshot.children) {
-                            val text = child.child("text").getValue(String::class.java)
-                            if (text != null) {
+                when (result) {
+                    is ChatResult.Success -> {
+                        val latestMessage = result.data
+
+                        if (latestMessage != null) {
+                            val index = chats.indexOfFirst {
+                                it.id == chat.id
+                            }
+
+                            if (index != -1) {
                                 chats[index] = chats[index].copy(
-                                    lastMessage = text,
+                                    lastMessage = latestMessage.text,
                                     time = "Now"
                                 )
                             }
                         }
                     }
+
+                    is ChatResult.Error -> {
+                        // Keep the existing preview if loading fails.
+                    }
                 }
+            }
         }
     }
 
-    fun updateLastMessage(chatId: String, newMessage: String) {
-        val index = chats.indexOfFirst { it.id == chatId }
+    fun updateLastMessage(
+        chatId: String,
+        newMessage: String
+    ) {
+        val index = chats.indexOfFirst {
+            it.id == chatId
+        }
 
         if (index != -1) {
             chats[index] = chats[index].copy(
@@ -115,71 +187,136 @@ fun Chat() {
                 time = "Now",
                 unreadCount = 0
             )
+
             selectedChat = chats[index]
         }
     }
 
     if (selectedChat != null) {
-        val chatIndex = chats.indexOfFirst { it.id == selectedChat!!.id }
-        if (chatIndex != -1 && chats[chatIndex].unreadCount > 0) {
-            chats[chatIndex] = chats[chatIndex].copy(unreadCount = 0)
+        val currentChat = selectedChat!!
+
+        val chatIndex = chats.indexOfFirst {
+            it.id == currentChat.id
         }
 
-        val authUser = Firebase.auth.currentUser
-        val currentUserId = authUser?.uid ?: "anonymous_user"
-        val roomId = "room_${currentUserId}_${selectedChat!!.id}"
+        if (
+            chatIndex != -1 &&
+            chats[chatIndex].unreadCount > 0
+        ) {
+            chats[chatIndex] =
+                chats[chatIndex].copy(unreadCount = 0)
+        }
+
+        val currentUserId =
+            chatService.getCurrentUserId() ?: "anonymous_user"
+
+        val roomId =
+            "room_${currentUserId}_${currentChat.id}"
 
         ChatConversationScreen(
-            chat = selectedChat!!,
+            chat = currentChat,
             roomId = roomId,
-            onBack = { selectedChat = null },
+            onBack = {
+                selectedChat = null
+            },
             onMessageSent = { chatId, message ->
-                updateLastMessage(chatId, message)
+                updateLastMessage(
+                    chatId = chatId,
+                    newMessage = message
+                )
             }
         )
     } else {
         ChatListScreen(
             searchQuery = searchQuery,
-            onSearchChange = { searchQuery = it },
+            onSearchChange = {
+                searchQuery = it
+            },
             chats = chats.filter {
                 searchQuery.isBlank() ||
-                        it.name.contains(searchQuery, ignoreCase = true) ||
-                        it.lastMessage.contains(searchQuery, ignoreCase = true)
+                        it.name.contains(
+                            searchQuery,
+                            ignoreCase = true
+                        ) ||
+                        it.lastMessage.contains(
+                            searchQuery,
+                            ignoreCase = true
+                        )
             },
-            onChatClick = { selectedChat = it },
-            onNewChatClick = { showContactPicker = true }
+            onChatClick = {
+                selectedChat = it
+            },
+            onNewChatClick = {
+                showContactPicker = true
+            }
         )
     }
 
     if (showContactPicker) {
         AlertDialog(
-            onDismissRequest = { showContactPicker = false },
-            title = { Text("Start New Chat") },
+            onDismissRequest = {
+                showContactPicker = false
+            },
+            title = {
+                Text("Start New Chat")
+            },
             text = {
                 Column {
                     Text("Who do you want to chat with?")
-                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Spacer(
+                        modifier = Modifier.height(12.dp)
+                    )
 
                     listOf(
-                        Triple("doc_smith_id", "Dr. Smith", "Doctor"),
-                        Triple("nurse_johnson_id", "Nurse Johnson", "Nurse"),
-                        Triple("caregiver_support_id", "Caregiver Support", "Support"),
-                        Triple("family_caregiver_id", "Family Caregiver", "Family"),
-                        Triple("memory_clinic_id", "Memory Clinic", "Clinic")
+                        Triple(
+                            "doc_smith_id",
+                            "Dr. Smith",
+                            "Doctor"
+                        ),
+                        Triple(
+                            "nurse_johnson_id",
+                            "Nurse Johnson",
+                            "Nurse"
+                        ),
+                        Triple(
+                            "caregiver_support_id",
+                            "Caregiver Support",
+                            "Support"
+                        ),
+                        Triple(
+                            "family_caregiver_id",
+                            "Family Caregiver",
+                            "Family"
+                        ),
+                        Triple(
+                            "memory_clinic_id",
+                            "Memory Clinic",
+                            "Clinic"
+                        )
                     ).forEach { (contactId, contactName, _) ->
+
                         Text(
                             text = contactName,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    val existingChat = chats.find { it.id == contactId }
-                                    selectedChat = existingChat ?: ChatItem(
-                                        id = contactId,
-                                        name = contactName,
-                                        lastMessage = "",
-                                        time = "Now",
-                                        unreadCount = 0
-                                    ).also { chats.add(0, it) }
+                                    val existingChat =
+                                        chats.find {
+                                            it.id == contactId
+                                        }
+
+                                    selectedChat =
+                                        existingChat
+                                            ?: ChatItem(
+                                                id = contactId,
+                                                name = contactName,
+                                                lastMessage = "",
+                                                time = "Now",
+                                                unreadCount = 0
+                                            ).also {
+                                                chats.add(0, it)
+                                            }
 
                                     showContactPicker = false
                                 }
@@ -192,8 +329,15 @@ fun Chat() {
             },
             confirmButton = {},
             dismissButton = {
-                TextButton(onClick = { showContactPicker = false }) {
-                    Text("Cancel", color = FormColors.green)
+                TextButton(
+                    onClick = {
+                        showContactPicker = false
+                    }
+                ) {
+                    Text(
+                        "Cancel",
+                        color = FormColors.green
+                    )
                 }
             }
         )
@@ -222,7 +366,9 @@ fun ChatListScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            placeholder = { Text("Search chats...") },
+            placeholder = {
+                Text("Search chats...")
+            },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -233,8 +379,10 @@ fun ChatListScreen(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = FormColors.green,
                 unfocusedBorderColor = FormColors.green,
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                focusedTextColor =
+                    MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor =
+                    MaterialTheme.colorScheme.onSurface
             ),
             singleLine = true
         )
@@ -245,9 +393,14 @@ fun ChatListScreen(
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(bottom = 16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = FormColors.green)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = FormColors.green
+            )
         ) {
-            Text("Start New Chat", fontSize = 16.sp)
+            Text(
+                "Start New Chat",
+                fontSize = 16.sp
+            )
         }
 
         Column(
@@ -262,15 +415,23 @@ fun ChatListScreen(
                         .padding(vertical = 32.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No chats found", color = Color.Gray)
+                    Text(
+                        "No chats found",
+                        color = Color.Gray
+                    )
                 }
             } else {
                 chats.forEach { chat ->
                     ChatListItem(
                         chat = chat,
-                        onChatClick = { onChatClick(chat) }
+                        onChatClick = {
+                            onChatClick(chat)
+                        }
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
                 }
             }
         }
@@ -284,73 +445,120 @@ fun ChatConversationScreen(
     onBack: () -> Unit,
     onMessageSent: (String, String) -> Unit
 ) {
-    var messageText by remember { mutableStateOf("") }
-    val messages = remember { mutableStateListOf<ChatMessage>() }
+    var messageText by remember {
+        mutableStateOf("")
+    }
 
-    // Load message history from RTDB on screen opening
+    val messages = remember {
+        mutableStateListOf<ChatMessage>()
+    }
+
+    val chatService = remember {
+        ChatService()
+    }
+
     LaunchedEffect(roomId) {
-        val dbRef = Firebase.database.reference
-        val currentUserId = Firebase.auth.currentUser?.uid ?: ""
+        val currentUserId =
+            chatService.getCurrentUserId() ?: ""
 
-        dbRef.child("chatRooms").child(roomId).child("messages")
-            .get()
-            .addOnSuccessListener { snapshot ->
-                messages.clear()
-                if (snapshot.exists()) {
-                    for (child in snapshot.children) {
-                        val text = child.child("text").getValue(String::class.java) ?: ""
-                        val senderId = child.child("senderId").getValue(String::class.java) ?: ""
+        chatService.getMessages(roomId) { result ->
+            when (result) {
+                is ChatResult.Success -> {
+                    messages.clear()
 
-                        val isFromUser = (senderId == currentUserId && currentUserId.isNotBlank())
+                    result.data.forEach { message ->
+                        messages.add(
+                            ChatMessage(
+                                text = message.text,
+                                isFromUser =
+                                    currentUserId.isNotBlank() &&
+                                            message.senderId == currentUserId
+                            )
+                        )
+                    }
 
-                        messages.add(ChatMessage(text, isFromUser))
+                    if (messages.isEmpty()) {
+                        messages.add(
+                            ChatMessage(
+                                text = chat.lastMessage.ifBlank {
+                                    "Start a new conversation."
+                                },
+                                isFromUser = false
+                            )
+                        )
                     }
                 }
 
-                if (messages.isEmpty()) {
-                    messages.add(ChatMessage(chat.lastMessage.ifBlank { "Start a new conversation." }, false))
+                is ChatResult.Error -> {
+                    if (messages.isEmpty()) {
+                        messages.add(
+                            ChatMessage(
+                                text = chat.lastMessage.ifBlank {
+                                    "Start a new conversation."
+                                },
+                                isFromUser = false
+                            )
+                        )
+                    }
                 }
             }
+        }
     }
 
     fun handleSend() {
-        if (messageText.isNotBlank()) {
-            val sentMessage = messageText.trim()
-            val currentUserId = Firebase.auth.currentUser?.uid ?: ""
+        val sentMessage = messageText.trim()
 
-            // SAFETY CHECK: Ensure we actually have a logged-in user UID
-            if (currentUserId.isBlank()) return
+        if (sentMessage.isBlank()) {
+            return
+        }
 
-            // Optimistically display on the RIGHT side immediately
-            messages.add(ChatMessage(sentMessage, true))
+        val currentUserId =
+            chatService.getCurrentUserId()
 
-            val dbRef = Firebase.database.reference
-            val roomRef = dbRef.child("chatRooms").child(roomId)
+        if (currentUserId.isNullOrBlank()) {
+            return
+        }
 
-            // Setup participants
-            roomRef.child("participants").child(currentUserId).setValue(true)
-            roomRef.child("participants").child(chat.id).setValue(true)
+        messages.add(
+            ChatMessage(
+                text = sentMessage,
+                isFromUser = true
+            )
+        )
 
-            // Push message to RTDB making sure senderId is ALWAYS currentUserId
-            val messageId = roomRef.child("messages").push().key
-            if (messageId != null) {
-                val messageData = mapOf(
-                    "senderId" to currentUserId, // <-- Must match your Auth UID
-                    "text" to sentMessage,
-                    "timestamp" to ServerValue.TIMESTAMP
-                )
-                roomRef.child("messages").child(messageId).setValue(messageData)
+        messageText = ""
+
+        chatService.sendMessage(
+            roomId = roomId,
+            recipientId = chat.id,
+            text = sentMessage
+        ) { result ->
+            when (result) {
+                is ChatResult.Success -> {
+                    onMessageSent(
+                        chat.id,
+                        sentMessage
+                    )
+                }
+
+                is ChatResult.Error -> {
+                    /*
+                     * The message is displayed optimistically,
+                     * matching the previous chat behaviour.
+                     *
+                     * We can add visible error handling later.
+                     */
+                }
             }
-
-            onMessageSent(chat.id, sentMessage)
-            messageText = ""
         }
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(
+                MaterialTheme.colorScheme.surface
+            )
             .statusBarsPadding()
             .navigationBarsPadding()
             .imePadding()
@@ -361,14 +569,18 @@ fun ChatConversationScreen(
                 .padding(bottom = 80.dp)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment =
+                    Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    imageVector =
+                        Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
                     modifier = Modifier
-                        .clickable { onBack() }
+                        .clickable {
+                            onBack()
+                        }
                         .padding(8.dp),
                     tint = FormColors.green
                 )
@@ -377,7 +589,8 @@ fun ChatConversationScreen(
                     text = chat.name,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier =
+                        Modifier.padding(start = 8.dp)
                 )
             }
 
@@ -385,17 +598,21 @@ fun ChatConversationScreen(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(
+                        rememberScrollState()
+                    )
                     .padding(horizontal = 16.dp)
             ) {
                 messages.forEach { message ->
                     ChatBubble(message)
-                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
                 }
             }
         }
 
-        // Bottom Input Field Section
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -407,29 +624,59 @@ fun ChatConversationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment =
+                    Alignment.CenterVertically
             ) {
                 OutlinedTextField(
                     value = messageText,
-                    onValueChange = { messageText = it },
+                    onValueChange = {
+                        messageText = it
+                    },
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Type a message...") },
+                    placeholder = {
+                        Text("Type a message...")
+                    },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(onSend = { handleSend() }),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = FormColors.green,
-                        unfocusedBorderColor = FormColors.green,
-                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                    )
+                    keyboardOptions =
+                        KeyboardOptions(
+                            imeAction = ImeAction.Send
+                        ),
+                    keyboardActions =
+                        KeyboardActions(
+                            onSend = {
+                                handleSend()
+                            }
+                        ),
+                    colors =
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor =
+                                FormColors.green,
+                            unfocusedBorderColor =
+                                FormColors.green,
+                            focusedTextColor =
+                                MaterialTheme
+                                    .colorScheme
+                                    .onSurface,
+                            unfocusedTextColor =
+                                MaterialTheme
+                                    .colorScheme
+                                    .onSurface
+                        )
                 )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(
+                    modifier = Modifier.width(8.dp)
+                )
 
                 Button(
-                    onClick = { handleSend() },
-                    colors = ButtonDefaults.buttonColors(containerColor = FormColors.green)
+                    onClick = {
+                        handleSend()
+                    },
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor =
+                                FormColors.green
+                        )
                 ) {
                     Text("Send")
                 }
@@ -439,21 +686,47 @@ fun ChatConversationScreen(
 }
 
 @Composable
-fun ChatBubble(message: ChatMessage) {
+fun ChatBubble(
+    message: ChatMessage
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (message.isFromUser) Arrangement.End else Arrangement.Start
+        horizontalArrangement =
+            if (message.isFromUser) {
+                Arrangement.End
+            } else {
+                Arrangement.Start
+            }
     ) {
         Box(
             modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(if (message.isFromUser) FormColors.green else MaterialTheme.colorScheme.surfaceVariant)
+                .clip(
+                    RoundedCornerShape(12.dp)
+                )
+                .background(
+                    if (message.isFromUser) {
+                        FormColors.green
+                    } else {
+                        MaterialTheme
+                            .colorScheme
+                            .surfaceVariant
+                    }
+                )
                 .padding(12.dp)
                 .widthIn(max = 260.dp)
         ) {
             Text(
                 text = message.text,
-                color = if (message.isFromUser) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface,
+                color =
+                    if (message.isFromUser) {
+                        MaterialTheme
+                            .colorScheme
+                            .surface
+                    } else {
+                        MaterialTheme
+                            .colorScheme
+                            .onSurface
+                    },
                 fontSize = 14.sp
             )
         }
@@ -468,55 +741,88 @@ fun ChatListItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onChatClick() },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .clip(
+                RoundedCornerShape(8.dp)
+            )
+            .clickable {
+                onChatClick()
+            },
+        colors = CardDefaults.cardColors(
+            containerColor =
+                MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement =
+                Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = chat.name,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier =
+                        Modifier.padding(bottom = 4.dp)
                 )
 
                 Text(
-                    text = chat.lastMessage.ifBlank { "No messages yet" },
+                    text =
+                        chat.lastMessage.ifBlank {
+                            "No messages yet"
+                        },
                     color = Color.Gray,
                     fontSize = 14.sp,
                     maxLines = 2
                 )
             }
 
-            Column(horizontalAlignment = Alignment.End) {
+            Column(
+                horizontalAlignment =
+                    Alignment.End
+            ) {
                 Text(
                     text = chat.time,
                     color = Color.Gray,
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier =
+                        Modifier.padding(bottom = 4.dp)
                 )
 
                 if (chat.unreadCount > 0) {
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .background(FormColors.green)
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        contentAlignment = Alignment.Center
+                            .clip(
+                                RoundedCornerShape(50)
+                            )
+                            .background(
+                                FormColors.green
+                            )
+                            .padding(
+                                horizontal = 8.dp,
+                                vertical = 4.dp
+                            ),
+                        contentAlignment =
+                            Alignment.Center
                     ) {
                         Text(
-                            text = chat.unreadCount.toString(),
-                            color = MaterialTheme.colorScheme.surface,
+                            text =
+                                chat.unreadCount.toString(),
+                            color =
+                                MaterialTheme
+                                    .colorScheme
+                                    .surface,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight =
+                                FontWeight.Bold
                         )
                     }
                 }

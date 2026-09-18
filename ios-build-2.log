@@ -1,0 +1,445 @@
+Reusing configuration cache.
+> Task :composeApp:generateDefFirebaseFirestore UP-TO-DATE
+> Task :composeApp:kmpPartiallyResolvedDependenciesChecker
+> Task :composeApp:xcodeVersion UP-TO-DATE
+> Task :composeApp:generateDefFirebaseCore UP-TO-DATE
+> Task :composeApp:generateDefFirebaseAuth UP-TO-DATE
+> Task :composeApp:generateDefFirebaseDatabase UP-TO-DATE
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :composeApp:generateDefFirebaseStorage UP-TO-DATE
+> Task :composeApp:podGenIos UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:podInstallSyntheticIos UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForAppleMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :composeApp:podSetupBuildFirebaseAuthIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseDatabaseIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseCoreIosSimulator UP-TO-DATE
+> Task :composeApp:podSetupBuildFirebaseFirestoreIosSimulator UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForAppleMain NO-SOURCE
+> Task :composeApp:podSetupBuildFirebaseStorageIosSimulator UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForAppleMain NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForIosMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForIosMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForIosMain NO-SOURCE
+> Task :composeApp:copyNonXmlValueResourcesForNativeMain NO-SOURCE
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:generateComposeResClass UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForIosSimulatorArm64Main NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForNativeMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForNativeMain NO-SOURCE
+> Task :composeApp:generateActualResourceCollectorsForIosSimulatorArm64Main UP-TO-DATE
+> Task :composeApp:downloadKotlinNativeDistribution UP-TO-DATE
+> Task :composeApp:podBuildFirebaseAuthIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseAuthIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseCoreIosSimulator
+> Task :composeApp:cinteropFirebaseCoreIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseDatabaseIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseDatabaseIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseFirestoreIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseFirestoreIosSimulatorArm64 UP-TO-DATE
+> Task :composeApp:podBuildFirebaseStorageIosSimulator UP-TO-DATE
+> Task :composeApp:cinteropFirebaseStorageIosSimulatorArm64 UP-TO-DATE
+
+> Task :composeApp:compileKotlinIosSimulatorArm64 FAILED
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/App.kt:679:29 Overload resolution ambiguity between candidates:
+fun Chat(): Unit
+fun Chat(): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/App.kt:690:37 Overload resolution ambiguity between candidates:
+fun clearChatSessionState(): Unit
+fun clearChatSessionState(): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/App.kt:733:29 Overload resolution ambiguity between candidates:
+fun clearChatSessionState(): Unit
+fun clearChatSessionState(): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:25:45 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:26:45 Unresolved reference 'ChatService'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:83:1 Conflicting overloads:
+fun clearChatSessionState(): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:129:1 Conflicting overloads:
+fun Chat(): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:135:23 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:135:34 Unresolved reference 'ChatService'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:138:41 Unresolved reference 'getCurrentUserId'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:144:25 Unresolved reference 'getLatestMessage'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:144:52 Cannot infer type for value parameter 'result'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:145:33 Unresolved reference 'getCurrentUserId'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:146:21 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:150:24 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:151:52 Unresolved reference 'data'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:160:65 Unresolved reference 'text'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:167:24 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:210:25 Unresolved reference 'getCurrentUserId'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:221:31 Cannot infer type for value parameter 'chatId'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:221:39 Cannot infer type for value parameter 'message'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:229:9 Overload resolution ambiguity between candidates:
+fun ChatListScreen(searchQuery: String, onSearchChange: (String) -> Unit, chats: List<ChatItem>, onChatClick: (ChatItem) -> Unit, onNewChatClick: () -> Unit): Unit
+fun ChatListScreen(searchQuery: String, onSearchChange: (String) -> Unit, chats: List<ChatItem>, onChatClick: (ChatItem) -> Unit, onNewChatClick: () -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:232:31 Unresolved reference 'it'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:246:32 Unresolved reference 'it'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:348:1 Conflicting overloads:
+fun ChatListScreen(searchQuery: String, onSearchChange: (String) -> Unit, chats: List<ChatItem>, onChatClick: (ChatItem) -> Unit, onNewChatClick: () -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:425:21 Overload resolution ambiguity between candidates:
+fun ChatListItem(chat: ChatItem, onChatClick: () -> Unit): Unit
+fun ChatListItem(chat: ChatItem, onChatClick: () -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:442:1 Conflicting overloads:
+fun ChatConversationScreen(chat: ChatItem, roomId: String, onBack: () -> Unit, onMessageSent: (String, String) -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:456:23 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:457:9 Unresolved reference 'ChatService'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:462:25 Unresolved reference 'getCurrentUserId'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:464:21 Unresolved reference 'getMessages'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:464:43 Cannot infer type for value parameter 'result'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:466:20 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:469:28 Unresolved reference 'data'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:469:43 Cannot infer type for value parameter 'message'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:472:48 Unresolved reference 'text'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:475:53 Unresolved reference 'senderId'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:493:20 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:517:25 Unresolved reference 'getCurrentUserId'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:532:21 Unresolved reference 'sendMessage'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:536:13 Cannot infer type for value parameter 'result'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:538:20 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:545:20 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:608:21 Overload resolution ambiguity between candidates:
+fun ChatBubble(message: ChatMessage): Unit
+fun ChatBubble(message: ChatMessage): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:690:1 Conflicting overloads:
+fun ChatBubble(message: ChatMessage): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/data/ChatService.kt:738:1 Conflicting overloads:
+fun ChatListItem(chat: ChatItem, onChatClick: () -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:26:8 Unresolved reference 'com'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:27:8 Unresolved reference 'com'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:28:8 Unresolved reference 'com'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:29:8 Unresolved reference 'com'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:31:12 Redeclaration:
+data class ChatItem : Any
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:39:12 Redeclaration:
+data class ChatMessage : Any
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:55:1 Conflicting overloads:
+fun clearChatSessionState(): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:70:1 Conflicting overloads:
+fun Chat(): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:79:24 Unresolved reference 'Firebase'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:81:38 Unresolved reference 'uid'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:82:21 Unresolved reference 'Firebase'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:91:18 Unresolved reference 'addOnSuccessListener'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:91:41 Cannot infer type for value parameter 'snapshot'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:92:25 Unresolved reference 'Firebase'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:92:74 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:94:34 Unresolved reference 'exists'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:94:55 Unresolved reference 'children'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:95:48 Unresolved reference 'children'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:96:46 Unresolved reference 'child'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:96:60 Cannot infer type for type parameter 'K'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:96:60 Cannot infer type for type parameter 'V'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:96:83 Unresolved reference 'java'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:99:51 Argument type mismatch: actual type is 'Any', but 'String' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:128:24 Unresolved reference 'Firebase'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:136:31 Cannot infer type for value parameter 'chatId'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:136:39 Cannot infer type for value parameter 'message'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:141:9 Overload resolution ambiguity between candidates:
+fun ChatListScreen(searchQuery: String, onSearchChange: (String) -> Unit, chats: List<ChatItem>, onChatClick: (ChatItem) -> Unit, onNewChatClick: () -> Unit): Unit
+fun ChatListScreen(searchQuery: String, onSearchChange: (String) -> Unit, chats: List<ChatItem>, onChatClick: (ChatItem) -> Unit, onNewChatClick: () -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:143:46 Unresolved reference 'it'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:149:44 Unresolved reference 'it'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:204:1 Conflicting overloads:
+fun ChatListScreen(searchQuery: String, onSearchChange: (String) -> Unit, chats: List<ChatItem>, onChatClick: (ChatItem) -> Unit, onNewChatClick: () -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:269:21 Overload resolution ambiguity between candidates:
+fun ChatListItem(chat: ChatItem, onChatClick: () -> Unit): Unit
+fun ChatListItem(chat: ChatItem, onChatClick: () -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:281:1 Conflicting overloads:
+fun ChatConversationScreen(chat: ChatItem, roomId: String, onBack: () -> Unit, onMessageSent: (String, String) -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:292:21 Unresolved reference 'Firebase'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:293:29 Unresolved reference 'Firebase'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:297:14 Unresolved reference 'addOnSuccessListener'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:297:37 Cannot infer type for value parameter 'snapshot'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:299:30 Unresolved reference 'exists'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:300:44 Unresolved reference 'children'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:301:42 Unresolved reference 'child'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:301:56 Cannot infer type for type parameter 'K'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:301:79 Unresolved reference 'java'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:302:46 Unresolved reference 'child'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:302:64 Cannot infer type for type parameter 'K'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:302:87 Unresolved reference 'java'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:319:33 Unresolved reference 'Firebase'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:327:25 Unresolved reference 'Firebase'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:340:36 Unresolved reference 'ServerValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:392:21 Overload resolution ambiguity between candidates:
+fun ChatBubble(message: ChatMessage): Unit
+fun ChatBubble(message: ChatMessage): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:442:1 Conflicting overloads:
+fun ChatBubble(message: ChatMessage): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/commonMain/kotlin/org/example/dementia_tester_app/ui/screens/Chat.kt:464:1 Conflicting overloads:
+fun ChatListItem(chat: ChatItem, onChatClick: () -> Unit): Unit
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/auth/AuthService.ios.kt:91:45 Syntax error: Unexpected tokens (use ';' to separate expressions on the same line).
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:4:36 Unresolved reference 'FIRDocumentSnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:5:36 Unresolved reference 'FIRFirestore'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:6:36 Unresolved reference 'FIRQuerySnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:26:29 Unresolved reference 'FIRFirestore'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:43:37 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:159:31 Unresolved reference 'FIRQuerySnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:168:34 Unresolved reference 'documents'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:169:33 Cannot infer type for value parameter 'docAny'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:172:43 Unresolved reference 'FIRDocumentSnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:176:37 Unresolved reference 'data'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:182:41 Unresolved reference 'documentID'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:268:31 Unresolved reference 'FIRQuerySnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:295:30 None of the following candidates is applicable:
+
+fun <T> Array<out T>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Array<out T>.count(): Int
+
+fun ByteArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ByteArray.count(): Int
+
+fun ShortArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ShortArray.count(): Int
+
+fun IntArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun IntArray.count(): Int
+
+fun LongArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun LongArray.count(): Int
+
+fun FloatArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun FloatArray.count(): Int
+
+fun DoubleArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun DoubleArray.count(): Int
+
+fun BooleanArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun BooleanArray.count(): Int
+
+fun CharArray.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun CharArray.count(): Int
+
+fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int
+
+fun ByteArray.count(predicate: (Byte) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ByteArray.count(predicate: (Byte) -> Boolean): Int
+
+fun ShortArray.count(predicate: (Short) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ShortArray.count(predicate: (Short) -> Boolean): Int
+
+fun IntArray.count(predicate: (Int) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun IntArray.count(predicate: (Int) -> Boolean): Int
+
+fun LongArray.count(predicate: (Long) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun LongArray.count(predicate: (Long) -> Boolean): Int
+
+fun FloatArray.count(predicate: (Float) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun FloatArray.count(predicate: (Float) -> Boolean): Int
+
+fun DoubleArray.count(predicate: (Double) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun DoubleArray.count(predicate: (Double) -> Boolean): Int
+
+fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int
+
+fun CharArray.count(predicate: (Char) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun CharArray.count(predicate: (Char) -> Boolean): Int
+
+fun <T> Iterable<T>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Iterable<T>.count(): Int
+
+fun <T> Collection<T>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Collection<T>.count(): Int
+
+fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int
+
+fun <K, V> Map<out K, V>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <K, V> Map<out K, V>.count(): Int
+
+fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int
+
+fun UIntArray.count(predicate: (UInt) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun UIntArray.count(predicate: (UInt) -> Boolean): Int
+
+fun ULongArray.count(predicate: (ULong) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun ULongArray.count(predicate: (ULong) -> Boolean): Int
+
+fun UByteArray.count(predicate: (UByte) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun UByteArray.count(predicate: (UByte) -> Boolean): Int
+
+fun UShortArray.count(predicate: (UShort) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun UShortArray.count(predicate: (UShort) -> Boolean): Int
+
+fun <T> Sequence<T>.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Sequence<T>.count(): Int
+
+fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int
+
+fun CharSequence.count(): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun CharSequence.count(): Int
+
+fun CharSequence.count(predicate: (Char) -> Boolean): Int:
+  Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun CharSequence.count(predicate: (Char) -> Boolean): Int
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:297:26 Unresolved reference 'documents'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:298:25 Cannot infer type for value parameter 'docAny'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:301:35 Unresolved reference 'FIRDocumentSnapshot'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:304:29 Unresolved reference 'data'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:310:33 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:310:33 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ActivityService.ios.kt:310:33 Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:14:14 'actual class AppointmentService : Any' has no corresponding members for expected class members:
+
+    expect fun createAppointmentForUser(userId: String, appointment: Appointment, callback: (DatabaseResult<Unit>) -> Unit): Unit
+
+    expect fun getAppointmentsForUser(userId: String, callback: (DatabaseResult<List<Appointment>>) -> Unit): Unit
+
+    expect fun updateAppointmentStatusForUser(userId: String, appointmentId: String, newStatus: AppointmentStatus, callback: (DatabaseResult<Unit>) -> Unit): Unit
+
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:25:30 Unresolved reference 'childByAutoID'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:35:40 Cannot infer type for value parameter 'error'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:35:47 Cannot infer type for implicit value parameter 'it'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:37:85 Unresolved reference 'localizedDescription'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:48:65 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:55:35 Unresolved reference 'allObjects'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:55:56 Cannot infer type for value parameter 'child'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:56:70 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:57:64 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/AppointmentService.ios.kt:91:25 Unresolved reference 'allKeys'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:9:14 'public final actual class ChatService : ??? (Unresolved qualified name: ChatServiceInterface)' has no corresponding expected declaration
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:9:26 'public actual constructor(): ChatService' has no corresponding expected declaration
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:9:49 Unresolved reference 'ChatServiceInterface'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:11:25 'public open actual override fun getCurrentUserId(): String?' has no corresponding expected declaration
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:18:25 'public open actual override fun getLatestMessage(roomId: String, callback: (??? (Unresolved qualified name: ChatResult)<??? (Unresolved qualified name: ChatMessageData)?>) -> Unit): Unit' has no corresponding expected declaration
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:20:20 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:20:31 Unresolved reference 'ChatMessageData'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:25:22 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:38:29 Argument type mismatch: actual type is 'UInt', but 'FIRDataEventType' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:42:34 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:46:49 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'FIRDataSnapshot?'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:49:34 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:53:40 Unresolved reference 'ChatMessageData'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:61:41 Unresolved reference 'ChatMessageData'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:68:25 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:73:25 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:74:34 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'NSError?'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:81:25 'public open actual override fun getMessages(roomId: String, callback: (??? (Unresolved qualified name: ChatResult)<List<??? (Unresolved qualified name: ChatMessageData)>>) -> Unit): Unit' has no corresponding expected declaration
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:83:20 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:83:36 Unresolved reference 'ChatMessageData'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:88:22 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:98:25 Argument type mismatch: actual type is 'UInt', but 'FIRDataEventType' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:102:30 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:106:44 Unresolved reference 'ChatMessageData'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:107:45 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'FIRDataSnapshot?'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:117:29 Unresolved reference 'ChatMessageData'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:126:21 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:131:21 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:132:30 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'NSError?'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:139:25 'public open actual override fun sendMessage(roomId: String, recipientId: String, text: String, callback: (??? (Unresolved qualified name: ChatResult)<Unit>) -> Unit): Unit' has no corresponding expected declaration
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:143:20 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:148:22 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:155:22 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:170:22 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:189:30 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ChatService.ios.kt:192:25 Unresolved reference 'ChatResult'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/ReminderService.ios.kt:14:14 'actual class ReminderService : Any' has no corresponding members for expected class members:
+
+    expect fun createReminderForUser(userId: String, reminder: Reminder, callback: (ReminderResult<Unit>) -> Unit): Unit
+
+    expect fun updateReminderForUser(userId: String, reminderId: String, updates: Map<String, Any?>, callback: (ReminderResult<Unit>) -> Unit): Unit
+
+    expect fun deleteReminderForUser(userId: String, reminderID: String, callback: (ReminderResult<Unit>) -> Unit): Unit
+
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:54:25 Unresolved reference 'allKeys'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:92:40 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:156:40 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:281:40 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:353:40 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:362:23 Unresolved reference 'allObjects'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:363:33 Cannot infer type for value parameter 'child'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:367:36 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:371:36 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:377:29 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:432:48 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:441:31 Unresolved reference 'allObjects'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:442:41 Cannot infer type for value parameter 'child'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:446:44 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:450:44 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:456:37 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:469:37 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:542:48 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:631:48 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:651:26 Unresolved reference 'allObjects'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:652:36 Cannot infer type for value parameter 'child'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:656:40 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:690:38 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:800:48 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:809:31 Unresolved reference 'allObjects'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:810:41 Cannot infer type for value parameter 'child'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:814:44 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:818:44 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:824:37 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:907:48 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:955:34 Unresolved reference 'FIRDataEventTypeValue'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:1084:24 Cannot infer type for type parameter 'R'. Specify it explicitly.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserProfileService.ios.kt:1085:24 Unresolved reference 'create'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserSettingsService.ios.kt:14:14 The 'expect' and the 'actual' declarations are incompatible.
+  expect: public final expect class UserSettingsService : UserSettingsServiceInterface
+  actual: public final actual class UserSettingsService : Any
+  reason: some supertypes are missing in the 'actual' declaration
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/data/UserSettingsService.ios.kt:70:25 Unresolved reference 'allKeys'.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:22:55 Argument type mismatch: actual type is 'UIImage.Companion', but 'NSItemProviderReadingProtocol' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:23:52 Argument type mismatch: actual type is 'UIImage.Companion', but 'NSItemProviderReadingProtocol' was expected.
+e: file:///Users/michelle/Documents/SCHOOL/UNE/T2%202026/COSC591/DementiaSmartApp/GroupB-aoca-smart-app/composeApp/src/iosMain/kotlin/org/example/dementia_tester_app/ui/components/ImagePicker.ios.kt:50:33 Unresolved reference 'memcpy'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':composeApp:compileKotlinIosSimulatorArm64'.
+> Compilation finished with errors
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 9s
+32 actionable tasks: 3 executed, 29 up-to-date
+Configuration cache entry reused.
