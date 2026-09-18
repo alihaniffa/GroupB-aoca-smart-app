@@ -124,96 +124,122 @@ fun QuestionComponent(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(max = 700.dp)
-            .background(MaterialTheme.colorScheme.surface) // Applied change
+            .background(MaterialTheme.colorScheme.surface)
             .clip(RoundedCornerShape(12.dp))
             .padding(8.dp)
-            .verticalScroll(rememberScrollState())
     ) {
-        // Question number and domain:
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Question $questionNumber of $totalQuestions",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface // Applied change
-            )
-            Text(
-                text = question.domain,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = FormColors.green
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
 
-        // Progress bar showing overall assessment completion
-        val progressFraction = questionNumber.toFloat() / totalQuestions.toFloat()
-        val animatedProgress by animateFloatAsState(targetValue = progressFraction)
-        LinearProgressIndicator(
-            progress = { animatedProgress },
+        Column(
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
-                .height(8.dp),
-            color = FormColors.green,
-            trackColor = FormColors.green.copy(alpha = 0.2f),
-            strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
-        )
+                .verticalScroll(rememberScrollState())
+        ) {
+            // Question number and domain
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Question $questionNumber of $totalQuestions",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Question text:
-        Text(
-            text = question.questionText,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onSurface // Applied change
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Answer options:
-        if (question.allowMultipleAnswers) {
-            var selectedOptions by remember(question.id) {
-                mutableStateOf(question.selectedAnswers.toMutableList())
+                Text(
+                    text = question.domain,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = FormColors.green
+                )
             }
 
-            question.options.forEach { option ->
-                key(option, selectedOptions.contains(option)) {
-                    CheckboxOption(
-                        text = option,
-                        selected = selectedOptions.contains(option),
-                        onToggle = {
-                            val updatedOptions = selectedOptions.toMutableList()
-                            if (updatedOptions.contains(option)) {
-                                updatedOptions.remove(option)
-                            } else {
-                                updatedOptions.add(option)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Progress bar
+            val progressFraction =
+                questionNumber.toFloat() / totalQuestions.toFloat()
+
+            val animatedProgress by animateFloatAsState(
+                targetValue = progressFraction
+            )
+
+            LinearProgressIndicator(
+                progress = { animatedProgress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp),
+                color = FormColors.green,
+                trackColor = FormColors.green.copy(alpha = 0.2f),
+                strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Question text
+            Text(
+                text = question.questionText,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Answer options
+            if (question.allowMultipleAnswers) {
+                var selectedOptions by remember(question.id) {
+                    mutableStateOf(question.selectedAnswers.toMutableList())
+                }
+
+                question.options.forEach { option ->
+                    key(option, selectedOptions.contains(option)) {
+                        CheckboxOption(
+                            text = option,
+                            selected = selectedOptions.contains(option),
+                            onToggle = {
+                                val updatedOptions =
+                                    selectedOptions.toMutableList()
+
+                                if (updatedOptions.contains(option)) {
+                                    updatedOptions.remove(option)
+                                } else {
+                                    updatedOptions.add(option)
+                                }
+
+                                selectedOptions = updatedOptions
+                                onMultipleAnswersSelected(updatedOptions)
                             }
-                            selectedOptions = updatedOptions
-                            onMultipleAnswersSelected(updatedOptions)
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-            }
-        } else {
-            var selectedOption by remember(question.id) { mutableStateOf(question.selectedAnswer) }
+                        )
+                    }
 
-            question.options.forEach { option ->
-                key(option, selectedOption) {
-                    RadioOption(
-                        text = option,
-                        selected = option == selectedOption,
-                        onSelect = {
-                            selectedOption = option
-                            onAnswerSelected(option)
-                        }
-                    )
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
-                Spacer(modifier = Modifier.height(2.dp))
+
+            } else {
+                var selectedOption by remember(question.id) {
+                    mutableStateOf(question.selectedAnswer)
+                }
+
+                question.options.forEach { option ->
+                    key(option, selectedOption) {
+                        RadioOption(
+                            text = option,
+                            selected = option == selectedOption,
+                            onSelect = {
+                                selectedOption = option
+                                onAnswerSelected(option)
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(2.dp))
+                }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         Spacer(modifier = Modifier.height(8.dp))

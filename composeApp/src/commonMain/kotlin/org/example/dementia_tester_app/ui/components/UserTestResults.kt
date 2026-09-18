@@ -49,7 +49,7 @@ private object ChartColors {
 }
 
 private object ChartDims {
-    val HEIGHT = 350.dp
+    val HEIGHT = 220.dp
     val PADDING = 15.dp
     val AXIS_SPACE = 20.dp
     val POINT_BOX = 8.dp
@@ -464,8 +464,9 @@ private fun ScoreLineGraph(
     startAttemptIndex: Int = 0
 ) {
     val scores = attempts
-    val minS = scores.minOrNull() ?: 0
-    val maxS = max(scores.maxOrNull() ?: 100, 100)
+    val minS = 0
+    val highestScore = scores.maxOrNull() ?: 0
+    val maxS = max(10, highestScore + max(2, highestScore / 10))
     val labelStep = if (scores.size > 10) 2 else 1
 
     Column(
@@ -574,8 +575,12 @@ private fun ComparativeScoreLineGraph(
 ) {
     val s1 = attempts1.map { it.totalScore }
     val s2 = attempts2.map { it.totalScore }
-    val minS = min(s1.minOrNull() ?: 0, s2.minOrNull() ?: 0)
-    val maxS = max(max(s1.maxOrNull() ?: 100, s2.maxOrNull() ?: 100), 100)
+    val minS = 0
+    val highestScore = max(
+        s1.maxOrNull() ?: 0,
+        s2.maxOrNull() ?: 0
+    )
+    val maxS = max(10, highestScore + max(2, highestScore / 10))
     val maxPts = max(s1.size, s2.size)
     val labelStep = if (maxPts > 10) 2 else 1
 

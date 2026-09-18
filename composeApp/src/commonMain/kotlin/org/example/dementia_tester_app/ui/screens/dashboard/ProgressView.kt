@@ -43,9 +43,9 @@ fun ProgressView(
 ) {
 
     val tabs = listOf(
-        "Assessments",
-        "Health Surveys",
-        "Mini Games"
+        "Tests",
+        "Surveys",
+        "Games"
     )
 
     var selectedTab by remember {
@@ -550,19 +550,19 @@ fun ProgressView(
                 )
             }
 
-        TabRow(
+        ScrollableTabRow(
             selectedTabIndex =
                 selectedTab,
             containerColor =
                 Color.Transparent,
             contentColor =
                 FormColors.green,
+            edgePadding = 0.dp,
             divider = {}
         ) {
 
-            tabs.forEachIndexed {
-                    index,
-                    title ->
+            tabs.forEachIndexed { index,
+                                  title ->
 
                 Tab(
                     selected =
@@ -578,6 +578,7 @@ fun ProgressView(
                         Text(
                             text =
                                 title,
+                            maxLines = 1,
                             fontWeight =
                                 if (
                                     selectedTab ==
