@@ -22,10 +22,11 @@ composeApp/google-services (1).json
 iosApp/iosApp/GoogleService-Info.plist
 iosApp/GoogleService-Info.plist
 keystore.properties
-upload.jks
+*.jks
 iosApp/Pods/
 composeApp/composeApp.podspec
 functions/.env
 functions/node_modules/
 .env
+*.pem
 
