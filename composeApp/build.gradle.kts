@@ -119,8 +119,8 @@ android {
         applicationId = "com.aoca.dementiatester"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 5
-        versionName = "4.1"
+        versionCode = 6
+        versionName = "4.2"
     }
     packaging {
         resources {
