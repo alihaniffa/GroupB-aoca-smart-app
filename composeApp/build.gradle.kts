@@ -17,14 +17,11 @@ plugins {
 }
 
 kotlin {
-    // Add compiler options for all targets to suppress expect/actual classes warning
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -38,16 +35,16 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.16.0"))
-            implementation("com.google.firebase:firebase-auth:22.3.1")
-            implementation("com.google.android.gms:play-services-auth:21.2.0")
-            implementation("com.google.firebase:firebase-database-ktx")
-            implementation("com.google.firebase:firebase-storage-ktx")
+            // Updated Firebase BOM to a newer stable release
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.auth)
+            implementation(libs.play.services.auth)
+            implementation(libs.firebase.database.ktx)
+            implementation(libs.firebase.storage.ktx)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation("androidx.activity:activity-compose:1.10.1")
-            implementation("androidx.fragment:fragment-ktx:1.8.9")
+            implementation("androidx.fragment:fragment-ktx:1.8.5")
             implementation("androidx.exifinterface:exifinterface:1.3.7")
             implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
         }
@@ -57,21 +54,20 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
-            implementation("io.coil-kt.coil3:coil-compose:3.0.4")
-            implementation("org.jetbrains.compose.material:material-icons-core:1.7.3")
-            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.coil.compose)
+            implementation(libs.material.icons.core)
+            implementation(libs.material.icons.extended)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
-
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
         }
         androidUnitTest.dependencies {
-            implementation("io.mockk:mockk:1.13.11")
-            implementation("io.mockk:mockk-android:1.13.11")
-            implementation("io.mockk:mockk-agent:1.13.11")
-            implementation("org.robolectric:robolectric:4.12.1")
+            implementation("io.mockk:mockk:1.13.16")
+            implementation("io.mockk:mockk-android:1.13.16")
+            implementation("io.mockk:mockk-agent:1.13.16")
+            implementation("org.robolectric:robolectric:4.14.1")
             implementation("junit:junit:4.13.2")
         }
         val iosArm64Main by getting {
@@ -99,24 +95,15 @@ kotlin {
             isStatic = true
         }
 
-        // Firebase pods need clang modules enabled for cinterop
         val moduleFlags = listOf(
             "-compiler-option", "-fmodules",
             "-compiler-option", "-fcxx-modules"
         )
 
-        pod("FirebaseCore") {
-            extraOpts += moduleFlags
-        }
-        pod("FirebaseAuth") {
-            extraOpts += moduleFlags
-        }
-        pod("FirebaseDatabase") {
-            extraOpts += moduleFlags
-        }
-        pod("FirebaseStorage") {
-            extraOpts += moduleFlags
-        }
+        pod("FirebaseCore") { extraOpts += moduleFlags }
+        pod("FirebaseAuth") { extraOpts += moduleFlags }
+        pod("FirebaseDatabase") { extraOpts += moduleFlags }
+        pod("FirebaseStorage") { extraOpts += moduleFlags }
         pod("FirebaseDatabaseBridge") {
             source = path(project.file("../iosApp/iosApp"))
             interopBindingDependencies.add("FirebaseDatabase")
@@ -132,8 +119,8 @@ android {
         applicationId = "com.aoca.dementiatester"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 4
-        versionName = "4.0"
+        versionCode = 6
+        versionName = "4.2"
     }
     packaging {
         resources {
@@ -145,7 +132,6 @@ android {
             val ks = Properties().apply { load(ksFile.inputStream()) }
 
             create("release") {
-                // You can also read from env vars in CI:
                 val storePath = System.getenv("KS_PATH") ?: ks["storeFile"]?.toString()
                 val storePass = System.getenv("KS_STORE_PASS") ?: ks["storePassword"]?.toString()
                 val keyAlias  = System.getenv("KS_KEY_ALIAS") ?: ks["keyAlias"]?.toString()
