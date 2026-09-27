@@ -137,6 +137,9 @@ fun Chat() {
                 availableContacts.clear()
                 availableContacts.addAll(distinctContacts)
 
+                val validUserIds = distinctContacts.map { it.userId }.toSet()
+                chats.removeAll { it.id !in validUserIds }
+
                 distinctContacts.forEach { contact ->
                     val roleLabel = when (contact.userType) {
                         UserType.DOCTOR -> "Doctor"
@@ -224,41 +227,39 @@ fun Chat() {
                     val assignedDocId = currentProfile.assignedDoctorId.trim()
                     val assignedCaregiverId = currentProfile.assignedCaregiverId.trim()
 
+                    // Patient should only see their assigned doctor and caregiver
+                    if (assignedDocId.isNotBlank()) {
+                        patientContacts.add(
+                            UserProfile(
+                                userId = assignedDocId,
+                                name = "",
+                                userType = UserType.DOCTOR
+                            )
+                        )
+                    }
+
+                    if (assignedCaregiverId.isNotBlank()) {
+                        patientContacts.add(
+                            UserProfile(
+                                userId = assignedCaregiverId,
+                                name = "",
+                                userType = UserType.CAREGIVER
+                            )
+                        )
+                    }
+
+                    handleContacts(patientContacts.toList())
+
                     // Query assigned doctor profile to obtain doctor full name and details
                     if (assignedDocId.isNotBlank()) {
                         userProfileService.getUserProfile(assignedDocId) { docResult ->
-                            val docProfile = if (docResult is DatabaseResult.Success) {
-                                docResult.data
-                            } else {
-                                UserProfile(
-                                    userId = assignedDocId,
-                                    name = "",
-                                    userType = UserType.DOCTOR
-                                )
-                            }
-                            val idx = patientContacts.indexOfFirst { it.userId == assignedDocId }
-                            if (idx != -1) {
-                                patientContacts[idx] = docProfile
-                            } else {
-                                patientContacts.add(0, docProfile)
-                            }
-                            handleContacts(patientContacts.toList())
-
-                            userProfileService.getAllDoctors { doctorsResult ->
-                                if (doctorsResult is DatabaseResult.Success) {
-                                    doctorsResult.data.forEach { doc ->
-                                        if (doc.userId != assignedDocId && patientContacts.none { it.userId == doc.userId }) {
-                                            patientContacts.add(doc)
-                                        }
-                                    }
-                                    handleContacts(patientContacts.toList())
+                            if (docResult is DatabaseResult.Success) {
+                                val idx = patientContacts.indexOfFirst { it.userId == assignedDocId }
+                                if (idx != -1) {
+                                    patientContacts[idx] = docResult.data
+                                } else {
+                                    patientContacts.add(docResult.data)
                                 }
-                            }
-                        }
-                    } else {
-                        userProfileService.getAllDoctors { doctorsResult ->
-                            if (doctorsResult is DatabaseResult.Success) {
-                                patientContacts.addAll(doctorsResult.data)
                                 handleContacts(patientContacts.toList())
                             }
                         }
