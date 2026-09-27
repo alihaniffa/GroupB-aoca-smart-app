@@ -56,11 +56,15 @@ fun formatDoctorName(rawName: String): String {
     val clean = when {
         trimmed.startsWith("Dr.", ignoreCase = true) -> trimmed.substring(3).trim()
         trimmed.startsWith("Dr ", ignoreCase = true) -> trimmed.substring(3).trim()
+        trimmed.startsWith("Doctor ", ignoreCase = true) -> trimmed.substring(7).trim()
         trimmed.equals("Assigned Doctor", ignoreCase = true) -> ""
+        trimmed.equals("Doctor", ignoreCase = true) -> ""
         else -> trimmed
     }
-    val fallback = clean.ifBlank { "Doctor" }
-    val capitalized = fallback.split(" ").filter { it.isNotBlank() }.joinToString(" ") { word ->
+    if (clean.isBlank()) {
+        return "Doctor"
+    }
+    val capitalized = clean.split(" ").filter { it.isNotBlank() }.joinToString(" ") { word ->
         word.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase() else c.toString() }
     }
     return "Dr. $capitalized"
@@ -107,13 +111,10 @@ fun clearChatSessionState() {
 fun Chat() {
     var searchQuery by remember { mutableStateOf("") }
     var selectedChat by remember { mutableStateOf<ChatItem?>(null) }
-    var showContactPicker by remember { mutableStateOf(false) }
-    var contactSearchQuery by remember { mutableStateOf("") }
     var isLoadingContacts by remember { mutableStateOf(false) }
     var currentUserType by remember { mutableStateOf(UserType.USER) }
 
     val chats = sessionChats
-    val availableContacts = remember { mutableStateListOf<UserProfile>() }
     val chatService = remember { ChatService() }
     val userProfileService = remember { UserProfileService() }
 
@@ -135,9 +136,6 @@ fun Chat() {
                 val distinctContacts = rawList
                     .filter { it.userId.isNotBlank() && it.userId != currentUserId }
                     .distinctBy { it.userId }
-
-                availableContacts.clear()
-                availableContacts.addAll(distinctContacts)
 
                 val validUserIds = distinctContacts.map { it.userId }.toSet()
                 chats.removeAll { it.id !in validUserIds }
@@ -193,10 +191,10 @@ fun Chat() {
             when (userType) {
                 UserType.DOCTOR -> {
                     // Doctors can only chat to their assigned patients and assigned caregivers
-                    val doctorContacts = mutableListOf<UserProfile>()
                     userProfileService.getAllUsers { assignedResult ->
                         if (assignedResult is DatabaseResult.Success) {
                             val assignedPatients = assignedResult.data
+                            val doctorContacts = mutableListOf<UserProfile>()
                             doctorContacts.addAll(assignedPatients)
 
                             val caregiverIds = assignedPatients
@@ -209,23 +207,17 @@ fun Chat() {
                             } else {
                                 var pendingCaregivers = caregiverIds.size
                                 caregiverIds.forEach { cgId ->
-                                    doctorContacts.add(
-                                        UserProfile(
-                                            userId = cgId,
-                                            name = "",
-                                            userType = UserType.CAREGIVER
-                                        )
-                                    )
-                                    handleContacts(doctorContacts.toList())
-
                                     userProfileService.getUserProfile(cgId) { cgResult ->
                                         if (cgResult is DatabaseResult.Success) {
-                                            val idx = doctorContacts.indexOfFirst { it.userId == cgId }
-                                            if (idx != -1) {
-                                                doctorContacts[idx] = cgResult.data
-                                            } else {
-                                                doctorContacts.add(cgResult.data)
-                                            }
+                                            doctorContacts.add(cgResult.data)
+                                        } else {
+                                            doctorContacts.add(
+                                                UserProfile(
+                                                    userId = cgId,
+                                                    name = "",
+                                                    userType = UserType.CAREGIVER
+                                                )
+                                            )
                                         }
                                         pendingCaregivers--
                                         if (pendingCaregivers <= 0) {
@@ -241,10 +233,10 @@ fun Chat() {
                 }
                 UserType.CAREGIVER -> {
                     // Caregivers can only chat to their assigned patients and assigned doctors
-                    val caregiverContacts = mutableListOf<UserProfile>()
                     userProfileService.getPatientsForCurrentCaregiver { patientsResult ->
                         if (patientsResult is DatabaseResult.Success) {
                             val assignedPatients = patientsResult.data
+                            val caregiverContacts = mutableListOf<UserProfile>()
                             caregiverContacts.addAll(assignedPatients)
 
                             val docIds = assignedPatients
@@ -257,23 +249,17 @@ fun Chat() {
                             } else {
                                 var pendingDoctors = docIds.size
                                 docIds.forEach { docId ->
-                                    caregiverContacts.add(
-                                        UserProfile(
-                                            userId = docId,
-                                            name = "",
-                                            userType = UserType.DOCTOR
-                                        )
-                                    )
-                                    handleContacts(caregiverContacts.toList())
-
                                     userProfileService.getUserProfile(docId) { docResult ->
                                         if (docResult is DatabaseResult.Success) {
-                                            val idx = caregiverContacts.indexOfFirst { it.userId == docId }
-                                            if (idx != -1) {
-                                                caregiverContacts[idx] = docResult.data
-                                            } else {
-                                                caregiverContacts.add(docResult.data)
-                                            }
+                                            caregiverContacts.add(docResult.data)
+                                        } else {
+                                            caregiverContacts.add(
+                                                UserProfile(
+                                                    userId = docId,
+                                                    name = "",
+                                                    userType = UserType.DOCTOR
+                                                )
+                                            )
                                         }
                                         pendingDoctors--
                                         if (pendingDoctors <= 0) {
@@ -289,58 +275,36 @@ fun Chat() {
                 }
                 UserType.USER -> {
                     // Patients can only chat to their assigned doctor and assigned caregiver
-                    val patientContacts = mutableListOf<UserProfile>()
                     val assignedDocId = currentProfile.assignedDoctorId.trim()
                     val assignedCaregiverId = currentProfile.assignedCaregiverId.trim()
 
-                    if (assignedDocId.isNotBlank()) {
-                        patientContacts.add(
-                            UserProfile(
-                                userId = assignedDocId,
-                                name = "",
-                                userType = UserType.DOCTOR
-                            )
-                        )
-                    }
+                    val targetList = mutableListOf<Pair<String, UserType>>()
+                    if (assignedDocId.isNotBlank()) targetList.add(assignedDocId to UserType.DOCTOR)
+                    if (assignedCaregiverId.isNotBlank()) targetList.add(assignedCaregiverId to UserType.CAREGIVER)
 
-                    if (assignedCaregiverId.isNotBlank()) {
-                        patientContacts.add(
-                            UserProfile(
-                                userId = assignedCaregiverId,
-                                name = "",
-                                userType = UserType.CAREGIVER
-                            )
-                        )
-                    }
+                    if (targetList.isEmpty()) {
+                        handleContacts(emptyList())
+                    } else {
+                        val patientContacts = mutableListOf<UserProfile>()
+                        var pending = targetList.size
 
-                    handleContacts(patientContacts.toList())
-
-                    // Query assigned doctor profile to obtain doctor full name and details
-                    if (assignedDocId.isNotBlank()) {
-                        userProfileService.getUserProfile(assignedDocId) { docResult ->
-                            if (docResult is DatabaseResult.Success) {
-                                val idx = patientContacts.indexOfFirst { it.userId == assignedDocId }
-                                if (idx != -1) {
-                                    patientContacts[idx] = docResult.data
+                        targetList.forEach { (id, roleType) ->
+                            userProfileService.getUserProfile(id) { result ->
+                                if (result is DatabaseResult.Success) {
+                                    patientContacts.add(result.data)
                                 } else {
-                                    patientContacts.add(docResult.data)
+                                    patientContacts.add(
+                                        UserProfile(
+                                            userId = id,
+                                            name = "",
+                                            userType = roleType
+                                        )
+                                    )
                                 }
-                                handleContacts(patientContacts.toList())
-                            }
-                        }
-                    }
-
-                    // Query assigned caregiver profile to obtain caregiver full name and details
-                    if (assignedCaregiverId.isNotBlank()) {
-                        userProfileService.getUserProfile(assignedCaregiverId) { cgResult ->
-                            if (cgResult is DatabaseResult.Success) {
-                                val idx = patientContacts.indexOfFirst { it.userId == assignedCaregiverId }
-                                if (idx != -1) {
-                                    patientContacts[idx] = cgResult.data
-                                } else {
-                                    patientContacts.add(cgResult.data)
+                                pending--
+                                if (pending <= 0) {
+                                    handleContacts(patientContacts.toList())
                                 }
-                                handleContacts(patientContacts.toList())
                             }
                         }
                     }
@@ -404,168 +368,19 @@ fun Chat() {
                         it.lastMessage.contains(searchQuery, ignoreCase = true)
             }
 
+        val emptyMessage = when (currentUserType) {
+            UserType.USER -> "No assigned doctor or caregiver found."
+            UserType.CAREGIVER -> "No assigned patients or doctors found."
+            UserType.DOCTOR -> "No assigned patients or caregivers found."
+        }
+
         ChatListScreen(
             searchQuery = searchQuery,
             onSearchChange = { searchQuery = it },
             chats = filteredChats,
             isLoading = isLoadingContacts,
             onChatClick = { selectedChat = it },
-            onNewChatClick = { showContactPicker = true }
-        )
-    }
-
-    if (showContactPicker) {
-        val filteredContacts = availableContacts.filter {
-            contactSearchQuery.isBlank() ||
-                    it.name.contains(contactSearchQuery, ignoreCase = true) ||
-                    it.email.contains(contactSearchQuery, ignoreCase = true) ||
-                    it.userType.name.contains(contactSearchQuery, ignoreCase = true)
-        }
-
-        AlertDialog(
-            onDismissRequest = {
-                showContactPicker = false
-                contactSearchQuery = ""
-            },
-            title = {
-                Text("Start New Chat", fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    OutlinedTextField(
-                        value = contactSearchQuery,
-                        onValueChange = { contactSearchQuery = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp),
-                        placeholder = { Text("Search by name or email...") },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search",
-                                tint = FormColors.green
-                            )
-                        },
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = FormColors.green,
-                            unfocusedBorderColor = FormColors.green
-                        )
-                    )
-
-                    if (isLoadingContacts && availableContacts.isEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 24.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = FormColors.green)
-                        }
-                    } else if (filteredContacts.isEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val emptyText = if (availableContacts.isEmpty()) {
-                                when (currentUserType) {
-                                    UserType.DOCTOR -> "No assigned patients or caregivers found."
-                                    UserType.CAREGIVER -> "No assigned patients or doctors found."
-                                    UserType.USER -> "No assigned doctor or caregiver found."
-                                }
-                            } else {
-                                "No matching contacts found."
-                            }
-                            Text(
-                                emptyText,
-                                color = Color.Gray,
-                                fontSize = 14.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    } else {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 300.dp)
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            filteredContacts.forEach { contact ->
-                                val roleLabel = when (contact.userType) {
-                                    UserType.DOCTOR -> "Doctor"
-                                    UserType.CAREGIVER -> "Caregiver"
-                                    UserType.USER -> "Patient"
-                                }
-                                val displayName = getContactDisplayName(contact)
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            val existingChat = chats.find { it.id == contact.userId }
-                                            selectedChat = existingChat ?: ChatItem(
-                                                id = contact.userId,
-                                                name = displayName,
-                                                lastMessage = "",
-                                                time = "",
-                                                unreadCount = 0,
-                                                role = roleLabel
-                                            ).also { chats.add(0, it) }
-
-                                            showContactPicker = false
-                                            contactSearchQuery = ""
-                                        }
-                                        .padding(vertical = 10.dp, horizontal = 4.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(
-                                            text = displayName,
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.SemiBold
-                                        )
-                                        if (contact.email.isNotBlank() && contact.email != displayName) {
-                                            Text(
-                                                text = contact.email,
-                                                fontSize = 12.sp,
-                                                color = Color.Gray
-                                            )
-                                        }
-                                    }
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Surface(
-                                        shape = RoundedCornerShape(4.dp),
-                                        color = FormColors.green.copy(alpha = 0.12f)
-                                    ) {
-                                        Text(
-                                            text = roleLabel,
-                                            color = FormColors.green,
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                        )
-                                    }
-                                }
-                                HorizontalDivider(color = Color.LightGray.copy(alpha = 0.4f))
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showContactPicker = false
-                        contactSearchQuery = ""
-                    }
-                ) {
-                    Text("Cancel", color = FormColors.green)
-                }
-            }
+            emptyStateMessage = emptyMessage
         )
     }
 }
@@ -577,7 +392,7 @@ fun ChatListScreen(
     chats: List<ChatItem>,
     isLoading: Boolean,
     onChatClick: (ChatItem) -> Unit,
-    onNewChatClick: () -> Unit
+    emptyStateMessage: String = "No chats found"
 ) {
     val scrollState = rememberScrollState()
 
@@ -612,22 +427,6 @@ fun ChatListScreen(
             singleLine = true
         )
 
-        Button(
-            onClick = onNewChatClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .padding(bottom = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = FormColors.green
-            )
-        ) {
-            Text(
-                "Start New Chat",
-                fontSize = 16.sp
-            )
-        }
-
         if (isLoading && chats.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -651,7 +450,7 @@ fun ChatListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "No chats found",
+                            text = emptyStateMessage,
                             color = Color.Gray
                         )
                     }
