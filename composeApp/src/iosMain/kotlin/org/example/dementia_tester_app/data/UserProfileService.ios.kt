@@ -1220,7 +1220,7 @@ actual class UserProfileService actual constructor() :
             return
         }
 
-        val ref = rootRef()?.child(dbPath)
+        val ref = rootRef()?.child(dbPath)?.queryOrderedByChild("userType")?.queryEqualToValue(UserType.DOCTOR.value)
         if (ref == null) {
             callback(DatabaseResult.Error("Firebase not initialized"))
             return

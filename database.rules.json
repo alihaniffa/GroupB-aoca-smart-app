@@ -2,122 +2,108 @@
   "rules": {
     ".read": false,
     ".write": false,
-
     "UserProfiles": {
-      ".read": "auth != null",
-
+      ".read": "auth != null && (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (query.orderByChild === 'userType' && query.equalTo === 'doctor'))",
       ".indexOn": [
         "userType",
         "assignedDoctorId",
         "assignedCaregiverId"
       ],
-
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || data.child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('assignedDoctorId').val() === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true) || data.child('assignedCaregiverId').val() === auth.uid)",
-
-        ".write": "auth != null && auth.uid === $uid",
-
-        "assignedDoctorId": {
-          ".write": "auth != null && (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver') && newData.val() === auth.uid"
+        ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
+        ".validate": "newData.hasChildren(['email', 'userType']) && newData.child('email').isString() && (!data.exists() || data.child('userType').val() === newData.child('userType').val() || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
+        "userType": {
+          ".validate": "newData.isString() && (newData.val() === 'user' || newData.val() === 'doctor' || newData.val() === 'caregiver')"
         },
-
+        "assignedDoctorId": {
+          ".write": "auth != null && root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'",
+          ".validate": "newData.isString() && (!data.exists() || data.val() === newData.val() || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')"
+        },
         "assignedCaregiverId": {
-          ".write": "auth != null && root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'"
+          ".write": "auth != null && root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'",
+          ".validate": "newData.isString() && (!data.exists() || data.val() === newData.val() || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')"
         }
       }
     },
-
     "CaregiverPatients": {
       "$caregiverId": {
         ".read": "auth != null && (auth.uid === $caregiverId || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
-
         "$patientId": {
-          ".write": "auth != null && root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'"
+          ".write": "auth != null && root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'",
+          ".validate": "newData.isBoolean() || !newData.exists()"
         }
       }
     },
-
     "MiniGameScores": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
-
         ".write": "auth != null && (auth.uid === $uid || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
       }
     },
-
     "HealthSurvey": {
       "Questions": {
         ".read": "auth != null",
         ".write": false
       },
-
       "UserResponses": {
         "$uid": {
           ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
-
           ".write": "auth != null && (auth.uid === $uid || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
         }
       }
     },
-
     "CognitiveAssessment": {
       "Questions": {
         ".read": "auth != null",
         ".write": false
       },
-
       "UserResponses": {
         "$uid": {
           ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
-
           ".write": "auth != null && (auth.uid === $uid || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
         }
       }
     },
-
     "Reminders": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
-
         ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
       }
     },
-
     "Appointments": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
-
         ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
       }
     },
-
     "UserSettings": {
       "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
-        ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
       }
     },
-
     "Activities": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))",
-
         ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true))"
       }
     },
-
     "chatRooms": {
       "$roomId": {
-        ".read": "auth != null && (data.child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
-        ".write": "auth != null && (data.child('participants').child(auth.uid).val() === true || newData.child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
-
-        ".indexOn": ["timestamp"],
-
+        ".read": "auth != null && data.child('participants').child(auth.uid).val() === true",
+        ".write": "auth != null && (data.child('participants').child(auth.uid).val() === true || (!data.exists() && newData.child('participants').child(auth.uid).val() === true))",
+        ".indexOn": [
+          "timestamp"
+        ],
+        "participants": {
+          ".validate": "newData.hasChildren([auth.uid])"
+        },
         "messages": {
           "$messageId": {
-            ".read": "auth != null && (root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
-            ".write": "auth != null && ((root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || newData.parent().parent().child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor') && newData.child('senderId').val() === auth.uid)",
-            ".validate": "newData.hasChildren(['senderId', 'text', 'timestamp'])"
+            ".read": "auth != null && root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true",
+            ".write": "auth != null && root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true && newData.child('senderId').val() === auth.uid",
+            ".validate": "newData.hasChildren(['senderId', 'text', 'timestamp']) && newData.child('senderId').isString() && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 5000 && newData.child('timestamp').isNumber()"
           }
         }
       }

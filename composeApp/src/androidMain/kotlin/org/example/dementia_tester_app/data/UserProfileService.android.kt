@@ -1076,6 +1076,8 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
 
         database
             .child(dbPath)
+            .orderByChild("userType")
+            .equalTo(UserType.DOCTOR.value)
             .get()
             .addOnSuccessListener { snapshot ->
                 try {
