@@ -385,6 +385,7 @@ fun Chat() {
             roomId = roomId,
             onBack = {
                 selectedChat = null
+                refreshChats()
             },
             onMessageSent = { chatId, message ->
                 updateLastMessage(chatId = chatId, newMessage = message)
