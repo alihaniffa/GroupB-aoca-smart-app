@@ -1059,6 +1059,7 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
     /**
      * Get all doctor profiles.
      */
+    @Suppress("NewApi")
     actual override fun getAllDoctors(
         callback: (DatabaseResult<List<UserProfile>>) -> Unit
     ) {
@@ -1263,10 +1264,9 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
                          * CaregiverPatients mapping.
                          */
                         val previousCaregiverId =
-                            patientData
-                                ?.get(
-                                    "assignedCaregiverId"
-                                )
+                            patientData[
+                                "assignedCaregiverId"
+                            ]
                                 ?.toString()
                                 .orEmpty()
 
