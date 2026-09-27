@@ -51,7 +51,7 @@ It provides cognitive assessments, routine daily reminders, appointment booking,
 The application employs a decoupled **Clean Architecture** pattern across multiplatform layers:
 
 * **Target SDKs:** Android `compileSdk: 36`, `targetSdk: 36` (Android 16), `minSdk: 24` | iOS 16+.
-* **Version:** `4.2` (`versionCode: 6`).
+* **Version:** `4.3` (`versionCode: 7`).
 * **UI Layer:** Compose Multiplatform (Material 3).
 * **Domain Layer:** Decoupled service interfaces (`AuthServiceInterface`, `UserSettingsServiceInterface`, `ActivityServiceInterface`, `UserProfileService`).
 * **Test Doubles:** Configurable in-memory fakes (`FakeAuthService`, `FakeUserSettingsService`, `FakeActivityService`, `FakeUserProfileService`) for sub-second, deterministic offline test execution.

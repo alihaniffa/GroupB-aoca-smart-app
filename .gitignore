@@ -30,3 +30,7 @@ functions/node_modules/
 .env
 *.pem
 
+
+# Personal submission documents
+PROJECT_DIARY_AND_REFLECTION.*
+.~lock.PROJECT_DIARY_AND_REFLECTION.*
