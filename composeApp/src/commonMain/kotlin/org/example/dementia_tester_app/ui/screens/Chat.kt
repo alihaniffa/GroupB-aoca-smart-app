@@ -51,6 +51,52 @@ fun getChatRoomId(userId1: String, userId2: String): String {
     return "room_${sorted[0]}_${sorted[1]}"
 }
 
+fun formatDoctorName(rawName: String): String {
+    val trimmed = rawName.trim()
+    val clean = when {
+        trimmed.startsWith("Dr.", ignoreCase = true) -> trimmed.substring(3).trim()
+        trimmed.startsWith("Dr ", ignoreCase = true) -> trimmed.substring(3).trim()
+        trimmed.equals("Assigned Doctor", ignoreCase = true) -> ""
+        else -> trimmed
+    }
+    val fallback = clean.ifBlank { "Doctor" }
+    val capitalized = fallback.split(" ").filter { it.isNotBlank() }.joinToString(" ") { word ->
+        word.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase() else c.toString() }
+    }
+    return "Dr. $capitalized"
+}
+
+fun getContactDisplayName(contact: UserProfile): String {
+    return when (contact.userType) {
+        UserType.DOCTOR -> {
+            val raw = contact.name.trim().ifBlank {
+                contact.email.trim().substringBefore("@")
+            }
+            formatDoctorName(raw)
+        }
+        UserType.CAREGIVER -> {
+            val raw = contact.name.trim().ifBlank {
+                contact.email.trim().substringBefore("@").ifBlank {
+                    "Caregiver"
+                }
+            }
+            raw.split(" ").filter { it.isNotBlank() }.joinToString(" ") { word ->
+                word.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase() else c.toString() }
+            }
+        }
+        UserType.USER -> {
+            val raw = contact.name.trim().ifBlank {
+                contact.email.trim().substringBefore("@").ifBlank {
+                    "Patient ${contact.userId.take(6)}"
+                }
+            }
+            raw.split(" ").filter { it.isNotBlank() }.joinToString(" ") { word ->
+                word.replaceFirstChar { c -> if (c.isLowerCase()) c.titlecase() else c.toString() }
+            }
+        }
+    }
+}
+
 private val sessionChats = mutableStateListOf<ChatItem>()
 
 fun clearChatSessionState() {
@@ -97,22 +143,7 @@ fun Chat() {
                         UserType.CAREGIVER -> "Caregiver"
                         UserType.USER -> "Patient"
                     }
-                    val displayName = when {
-                        contact.userId == currentProfile.assignedDoctorId && contact.name.isNotBlank() && contact.name != "Doctor" && contact.name != "Assigned Doctor" ->
-                            contact.name.trim()
-                        contact.userId == currentProfile.assignedDoctorId ->
-                            "Assigned Doctor"
-                        contact.userId == currentProfile.assignedCaregiverId && contact.name.isNotBlank() && contact.name != "Caregiver" && contact.name != "Assigned Caregiver" ->
-                            contact.name.trim()
-                        contact.userId == currentProfile.assignedCaregiverId ->
-                            "Assigned Caregiver"
-                        contact.name.isNotBlank() ->
-                            contact.name.trim()
-                        contact.email.isNotBlank() ->
-                            contact.email.trim().substringBefore("@")
-                        else ->
-                            "User ${contact.userId.take(6)}"
-                    }
+                    val displayName = getContactDisplayName(contact)
 
                     val existingIndex = chats.indexOfFirst { it.id == contact.userId }
                     if (existingIndex == -1) {
@@ -193,55 +224,57 @@ fun Chat() {
                     val assignedDocId = currentProfile.assignedDoctorId.trim()
                     val assignedCaregiverId = currentProfile.assignedCaregiverId.trim()
 
-                    // Always add assigned doctor immediately so it is always accessible to the patient
-                    if (assignedDocId.isNotBlank()) {
-                        patientContacts.add(
-                            UserProfile(
-                                userId = assignedDocId,
-                                name = "Assigned Doctor",
-                                userType = UserType.DOCTOR
-                            )
-                        )
-                    }
-
-                    // Always add assigned caregiver immediately if present
-                    if (assignedCaregiverId.isNotBlank()) {
-                        patientContacts.add(
-                            UserProfile(
-                                userId = assignedCaregiverId,
-                                name = "Assigned Caregiver",
-                                userType = UserType.CAREGIVER
-                            )
-                        )
-                    }
-
-                    // Immediately populate contacts so patient never experiences empty state
-                    handleContacts(patientContacts.toList())
-
-                    // Query assigned doctor profile to obtain doctor name and details
+                    // Query assigned doctor profile to obtain doctor full name and details
                     if (assignedDocId.isNotBlank()) {
                         userProfileService.getUserProfile(assignedDocId) { docResult ->
-                            if (docResult is DatabaseResult.Success) {
-                                val idx = patientContacts.indexOfFirst { it.userId == assignedDocId }
-                                if (idx != -1) {
-                                    patientContacts[idx] = docResult.data
-                                } else {
-                                    patientContacts.add(docResult.data)
-                                }
+                            val docProfile = if (docResult is DatabaseResult.Success) {
+                                docResult.data
+                            } else {
+                                UserProfile(
+                                    userId = assignedDocId,
+                                    name = "",
+                                    userType = UserType.DOCTOR
+                                )
                             }
+                            val idx = patientContacts.indexOfFirst { it.userId == assignedDocId }
+                            if (idx != -1) {
+                                patientContacts[idx] = docProfile
+                            } else {
+                                patientContacts.add(0, docProfile)
+                            }
+                            handleContacts(patientContacts.toList())
+
                             userProfileService.getAllDoctors { doctorsResult ->
                                 if (doctorsResult is DatabaseResult.Success) {
-                                    patientContacts.addAll(doctorsResult.data)
+                                    doctorsResult.data.forEach { doc ->
+                                        if (doc.userId != assignedDocId && patientContacts.none { it.userId == doc.userId }) {
+                                            patientContacts.add(doc)
+                                        }
+                                    }
+                                    handleContacts(patientContacts.toList())
                                 }
-                                handleContacts(patientContacts)
                             }
                         }
                     } else {
                         userProfileService.getAllDoctors { doctorsResult ->
                             if (doctorsResult is DatabaseResult.Success) {
                                 patientContacts.addAll(doctorsResult.data)
+                                handleContacts(patientContacts.toList())
                             }
-                            handleContacts(patientContacts)
+                        }
+                    }
+
+                    if (assignedCaregiverId.isNotBlank()) {
+                        userProfileService.getUserProfile(assignedCaregiverId) { cgResult ->
+                            if (cgResult is DatabaseResult.Success) {
+                                val idx = patientContacts.indexOfFirst { it.userId == assignedCaregiverId }
+                                if (idx != -1) {
+                                    patientContacts[idx] = cgResult.data
+                                } else {
+                                    patientContacts.add(cgResult.data)
+                                }
+                                handleContacts(patientContacts.toList())
+                            }
                         }
                     }
                 }
@@ -276,11 +309,12 @@ fun Chat() {
             chats[chatIndex] = chats[chatIndex].copy(unreadCount = 0)
         }
 
+        val displayChat = if (chatIndex != -1) chats[chatIndex] else currentChat
         val currentUserId = chatService.getCurrentUserId() ?: "anonymous_user"
-        val roomId = getChatRoomId(currentUserId, currentChat.id)
+        val roomId = getChatRoomId(currentUserId, displayChat.id)
 
         ChatConversationScreen(
-            chat = currentChat,
+            chat = displayChat,
             roomId = roomId,
             onBack = {
                 selectedChat = null
@@ -390,11 +424,7 @@ fun Chat() {
                                     UserType.CAREGIVER -> "Caregiver"
                                     UserType.USER -> "Patient"
                                 }
-                                val displayName = contact.name.trim().ifBlank {
-                                    contact.email.trim().substringBefore("@").ifBlank {
-                                        "User ${contact.userId.take(6)}"
-                                    }
-                                }
+                                val displayName = getContactDisplayName(contact)
 
                                 Row(
                                     modifier = Modifier
@@ -669,8 +699,13 @@ fun ChatConversationScreen(
 
                 Column(modifier = Modifier.padding(start = 8.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
+                        val headerName = if (chat.role.equals("Doctor", ignoreCase = true)) {
+                            formatDoctorName(chat.name)
+                        } else {
+                            chat.name
+                        }
                         Text(
-                            text = chat.name,
+                            text = headerName,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
