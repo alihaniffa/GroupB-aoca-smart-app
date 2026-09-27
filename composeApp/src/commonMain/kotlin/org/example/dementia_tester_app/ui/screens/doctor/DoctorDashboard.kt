@@ -3,9 +3,13 @@ package org.example.dementia_tester_app.ui.screens.doctor
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,8 +44,8 @@ import org.example.dementia_tester_app.ui.components.LoadingSpinner
  * Current project implementation:
  * - DOCTOR also acts as ADMIN.
  * - Doctors only see patients assigned to them.
- * - Doctors can assign currently unassigned patients to themselves.
- * - Doctors/admins can assign caregivers to patients.
+ * - Doctors can assign currently unassigned patients to themselves in the Assignments tab.
+ * - Doctors/admins can assign caregivers to patients in the Assignments tab.
  */
 @Composable
 fun DoctorDashboard() {
@@ -49,7 +53,8 @@ fun DoctorDashboard() {
     val menuItems = listOf(
         "View",
         "Compare",
-        "Games"
+        "Games",
+        "Assignments"
     )
 
     var selectedMenuItem by remember {
@@ -437,7 +442,7 @@ fun DoctorDashboard() {
     ) {
 
         /*
-         * Existing doctor dashboard menu.
+         * Existing doctor dashboard menu with Assignments tab.
          */
         HorizontalMenu(
             menuItems =
@@ -454,603 +459,7 @@ fun DoctorDashboard() {
         )
 
         /*
-         * Doctor -> Patient assignment.
-         */
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            colors =
-                CardDefaults.cardColors(
-                    containerColor =
-                        MaterialTheme
-                            .colorScheme
-                            .surfaceVariant
-                )
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement =
-                    Arrangement.spacedBy(
-                        12.dp
-                    )
-            ) {
-
-                Text(
-                    text =
-                        "Assign Patient",
-                    style =
-                        MaterialTheme
-                            .typography
-                            .titleMedium,
-                    fontWeight =
-                        FontWeight.Bold
-                )
-
-                Text(
-                    text =
-                        "Select an unassigned patient to add them to your patient list.",
-                    style =
-                        MaterialTheme
-                            .typography
-                            .bodyMedium
-                )
-
-                if (
-                    unassignedPatients.isEmpty()
-                ) {
-
-                    Text(
-                        text =
-                            "There are currently no unassigned patients.",
-                        color =
-                            MaterialTheme
-                                .colorScheme
-                                .onSurfaceVariant
-                    )
-
-                } else {
-
-                    Box(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                    ) {
-
-                        OutlinedButton(
-                            onClick = {
-
-                                assignmentMenuExpanded =
-                                    true
-                            },
-                            modifier =
-                                Modifier.fillMaxWidth()
-                        ) {
-
-                            Text(
-                                text =
-                                    selectedUnassignedPatient
-                                        ?.let {
-                                            profileLabel(it)
-                                        }
-                                        ?: "Select patient"
-                            )
-                        }
-
-                        DropdownMenu(
-                            expanded =
-                                assignmentMenuExpanded,
-                            onDismissRequest = {
-
-                                assignmentMenuExpanded =
-                                    false
-                            }
-                        ) {
-
-                            unassignedPatients
-                                .forEach { patient ->
-
-                                    DropdownMenuItem(
-                                        text = {
-
-                                            Text(
-                                                profileLabel(
-                                                    patient
-                                                )
-                                            )
-                                        },
-                                        onClick = {
-
-                                            selectedUnassignedPatient =
-                                                patient
-
-                                            assignmentMenuExpanded =
-                                                false
-
-                                            assignmentMessage =
-                                                null
-                                        }
-                                    )
-                                }
-                        }
-                    }
-
-                    Button(
-                        onClick = {
-
-                            val patient =
-                                selectedUnassignedPatient
-                                    ?: return@Button
-
-                            isAssigning =
-                                true
-
-                            assignmentMessage =
-                                null
-
-                            userProfileService
-                                .assignPatientToCurrentDoctor(
-                                    patientId =
-                                        patient.userId
-                                ) { result ->
-
-                                    isAssigning =
-                                        false
-
-                                    when (result) {
-
-                                        is DatabaseResult.Success -> {
-
-                                            assignmentMessage =
-                                                "${profileLabel(patient)} assigned successfully."
-
-                                            selectedUnassignedPatient =
-                                                null
-
-                                            refreshDashboard()
-                                        }
-
-                                        is DatabaseResult.Error -> {
-
-                                            assignmentMessage =
-                                                "Assignment failed: ${result.message}"
-                                        }
-                                    }
-                                }
-                        },
-                        enabled =
-                            selectedUnassignedPatient != null &&
-                                    !isAssigning,
-                        modifier =
-                            Modifier.fillMaxWidth()
-                    ) {
-
-                        if (
-                            isAssigning
-                        ) {
-
-                            Text(
-                                "Assigning..."
-                            )
-
-                        } else {
-
-                            Text(
-                                "Assign Patient"
-                            )
-                        }
-                    }
-                }
-
-                assignmentMessage
-                    ?.let { message ->
-
-                        val isError =
-                            message.startsWith(
-                                "Assignment failed"
-                            ) ||
-                                    message.startsWith(
-                                        "Unable"
-                                    )
-
-                        Text(
-                            text =
-                                message,
-                            color =
-                                if (
-                                    isError
-                                ) {
-
-                                    Color.Red
-
-                                } else {
-
-                                    Color(
-                                        0xFF388E3C
-                                    )
-                                },
-                            modifier =
-                                Modifier.fillMaxWidth(),
-                            textAlign =
-                                TextAlign.Center
-                        )
-                    }
-            }
-        }
-
-        /*
-         * Doctor/Admin -> Caregiver assignment.
-         *
-         * The doctor selects one of their
-         * patients and then selects a caregiver.
-         */
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
-            colors =
-                CardDefaults.cardColors(
-                    containerColor =
-                        MaterialTheme
-                            .colorScheme
-                            .surfaceVariant
-                )
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement =
-                    Arrangement.spacedBy(
-                        12.dp
-                    )
-            ) {
-
-                Text(
-                    text =
-                        "Assign Caregiver",
-                    style =
-                        MaterialTheme
-                            .typography
-                            .titleMedium,
-                    fontWeight =
-                        FontWeight.Bold
-                )
-
-                Text(
-                    text =
-                        "Select one of your patients and assign a caregiver to support them.",
-                    style =
-                        MaterialTheme
-                            .typography
-                            .bodyMedium
-                )
-
-                /*
-                 * Patient selector.
-                 */
-                Text(
-                    text =
-                        "Patient",
-                    style =
-                        MaterialTheme
-                            .typography
-                            .labelLarge,
-                    fontWeight =
-                        FontWeight.Bold
-                )
-
-                if (
-                    userProfiles.isEmpty()
-                ) {
-
-                    Text(
-                        text =
-                            "You do not currently have any assigned patients.",
-                        color =
-                            MaterialTheme
-                                .colorScheme
-                                .onSurfaceVariant
-                    )
-
-                } else {
-
-                    Box(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                    ) {
-
-                        OutlinedButton(
-                            onClick = {
-
-                                caregiverPatientMenuExpanded =
-                                    true
-                            },
-                            modifier =
-                                Modifier.fillMaxWidth()
-                        ) {
-
-                            Text(
-                                text =
-                                    selectedCaregiverPatient
-                                        ?.let {
-                                            profileLabel(it)
-                                        }
-                                        ?: "Select patient"
-                            )
-                        }
-
-                        DropdownMenu(
-                            expanded =
-                                caregiverPatientMenuExpanded,
-                            onDismissRequest = {
-
-                                caregiverPatientMenuExpanded =
-                                    false
-                            }
-                        ) {
-
-                            userProfiles
-                                .forEach { patient ->
-
-                                    DropdownMenuItem(
-                                        text = {
-
-                                            Text(
-                                                profileLabel(
-                                                    patient
-                                                )
-                                            )
-                                        },
-                                        onClick = {
-
-                                            selectedCaregiverPatient =
-                                                patient
-
-                                            caregiverPatientMenuExpanded =
-                                                false
-
-                                            caregiverAssignmentMessage =
-                                                null
-                                        }
-                                    )
-                                }
-                        }
-                    }
-                }
-
-                /*
-                 * Caregiver selector.
-                 */
-                Text(
-                    text =
-                        "Caregiver",
-                    style =
-                        MaterialTheme
-                            .typography
-                            .labelLarge,
-                    fontWeight =
-                        FontWeight.Bold
-                )
-
-                caregiverLoadMessage
-                    ?.let { message ->
-
-                        Text(
-                            text =
-                                message,
-                            color =
-                                Color.Red
-                        )
-                    }
-
-                if (
-                    caregivers.isEmpty() &&
-                    caregiverLoadMessage == null
-                ) {
-
-                    Text(
-                        text =
-                            "No caregiver accounts are currently available.",
-                        color =
-                            MaterialTheme
-                                .colorScheme
-                                .onSurfaceVariant
-                    )
-
-                } else if (
-                    caregivers.isNotEmpty()
-                ) {
-
-                    Box(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                    ) {
-
-                        OutlinedButton(
-                            onClick = {
-
-                                caregiverMenuExpanded =
-                                    true
-                            },
-                            modifier =
-                                Modifier.fillMaxWidth()
-                        ) {
-
-                            Text(
-                                text =
-                                    selectedCaregiver
-                                        ?.let {
-                                            profileLabel(it)
-                                        }
-                                        ?: "Select caregiver"
-                            )
-                        }
-
-                        DropdownMenu(
-                            expanded =
-                                caregiverMenuExpanded,
-                            onDismissRequest = {
-
-                                caregiverMenuExpanded =
-                                    false
-                            }
-                        ) {
-
-                            caregivers
-                                .forEach { caregiver ->
-
-                                    DropdownMenuItem(
-                                        text = {
-
-                                            Text(
-                                                profileLabel(
-                                                    caregiver
-                                                )
-                                            )
-                                        },
-                                        onClick = {
-
-                                            selectedCaregiver =
-                                                caregiver
-
-                                            caregiverMenuExpanded =
-                                                false
-
-                                            caregiverAssignmentMessage =
-                                                null
-                                        }
-                                    )
-                                }
-                        }
-                    }
-                }
-
-                /*
-                 * Assignment button.
-                 */
-                Button(
-                    onClick = {
-
-                        val patient =
-                            selectedCaregiverPatient
-                                ?: return@Button
-
-                        val caregiver =
-                            selectedCaregiver
-                                ?: return@Button
-
-                        isAssigningCaregiver =
-                            true
-
-                        caregiverAssignmentMessage =
-                            null
-
-                        userProfileService
-                            .assignCaregiverToPatient(
-                                patientId =
-                                    patient.userId,
-                                caregiverId =
-                                    caregiver.userId
-                            ) { result ->
-
-                                isAssigningCaregiver =
-                                    false
-
-                                when (result) {
-
-                                    is DatabaseResult.Success -> {
-
-                                        caregiverAssignmentMessage =
-                                            "${profileLabel(caregiver)} assigned to ${profileLabel(patient)} successfully."
-
-                                        /*
-                                         * Clear selections so another
-                                         * assignment can be made.
-                                         */
-                                        selectedCaregiverPatient =
-                                            null
-
-                                        selectedCaregiver =
-                                            null
-
-                                        /*
-                                         * Reload profiles so the latest
-                                         * assignedCaregiverId is available.
-                                         */
-                                        refreshDashboard()
-                                    }
-
-                                    is DatabaseResult.Error -> {
-
-                                        caregiverAssignmentMessage =
-                                            "Caregiver assignment failed: ${result.message}"
-                                    }
-                                }
-                            }
-                    },
-                    enabled =
-                        selectedCaregiverPatient != null &&
-                                selectedCaregiver != null &&
-                                !isAssigningCaregiver,
-                    modifier =
-                        Modifier.fillMaxWidth()
-                ) {
-
-                    if (
-                        isAssigningCaregiver
-                    ) {
-
-                        Text(
-                            "Assigning caregiver..."
-                        )
-
-                    } else {
-
-                        Text(
-                            "Assign Caregiver"
-                        )
-                    }
-                }
-
-                caregiverAssignmentMessage
-                    ?.let { message ->
-
-                        val isError =
-                            message.startsWith(
-                                "Caregiver assignment failed"
-                            )
-
-                        Text(
-                            text =
-                                message,
-                            color =
-                                if (
-                                    isError
-                                ) {
-
-                                    Color.Red
-
-                                } else {
-
-                                    Color(
-                                        0xFF388E3C
-                                    )
-                                },
-                            modifier =
-                                Modifier.fillMaxWidth(),
-                            textAlign =
-                                TextAlign.Center
-                        )
-                    }
-            }
-        }
-
-        /*
-         * Existing doctor dashboard content.
+         * Doctor dashboard content.
          */
         Box(
             modifier = Modifier
@@ -1058,7 +467,7 @@ fun DoctorDashboard() {
                 .weight(1f)
                 .padding(top = 16.dp),
             contentAlignment =
-                Alignment.Center
+                Alignment.TopCenter
         ) {
 
             when {
@@ -1066,6 +475,81 @@ fun DoctorDashboard() {
                 isLoading -> {
 
                     LoadingSpinner()
+                }
+
+                selectedMenuItem == "Assignments" -> {
+
+                    DoctorAssignmentsScreen(
+                        unassignedPatients = unassignedPatients,
+                        selectedUnassignedPatient = selectedUnassignedPatient,
+                        assignmentMenuExpanded = assignmentMenuExpanded,
+                        onAssignmentMenuExpandedChange = { assignmentMenuExpanded = it },
+                        onSelectUnassignedPatient = { selectedUnassignedPatient = it },
+                        isAssigning = isAssigning,
+                        assignmentMessage = assignmentMessage,
+                        onClearAssignmentMessage = { assignmentMessage = null },
+                        onAssignPatient = { patient ->
+                            isAssigning = true
+                            assignmentMessage = null
+
+                            userProfileService.assignPatientToCurrentDoctor(
+                                patientId = patient.userId
+                            ) { result ->
+                                isAssigning = false
+                                when (result) {
+                                    is DatabaseResult.Success -> {
+                                        assignmentMessage =
+                                            "${profileLabel(patient)} assigned successfully."
+                                        selectedUnassignedPatient = null
+                                        refreshDashboard()
+                                    }
+                                    is DatabaseResult.Error -> {
+                                        assignmentMessage =
+                                            "Assignment failed: ${result.message}"
+                                    }
+                                }
+                            }
+                        },
+                        userProfiles = userProfiles,
+                        selectedCaregiverPatient = selectedCaregiverPatient,
+                        caregiverPatientMenuExpanded = caregiverPatientMenuExpanded,
+                        onCaregiverPatientMenuExpandedChange = { caregiverPatientMenuExpanded = it },
+                        onSelectCaregiverPatient = { selectedCaregiverPatient = it },
+                        caregivers = caregivers,
+                        selectedCaregiver = selectedCaregiver,
+                        caregiverMenuExpanded = caregiverMenuExpanded,
+                        onCaregiverMenuExpandedChange = { caregiverMenuExpanded = it },
+                        onSelectCaregiver = { selectedCaregiver = it },
+                        caregiverLoadMessage = caregiverLoadMessage,
+                        isAssigningCaregiver = isAssigningCaregiver,
+                        caregiverAssignmentMessage = caregiverAssignmentMessage,
+                        onClearCaregiverAssignmentMessage = { caregiverAssignmentMessage = null },
+                        onAssignCaregiver = { patient, caregiver ->
+                            isAssigningCaregiver = true
+                            caregiverAssignmentMessage = null
+
+                            userProfileService.assignCaregiverToPatient(
+                                patientId = patient.userId,
+                                caregiverId = caregiver.userId
+                            ) { result ->
+                                isAssigningCaregiver = false
+                                when (result) {
+                                    is DatabaseResult.Success -> {
+                                        caregiverAssignmentMessage =
+                                            "${profileLabel(caregiver)} assigned to ${profileLabel(patient)} successfully."
+                                        selectedCaregiverPatient = null
+                                        selectedCaregiver = null
+                                        refreshDashboard()
+                                    }
+                                    is DatabaseResult.Error -> {
+                                        caregiverAssignmentMessage =
+                                            "Caregiver assignment failed: ${result.message}"
+                                    }
+                                }
+                            }
+                        },
+                        profileLabel = { profileLabel(it) }
+                    )
                 }
 
                 errorMessage != null -> {
@@ -1086,16 +570,28 @@ fun DoctorDashboard() {
 
                 userProfiles.isEmpty() -> {
 
-                    Text(
-                        text =
-                            "No patients are currently assigned to you.",
-                        textAlign =
-                            TextAlign.Center,
-                        modifier =
-                            Modifier.padding(
-                                16.dp
-                            )
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text =
+                                "No patients are currently assigned to you.",
+                            textAlign =
+                                TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text =
+                                "Go to the Assignments tab to assign patients to your list.",
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
 
                 else -> {
@@ -1131,5 +627,289 @@ fun DoctorDashboard() {
                 }
             }
         }
+    }
+}
+
+/**
+ * Assignments tab screen containing Doctor-Patient and Caregiver-Patient assignment cards.
+ */
+@Composable
+private fun DoctorAssignmentsScreen(
+    unassignedPatients: List<UserProfile>,
+    selectedUnassignedPatient: UserProfile?,
+    assignmentMenuExpanded: Boolean,
+    onAssignmentMenuExpandedChange: (Boolean) -> Unit,
+    onSelectUnassignedPatient: (UserProfile) -> Unit,
+    isAssigning: Boolean,
+    assignmentMessage: String?,
+    onClearAssignmentMessage: () -> Unit,
+    onAssignPatient: (UserProfile) -> Unit,
+    userProfiles: List<UserProfile>,
+    selectedCaregiverPatient: UserProfile?,
+    caregiverPatientMenuExpanded: Boolean,
+    onCaregiverPatientMenuExpandedChange: (Boolean) -> Unit,
+    onSelectCaregiverPatient: (UserProfile) -> Unit,
+    caregivers: List<UserProfile>,
+    selectedCaregiver: UserProfile?,
+    caregiverMenuExpanded: Boolean,
+    onCaregiverMenuExpandedChange: (Boolean) -> Unit,
+    onSelectCaregiver: (UserProfile) -> Unit,
+    caregiverLoadMessage: String?,
+    isAssigningCaregiver: Boolean,
+    caregiverAssignmentMessage: String?,
+    onClearCaregiverAssignmentMessage: () -> Unit,
+    onAssignCaregiver: (UserProfile, UserProfile) -> Unit,
+    profileLabel: (UserProfile) -> String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+
+        /*
+         * Doctor -> Patient assignment.
+         */
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Assign Patient",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "Select an unassigned patient to add them to your patient list.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                if (unassignedPatients.isEmpty()) {
+                    Text(
+                        text = "There are currently no unassigned patients.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedButton(
+                            onClick = { onAssignmentMenuExpandedChange(true) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = selectedUnassignedPatient?.let { profileLabel(it) }
+                                    ?: "Select patient"
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = assignmentMenuExpanded,
+                            onDismissRequest = { onAssignmentMenuExpandedChange(false) }
+                        ) {
+                            unassignedPatients.forEach { patient ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(profileLabel(patient))
+                                    },
+                                    onClick = {
+                                        onSelectUnassignedPatient(patient)
+                                        onAssignmentMenuExpandedChange(false)
+                                        onClearAssignmentMessage()
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Button(
+                        onClick = {
+                            val patient = selectedUnassignedPatient ?: return@Button
+                            onAssignPatient(patient)
+                        },
+                        enabled = selectedUnassignedPatient != null && !isAssigning,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (isAssigning) {
+                            Text("Assigning...")
+                        } else {
+                            Text("Assign Patient")
+                        }
+                    }
+                }
+
+                assignmentMessage?.let { message ->
+                    val isError = message.startsWith("Assignment failed") ||
+                            message.startsWith("Unable")
+
+                    Text(
+                        text = message,
+                        color = if (isError) Color.Red else Color(0xFF388E3C),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+
+        /*
+         * Doctor/Admin -> Caregiver assignment.
+         */
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Assign Caregiver",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "Select one of your patients and assign a caregiver to support them.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = "Patient",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+
+                if (userProfiles.isEmpty()) {
+                    Text(
+                        text = "You do not currently have any assigned patients.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedButton(
+                            onClick = { onCaregiverPatientMenuExpandedChange(true) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = selectedCaregiverPatient?.let { profileLabel(it) }
+                                    ?: "Select patient"
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = caregiverPatientMenuExpanded,
+                            onDismissRequest = { onCaregiverPatientMenuExpandedChange(false) }
+                        ) {
+                            userProfiles.forEach { patient ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(profileLabel(patient))
+                                    },
+                                    onClick = {
+                                        onSelectCaregiverPatient(patient)
+                                        onCaregiverPatientMenuExpandedChange(false)
+                                        onClearCaregiverAssignmentMessage()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Text(
+                    text = "Caregiver",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+
+                caregiverLoadMessage?.let { message ->
+                    Text(
+                        text = message,
+                        color = Color.Red
+                    )
+                }
+
+                if (caregivers.isEmpty() && caregiverLoadMessage == null) {
+                    Text(
+                        text = "No caregiver accounts are currently available.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else if (caregivers.isNotEmpty()) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedButton(
+                            onClick = { onCaregiverMenuExpandedChange(true) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = selectedCaregiver?.let { profileLabel(it) }
+                                    ?: "Select caregiver"
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = caregiverMenuExpanded,
+                            onDismissRequest = { onCaregiverMenuExpandedChange(false) }
+                        ) {
+                            caregivers.forEach { caregiver ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(profileLabel(caregiver))
+                                    },
+                                    onClick = {
+                                        onSelectCaregiver(caregiver)
+                                        onCaregiverMenuExpandedChange(false)
+                                        onClearCaregiverAssignmentMessage()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        val patient = selectedCaregiverPatient ?: return@Button
+                        val caregiver = selectedCaregiver ?: return@Button
+                        onAssignCaregiver(patient, caregiver)
+                    },
+                    enabled = selectedCaregiverPatient != null &&
+                            selectedCaregiver != null &&
+                            !isAssigningCaregiver,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (isAssigningCaregiver) {
+                        Text("Assigning caregiver...")
+                    } else {
+                        Text("Assign Caregiver")
+                    }
+                }
+
+                caregiverAssignmentMessage?.let { message ->
+                    val isError = message.startsWith("Caregiver assignment failed")
+
+                    Text(
+                        text = message,
+                        color = if (isError) Color.Red else Color(0xFF388E3C),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
