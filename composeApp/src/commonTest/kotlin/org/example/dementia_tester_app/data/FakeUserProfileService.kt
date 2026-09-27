@@ -24,6 +24,31 @@ class FakeUserProfileService : UserProfileServiceInterface {
         }
     }
 
+    override fun getUserProfile(
+        userId: String,
+        callback: (DatabaseResult<UserProfile>) -> Unit
+    ) {
+        if (!shouldSucceed) {
+            callback(
+                DatabaseResult.Error(
+                    errorMessage
+                )
+            )
+            return
+        }
+
+        val profile = storedProfile
+        if (profile != null && profile.userId == userId) {
+            callback(
+                DatabaseResult.Success(profile)
+            )
+        } else {
+            callback(
+                DatabaseResult.Error("Profile not found")
+            )
+        }
+    }
+
     override fun updateUserProfile(
         userProfile: UserProfile,
         callback: (DatabaseResult<Unit>) -> Unit
@@ -217,6 +242,37 @@ class FakeUserProfileService : UserProfileServiceInterface {
         callback(
             DatabaseResult.Success(
                 caregivers
+            )
+        )
+    }
+
+    override fun getAllDoctors(
+        callback: (DatabaseResult<List<UserProfile>>) -> Unit
+    ) {
+        if (!shouldSucceed) {
+            callback(
+                DatabaseResult.Error(
+                    errorMessage
+                )
+            )
+            return
+        }
+
+        val profile = storedProfile
+
+        val doctors =
+            if (
+                profile != null &&
+                profile.userType == UserType.DOCTOR
+            ) {
+                listOf(profile)
+            } else {
+                emptyList()
+            }
+
+        callback(
+            DatabaseResult.Success(
+                doctors
             )
         )
     }

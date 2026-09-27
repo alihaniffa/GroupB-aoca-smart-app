@@ -195,6 +195,85 @@ actual class UserProfileService actual constructor() :
     }
 
     // ------------------------------------------------------------------
+    // getUserProfile
+    // ------------------------------------------------------------------
+
+    actual override fun getUserProfile(
+        userId: String,
+        callback: (DatabaseResult<UserProfile>) -> Unit
+    ) {
+        if (userId.isBlank()) {
+            callback(
+                DatabaseResult.Error(
+                    "User ID cannot be blank"
+                )
+            )
+            return
+        }
+
+        val ref =
+            rootRef()
+                ?.child(dbPath)
+                ?.child(userId)
+
+        if (ref == null) {
+            callback(
+                DatabaseResult.Error(
+                    "Firebase not initialized"
+                )
+            )
+            return
+        }
+
+        FirebaseDatabaseIosHelper.observeValueOnce(
+            query = ref
+        ) { snapshot ->
+
+            if (
+                snapshot == null ||
+                !snapshot.exists()
+            ) {
+                callback(
+                    DatabaseResult.Error(
+                        "Profile not found"
+                    )
+                )
+
+                return@observeValueOnce
+            }
+
+            try {
+                val data =
+                    snapshotToMap(snapshot)
+
+                if (data != null) {
+                    callback(
+                        DatabaseResult.Success(
+                            UserProfile.fromMap(
+                                data,
+                                userId
+                            )
+                        )
+                    )
+                } else {
+                    callback(
+                        DatabaseResult.Error(
+                            "Profile data is empty"
+                        )
+                    )
+                }
+
+            } catch (t: Throwable) {
+                callback(
+                    DatabaseResult.Error(
+                        "Failed to parse user profile: ${t.message}"
+                    )
+                )
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------
     // updateUserProfile
     // ------------------------------------------------------------------
 
@@ -1126,6 +1205,45 @@ actual class UserProfileService actual constructor() :
                 callback(it)
             }
         )
+    }
+
+    // ------------------------------------------------------------------
+    // getAllDoctors
+    // ------------------------------------------------------------------
+
+    actual override fun getAllDoctors(
+        callback: (DatabaseResult<List<UserProfile>>) -> Unit
+    ) {
+        val userId = currentUserId()
+        if (userId == null) {
+            callback(DatabaseResult.Error("No user is signed in"))
+            return
+        }
+
+        val ref = rootRef()?.child(dbPath)?.queryOrderedByChild("userType")?.queryEqualToValue(UserType.DOCTOR.value)
+        if (ref == null) {
+            callback(DatabaseResult.Error("Firebase not initialized"))
+            return
+        }
+
+        FirebaseDatabaseIosHelper.observeValueOnce(query = ref) { snapshot ->
+            try {
+                val doctors = mutableListOf<UserProfile>()
+                snapshotChildren(snapshot).forEach { childSnapshot ->
+                    val data = snapshotToMap(childSnapshot) ?: return@forEach
+                    if (data["userType"] as? String != UserType.DOCTOR.value) return@forEach
+                    doctors.add(
+                        UserProfile.fromMap(
+                            data,
+                            childSnapshot.key() ?: ""
+                        )
+                    )
+                }
+                callback(DatabaseResult.Success(doctors))
+            } catch (t: Throwable) {
+                callback(DatabaseResult.Error("Failed to parse doctors: " + t.message))
+            }
+        }
     }
 
     // ------------------------------------------------------------------

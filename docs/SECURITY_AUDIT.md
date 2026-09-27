@@ -70,3 +70,43 @@ direction, 13/08), but worth revisiting if admin/doctor scope narrows in a futur
 iteration.
 
 **Auditor:** Ali
+
+---
+
+## 2026-09-27 — Security Rules Hardening & Unintended Access Mitigation
+
+**Trigger:** Security review and user request to ensure database rules are robust and secure, blocking unintended access.
+
+**Scope checked:**
+- `UserProfiles` collection read & individual profile scoping
+- `UserProfiles/{uid}` privilege escalation prevention & assignment tampering protection
+- `UserSettings` privacy scoping
+- `chatRooms` privacy scoping & participant-only message validation
+- Role separation for `doctor`, `caregiver`, and `user` across all nodes
+
+**Findings and Fixes:**
+1. **Critical PII Data Leakage (`UserProfiles/.read: "auth != null"`):**
+   - *Issue:* Root `UserProfiles` node had `.read: "auth != null"`, allowing any signed-in patient or malicious authenticated user to dump all user records (full names, emails, phone numbers, home addresses, emergency contacts) and completely bypassing child `$uid` rules.
+   - *Fix:* Restricted `UserProfiles/.read` strictly to doctors (`root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'`) or indexed public doctor discovery queries (`query.orderByChild === 'userType' && query.equalTo === 'doctor'`). Regular patients and caregivers cannot dump the user directory and can only read individual profiles permitted under `$uid`.
+2. **Privilege Escalation on `UserProfiles/{uid}`:**
+   - *Issue:* Users could update their own profile and change `userType` to `'doctor'`, granting themselves full clinical data access.
+   - *Fix:* Added `.validate` rule prohibiting existing users from altering their `userType` (`!data.exists() || data.child('userType').val() === newData.child('userType').val() || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor'`). Also validated that `userType` must be one of `'user'`, `'doctor'`, or `'caregiver'`.
+3. **Patient Assignment Tampering:**
+   - *Issue:* A user writing to `$uid` could arbitrarily modify `assignedDoctorId` or `assignedCaregiverId`.
+   - *Fix:* Added `.validate` rules to `assignedDoctorId` and `assignedCaregiverId` enforcing that values cannot be modified on existing profiles unless written by a doctor account. Removed caregiver write permission on `assignedDoctorId`.
+4. **Chat Room Eavesdropping by Doctors:**
+   - *Issue:* `chatRooms` and `messages` allowed any doctor account to read or write to any chat room, even rooms they were not invited to or participating in.
+   - *Fix:* Restricted chat room reads and writes strictly to participating users (`data.child('participants').child(auth.uid).val() === true`). Doctors only have access to rooms where they are legitimate participants.
+5. **Chat Message Payload Abuse & Spoofing:**
+   - *Issue:* Messages did not enforce data types, length limits, or timestamp constraints.
+   - *Fix:* Added validations for string types, non-empty text up to 5,000 characters, valid numeric timestamp, and sender ID match (`newData.child('senderId').val() === auth.uid`).
+6. **UserSettings Exposure:**
+   - *Issue:* `UserSettings` permitted doctors and caregivers to read and write a patient's personal display and device settings.
+   - *Fix:* Scoped `UserSettings` strictly to the account owner (`auth.uid === $uid`).
+7. **CaregiverPatients Data Integrity:**
+   - *Issue:* Caregiver-patient mappings lacked value validation.
+   - *Fix:* Added `.validate` ensuring child values are boolean (`true`) or null on removal.
+
+**Result after fixes:** Verified robust. All unintended data dump vectors, privilege escalations, unauthorized assignment alterations, and eavesdropping paths are blocked.
+
+**Auditor:** Pierre

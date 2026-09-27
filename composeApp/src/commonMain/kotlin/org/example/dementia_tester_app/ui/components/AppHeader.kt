@@ -184,6 +184,7 @@ fun AppMenuContent(
         val items = if (userType == UserType.DOCTOR) {
             listOf(
                 "📊" to "Dashboard",
+                "💬" to "Chat",
                 "📞" to "Contact",
                 "⚙️" to "Settings",
                 "❓" to "Help"

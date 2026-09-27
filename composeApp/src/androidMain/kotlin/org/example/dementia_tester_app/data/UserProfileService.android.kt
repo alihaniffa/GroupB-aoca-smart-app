@@ -90,6 +90,75 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
     }
 
     /**
+     * Get a specific user profile by userId.
+     */
+    actual override fun getUserProfile(
+        userId: String,
+        callback: (DatabaseResult<UserProfile>) -> Unit
+    ) {
+        if (userId.isBlank()) {
+            callback(
+                DatabaseResult.Error(
+                    "User ID cannot be blank"
+                )
+            )
+            return
+        }
+
+        database
+            .child(dbPath)
+            .child(userId)
+            .get()
+            .addOnSuccessListener { snapshot ->
+
+                if (!snapshot.exists()) {
+                    callback(
+                        DatabaseResult.Error(
+                            "Profile not found"
+                        )
+                    )
+                    return@addOnSuccessListener
+                }
+
+                try {
+                    val data =
+                        snapshot.value as? Map<*, *>
+
+                    if (data != null) {
+                        callback(
+                            DatabaseResult.Success(
+                                UserProfile.fromMap(
+                                    data,
+                                    userId
+                                )
+                            )
+                        )
+                    } else {
+                        callback(
+                            DatabaseResult.Error(
+                                "Profile data is empty"
+                            )
+                        )
+                    }
+
+                } catch (e: Exception) {
+                    callback(
+                        DatabaseResult.Error(
+                            "Failed to parse user profile: ${e.message}"
+                        )
+                    )
+                }
+            }
+            .addOnFailureListener { e ->
+                callback(
+                    DatabaseResult.Error(
+                        "Failed to get user profile: ${e.message}"
+                    )
+                )
+            }
+    }
+
+    /**
      * Create or update the current signed-in user's profile.
      */
     actual override fun updateUserProfile(
@@ -988,6 +1057,80 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
     }
 
     /**
+     * Get all doctor profiles.
+     */
+    @Suppress("NewApi")
+    actual override fun getAllDoctors(
+        callback: (DatabaseResult<List<UserProfile>>) -> Unit
+    ) {
+        val currentUserId =
+            auth.currentUser?.uid
+
+        if (currentUserId == null) {
+            callback(
+                DatabaseResult.Error(
+                    "No user is signed in"
+                )
+            )
+            return
+        }
+
+        database
+            .child(dbPath)
+            .orderByChild("userType")
+            .equalTo(UserType.DOCTOR.value)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                try {
+                    val doctors =
+                        snapshot.children
+                            .mapNotNull { child ->
+                                val data =
+                                    child.value
+                                            as? Map<*, *>
+                                        ?: return@mapNotNull null
+
+                                val userType =
+                                    data["userType"]
+                                        ?.toString()
+
+                                if (
+                                    userType !=
+                                    UserType.DOCTOR.value
+                                ) {
+                                    return@mapNotNull null
+                                }
+
+                                UserProfile.fromMap(
+                                    data,
+                                    child.key ?: ""
+                                )
+                            }
+
+                    callback(
+                        DatabaseResult.Success(
+                            doctors
+                        )
+                    )
+
+                } catch (e: Exception) {
+                    callback(
+                        DatabaseResult.Error(
+                            "Failed to parse doctors: " + e.message
+                        )
+                    )
+                }
+            }
+            .addOnFailureListener { e ->
+                callback(
+                    DatabaseResult.Error(
+                        "Failed to fetch doctors: " + e.message
+                    )
+                )
+            }
+    }
+
+    /**
      * Assign a caregiver to a patient.
      *
      * Only a doctor/admin can perform this operation.
@@ -1121,10 +1264,9 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
                          * CaregiverPatients mapping.
                          */
                         val previousCaregiverId =
-                            patientData
-                                ?.get(
-                                    "assignedCaregiverId"
-                                )
+                            patientData[
+                                "assignedCaregiverId"
+                            ]
                                 ?.toString()
                                 .orEmpty()
 
