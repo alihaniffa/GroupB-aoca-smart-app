@@ -4,7 +4,7 @@
     ".write": false,
 
     "UserProfiles": {
-      ".read": "auth != null && (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver')",
+      ".read": "auth != null",
 
       ".indexOn": [
         "userType",
@@ -13,7 +13,7 @@
       ],
 
       "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true) || data.child('assignedCaregiverId').val() === auth.uid)",
+        ".read": "auth != null",
 
         ".write": "auth != null && auth.uid === $uid",
 
@@ -116,7 +116,7 @@
         "messages": {
           "$messageId": {
             ".read": "auth != null && (root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
-            ".write": "auth != null && ((root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor') && newData.child('senderId').val() === auth.uid)",
+            ".write": "auth != null && ((root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true || newData.parent().parent().child('participants').child(auth.uid).val() === true || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor') && newData.child('senderId').val() === auth.uid)",
             ".validate": "newData.hasChildren(['senderId', 'text', 'timestamp'])"
           }
         }

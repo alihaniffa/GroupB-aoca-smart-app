@@ -1129,6 +1129,45 @@ actual class UserProfileService actual constructor() :
     }
 
     // ------------------------------------------------------------------
+    // getAllDoctors
+    // ------------------------------------------------------------------
+
+    actual override fun getAllDoctors(
+        callback: (DatabaseResult<List<UserProfile>>) -> Unit
+    ) {
+        val userId = currentUserId()
+        if (userId == null) {
+            callback(DatabaseResult.Error("No user is signed in"))
+            return
+        }
+
+        val ref = rootRef()?.child(dbPath)
+        if (ref == null) {
+            callback(DatabaseResult.Error("Firebase not initialized"))
+            return
+        }
+
+        FirebaseDatabaseIosHelper.observeValueOnce(query = ref) { snapshot ->
+            try {
+                val doctors = mutableListOf<UserProfile>()
+                snapshotChildren(snapshot).forEach { childSnapshot ->
+                    val data = snapshotToMap(childSnapshot) ?: return@forEach
+                    if (data["userType"] as? String != UserType.DOCTOR.value) return@forEach
+                    doctors.add(
+                        UserProfile.fromMap(
+                            data,
+                            childSnapshot.key() ?: ""
+                        )
+                    )
+                }
+                callback(DatabaseResult.Success(doctors))
+            } catch (t: Throwable) {
+                callback(DatabaseResult.Error("Failed to parse doctors: " + t.message))
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------
     // assignCaregiverToPatient
     // ------------------------------------------------------------------
 

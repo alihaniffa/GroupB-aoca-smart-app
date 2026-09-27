@@ -221,6 +221,37 @@ class FakeUserProfileService : UserProfileServiceInterface {
         )
     }
 
+    override fun getAllDoctors(
+        callback: (DatabaseResult<List<UserProfile>>) -> Unit
+    ) {
+        if (!shouldSucceed) {
+            callback(
+                DatabaseResult.Error(
+                    errorMessage
+                )
+            )
+            return
+        }
+
+        val profile = storedProfile
+
+        val doctors =
+            if (
+                profile != null &&
+                profile.userType == UserType.DOCTOR
+            ) {
+                listOf(profile)
+            } else {
+                emptyList()
+            }
+
+        callback(
+            DatabaseResult.Success(
+                doctors
+            )
+        )
+    }
+
     override fun assignCaregiverToPatient(
         patientId: String,
         caregiverId: String,

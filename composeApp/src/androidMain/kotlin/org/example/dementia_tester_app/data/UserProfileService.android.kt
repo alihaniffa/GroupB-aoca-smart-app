@@ -988,6 +988,77 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
     }
 
     /**
+     * Get all doctor profiles.
+     */
+    actual override fun getAllDoctors(
+        callback: (DatabaseResult<List<UserProfile>>) -> Unit
+    ) {
+        val currentUserId =
+            auth.currentUser?.uid
+
+        if (currentUserId == null) {
+            callback(
+                DatabaseResult.Error(
+                    "No user is signed in"
+                )
+            )
+            return
+        }
+
+        database
+            .child(dbPath)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                try {
+                    val doctors =
+                        snapshot.children
+                            .mapNotNull { child ->
+                                val data =
+                                    child.value
+                                            as? Map<*, *>
+                                        ?: return@mapNotNull null
+
+                                val userType =
+                                    data["userType"]
+                                        ?.toString()
+
+                                if (
+                                    userType !=
+                                    UserType.DOCTOR.value
+                                ) {
+                                    return@mapNotNull null
+                                }
+
+                                UserProfile.fromMap(
+                                    data,
+                                    child.key ?: ""
+                                )
+                            }
+
+                    callback(
+                        DatabaseResult.Success(
+                            doctors
+                        )
+                    )
+
+                } catch (e: Exception) {
+                    callback(
+                        DatabaseResult.Error(
+                            "Failed to parse doctors: " + e.message
+                        )
+                    )
+                }
+            }
+            .addOnFailureListener { e ->
+                callback(
+                    DatabaseResult.Error(
+                        "Failed to fetch doctors: " + e.message
+                    )
+                )
+            }
+    }
+
+    /**
      * Assign a caregiver to a patient.
      *
      * Only a doctor/admin can perform this operation.

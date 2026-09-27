@@ -56,6 +56,13 @@ interface UserProfileServiceInterface {
     )
 
     /**
+     * Get all doctor profiles.
+     */
+    fun getAllDoctors(
+        callback: (DatabaseResult<List<UserProfile>>) -> Unit
+    )
+
+    /**
      * Assign a caregiver to a patient.
      *
      * The currently signed-in user must be a doctor/admin.
@@ -135,6 +142,13 @@ expect class UserProfileService() : UserProfileServiceInterface {
      * current user is a doctor/admin before returning them.
      */
     override fun getAllCaregivers(
+        callback: (DatabaseResult<List<UserProfile>>) -> Unit
+    )
+
+    /**
+     * Get all doctor profiles.
+     */
+    override fun getAllDoctors(
         callback: (DatabaseResult<List<UserProfile>>) -> Unit
     )
 
