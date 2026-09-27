@@ -10,7 +10,7 @@
         "assignedCaregiverId"
       ],
       "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || data.child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('assignedDoctorId').val() === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true) || data.child('assignedCaregiverId').val() === auth.uid)",
+        ".read": "auth != null && (auth.uid === $uid || data.child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('assignedDoctorId').val() === $uid || root.child('UserProfiles').child(auth.uid).child('assignedCaregiverId').val() === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true) || data.child('assignedCaregiverId').val() === auth.uid)",
         ".write": "auth != null && (auth.uid === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
         ".validate": "newData.hasChildren(['email', 'userType']) && newData.child('email').isString() && (!data.exists() || data.child('userType').val() === newData.child('userType').val() || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor')",
         "userType": {
@@ -93,13 +93,13 @@
       "$roomId": {
         ".read": "auth != null && data.child('participants').child(auth.uid).val() === true",
         ".write": "auth != null && (data.child('participants').child(auth.uid).val() === true || (!data.exists() && newData.child('participants').child(auth.uid).val() === true))",
-        ".indexOn": [
-          "timestamp"
-        ],
         "participants": {
           ".validate": "newData.hasChildren([auth.uid])"
         },
         "messages": {
+          ".indexOn": [
+            "timestamp"
+          ],
           "$messageId": {
             ".read": "auth != null && root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true",
             ".write": "auth != null && root.child('chatRooms').child($roomId).child('participants').child(auth.uid).val() === true && newData.child('senderId').val() === auth.uid",

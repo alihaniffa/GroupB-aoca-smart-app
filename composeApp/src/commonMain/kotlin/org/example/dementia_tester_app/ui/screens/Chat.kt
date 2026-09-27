@@ -110,6 +110,7 @@ fun Chat() {
     var showContactPicker by remember { mutableStateOf(false) }
     var contactSearchQuery by remember { mutableStateOf("") }
     var isLoadingContacts by remember { mutableStateOf(false) }
+    var currentUserType by remember { mutableStateOf(UserType.USER) }
 
     val chats = sessionChats
     val availableContacts = remember { mutableStateListOf<UserProfile>() }
@@ -128,6 +129,7 @@ fun Chat() {
 
             val currentProfile = profileResult.data
             val userType = currentProfile.userType
+            currentUserType = userType
 
             val handleContacts: (List<UserProfile>) -> Unit = { rawList ->
                 val distinctContacts = rawList
@@ -190,44 +192,107 @@ fun Chat() {
 
             when (userType) {
                 UserType.DOCTOR -> {
+                    // Doctors can only chat to their assigned patients and assigned caregivers
                     val doctorContacts = mutableListOf<UserProfile>()
                     userProfileService.getAllUsers { assignedResult ->
                         if (assignedResult is DatabaseResult.Success) {
-                            doctorContacts.addAll(assignedResult.data)
-                        }
-                        userProfileService.getUnassignedPatients { unassignedResult ->
-                            if (unassignedResult is DatabaseResult.Success) {
-                                doctorContacts.addAll(unassignedResult.data)
-                            }
-                            userProfileService.getAllCaregivers { caregiversResult ->
-                                if (caregiversResult is DatabaseResult.Success) {
-                                    doctorContacts.addAll(caregiversResult.data)
+                            val assignedPatients = assignedResult.data
+                            doctorContacts.addAll(assignedPatients)
+
+                            val caregiverIds = assignedPatients
+                                .map { it.assignedCaregiverId.trim() }
+                                .filter { it.isNotBlank() }
+                                .distinct()
+
+                            if (caregiverIds.isEmpty()) {
+                                handleContacts(doctorContacts.toList())
+                            } else {
+                                var pendingCaregivers = caregiverIds.size
+                                caregiverIds.forEach { cgId ->
+                                    doctorContacts.add(
+                                        UserProfile(
+                                            userId = cgId,
+                                            name = "",
+                                            userType = UserType.CAREGIVER
+                                        )
+                                    )
+                                    handleContacts(doctorContacts.toList())
+
+                                    userProfileService.getUserProfile(cgId) { cgResult ->
+                                        if (cgResult is DatabaseResult.Success) {
+                                            val idx = doctorContacts.indexOfFirst { it.userId == cgId }
+                                            if (idx != -1) {
+                                                doctorContacts[idx] = cgResult.data
+                                            } else {
+                                                doctorContacts.add(cgResult.data)
+                                            }
+                                        }
+                                        pendingCaregivers--
+                                        if (pendingCaregivers <= 0) {
+                                            handleContacts(doctorContacts.toList())
+                                        }
+                                    }
                                 }
-                                handleContacts(doctorContacts)
                             }
+                        } else {
+                            handleContacts(emptyList())
                         }
                     }
                 }
                 UserType.CAREGIVER -> {
+                    // Caregivers can only chat to their assigned patients and assigned doctors
                     val caregiverContacts = mutableListOf<UserProfile>()
                     userProfileService.getPatientsForCurrentCaregiver { patientsResult ->
                         if (patientsResult is DatabaseResult.Success) {
-                            caregiverContacts.addAll(patientsResult.data)
-                        }
-                        userProfileService.getAllDoctors { doctorsResult ->
-                            if (doctorsResult is DatabaseResult.Success) {
-                                caregiverContacts.addAll(doctorsResult.data)
+                            val assignedPatients = patientsResult.data
+                            caregiverContacts.addAll(assignedPatients)
+
+                            val docIds = assignedPatients
+                                .map { it.assignedDoctorId.trim() }
+                                .filter { it.isNotBlank() }
+                                .distinct()
+
+                            if (docIds.isEmpty()) {
+                                handleContacts(caregiverContacts.toList())
+                            } else {
+                                var pendingDoctors = docIds.size
+                                docIds.forEach { docId ->
+                                    caregiverContacts.add(
+                                        UserProfile(
+                                            userId = docId,
+                                            name = "",
+                                            userType = UserType.DOCTOR
+                                        )
+                                    )
+                                    handleContacts(caregiverContacts.toList())
+
+                                    userProfileService.getUserProfile(docId) { docResult ->
+                                        if (docResult is DatabaseResult.Success) {
+                                            val idx = caregiverContacts.indexOfFirst { it.userId == docId }
+                                            if (idx != -1) {
+                                                caregiverContacts[idx] = docResult.data
+                                            } else {
+                                                caregiverContacts.add(docResult.data)
+                                            }
+                                        }
+                                        pendingDoctors--
+                                        if (pendingDoctors <= 0) {
+                                            handleContacts(caregiverContacts.toList())
+                                        }
+                                    }
+                                }
                             }
-                            handleContacts(caregiverContacts)
+                        } else {
+                            handleContacts(emptyList())
                         }
                     }
                 }
                 UserType.USER -> {
+                    // Patients can only chat to their assigned doctor and assigned caregiver
                     val patientContacts = mutableListOf<UserProfile>()
                     val assignedDocId = currentProfile.assignedDoctorId.trim()
                     val assignedCaregiverId = currentProfile.assignedCaregiverId.trim()
 
-                    // Patient should only see their assigned doctor and caregiver
                     if (assignedDocId.isNotBlank()) {
                         patientContacts.add(
                             UserProfile(
@@ -265,6 +330,7 @@ fun Chat() {
                         }
                     }
 
+                    // Query assigned caregiver profile to obtain caregiver full name and details
                     if (assignedCaregiverId.isNotBlank()) {
                         userProfileService.getUserProfile(assignedCaregiverId) { cgResult ->
                             if (cgResult is DatabaseResult.Success) {
@@ -402,11 +468,17 @@ fun Chat() {
                                 .padding(vertical = 16.dp),
                             contentAlignment = Alignment.Center
                         ) {
+                            val emptyText = if (availableContacts.isEmpty()) {
+                                when (currentUserType) {
+                                    UserType.DOCTOR -> "No assigned patients or caregivers found."
+                                    UserType.CAREGIVER -> "No assigned patients or doctors found."
+                                    UserType.USER -> "No assigned doctor or caregiver found."
+                                }
+                            } else {
+                                "No matching contacts found."
+                            }
                             Text(
-                                if (availableContacts.isEmpty())
-                                    "No contacts found. When other accounts register, they will appear here."
-                                else
-                                    "No matching contacts found.",
+                                emptyText,
                                 color = Color.Gray,
                                 fontSize = 14.sp,
                                 textAlign = TextAlign.Center
