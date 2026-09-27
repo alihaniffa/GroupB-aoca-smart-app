@@ -90,6 +90,75 @@ actual class UserProfileService actual constructor() : UserProfileServiceInterfa
     }
 
     /**
+     * Get a specific user profile by userId.
+     */
+    actual override fun getUserProfile(
+        userId: String,
+        callback: (DatabaseResult<UserProfile>) -> Unit
+    ) {
+        if (userId.isBlank()) {
+            callback(
+                DatabaseResult.Error(
+                    "User ID cannot be blank"
+                )
+            )
+            return
+        }
+
+        database
+            .child(dbPath)
+            .child(userId)
+            .get()
+            .addOnSuccessListener { snapshot ->
+
+                if (!snapshot.exists()) {
+                    callback(
+                        DatabaseResult.Error(
+                            "Profile not found"
+                        )
+                    )
+                    return@addOnSuccessListener
+                }
+
+                try {
+                    val data =
+                        snapshot.value as? Map<*, *>
+
+                    if (data != null) {
+                        callback(
+                            DatabaseResult.Success(
+                                UserProfile.fromMap(
+                                    data,
+                                    userId
+                                )
+                            )
+                        )
+                    } else {
+                        callback(
+                            DatabaseResult.Error(
+                                "Profile data is empty"
+                            )
+                        )
+                    }
+
+                } catch (e: Exception) {
+                    callback(
+                        DatabaseResult.Error(
+                            "Failed to parse user profile: ${e.message}"
+                        )
+                    )
+                }
+            }
+            .addOnFailureListener { e ->
+                callback(
+                    DatabaseResult.Error(
+                        "Failed to get user profile: ${e.message}"
+                    )
+                )
+            }
+    }
+
+    /**
      * Create or update the current signed-in user's profile.
      */
     actual override fun updateUserProfile(

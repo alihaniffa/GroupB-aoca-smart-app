@@ -97,10 +97,21 @@ fun Chat() {
                         UserType.CAREGIVER -> "Caregiver"
                         UserType.USER -> "Patient"
                     }
-                    val displayName = contact.name.trim().ifBlank {
-                        contact.email.trim().substringBefore("@").ifBlank {
+                    val displayName = when {
+                        contact.userId == currentProfile.assignedDoctorId && contact.name.isNotBlank() && contact.name != "Doctor" && contact.name != "Assigned Doctor" ->
+                            contact.name.trim()
+                        contact.userId == currentProfile.assignedDoctorId ->
+                            "Assigned Doctor"
+                        contact.userId == currentProfile.assignedCaregiverId && contact.name.isNotBlank() && contact.name != "Caregiver" && contact.name != "Assigned Caregiver" ->
+                            contact.name.trim()
+                        contact.userId == currentProfile.assignedCaregiverId ->
+                            "Assigned Caregiver"
+                        contact.name.isNotBlank() ->
+                            contact.name.trim()
+                        contact.email.isNotBlank() ->
+                            contact.email.trim().substringBefore("@")
+                        else ->
                             "User ${contact.userId.take(6)}"
-                        }
                     }
 
                     val existingIndex = chats.indexOfFirst { it.id == contact.userId }
@@ -178,12 +189,60 @@ fun Chat() {
                     }
                 }
                 UserType.USER -> {
-                    userProfileService.getAllDoctors { doctorsResult ->
-                        val patientContacts = mutableListOf<UserProfile>()
-                        if (doctorsResult is DatabaseResult.Success) {
-                            patientContacts.addAll(doctorsResult.data)
+                    val patientContacts = mutableListOf<UserProfile>()
+                    val assignedDocId = currentProfile.assignedDoctorId.trim()
+                    val assignedCaregiverId = currentProfile.assignedCaregiverId.trim()
+
+                    // Always add assigned doctor immediately so it is always accessible to the patient
+                    if (assignedDocId.isNotBlank()) {
+                        patientContacts.add(
+                            UserProfile(
+                                userId = assignedDocId,
+                                name = "Assigned Doctor",
+                                userType = UserType.DOCTOR
+                            )
+                        )
+                    }
+
+                    // Always add assigned caregiver immediately if present
+                    if (assignedCaregiverId.isNotBlank()) {
+                        patientContacts.add(
+                            UserProfile(
+                                userId = assignedCaregiverId,
+                                name = "Assigned Caregiver",
+                                userType = UserType.CAREGIVER
+                            )
+                        )
+                    }
+
+                    // Immediately populate contacts so patient never experiences empty state
+                    handleContacts(patientContacts.toList())
+
+                    // Query assigned doctor profile to obtain doctor name and details
+                    if (assignedDocId.isNotBlank()) {
+                        userProfileService.getUserProfile(assignedDocId) { docResult ->
+                            if (docResult is DatabaseResult.Success) {
+                                val idx = patientContacts.indexOfFirst { it.userId == assignedDocId }
+                                if (idx != -1) {
+                                    patientContacts[idx] = docResult.data
+                                } else {
+                                    patientContacts.add(docResult.data)
+                                }
+                            }
+                            userProfileService.getAllDoctors { doctorsResult ->
+                                if (doctorsResult is DatabaseResult.Success) {
+                                    patientContacts.addAll(doctorsResult.data)
+                                }
+                                handleContacts(patientContacts)
+                            }
                         }
-                        handleContacts(patientContacts)
+                    } else {
+                        userProfileService.getAllDoctors { doctorsResult ->
+                            if (doctorsResult is DatabaseResult.Success) {
+                                patientContacts.addAll(doctorsResult.data)
+                            }
+                            handleContacts(patientContacts)
+                        }
                     }
                 }
             }
@@ -519,6 +578,7 @@ fun ChatConversationScreen(
     onMessageSent: (String, String) -> Unit
 ) {
     var messageText by remember { mutableStateOf("") }
+    var sendError by remember { mutableStateOf<String?>(null) }
     val messages = remember { mutableStateListOf<ChatMessage>() }
     val chatService = remember { ChatService() }
 
@@ -571,10 +631,11 @@ fun ChatConversationScreen(
         ) { result ->
             when (result) {
                 is ChatResult.Success -> {
+                    sendError = null
                     onMessageSent(chat.id, sentMessage)
                 }
                 is ChatResult.Error -> {
-                    // Message remains optimistically added
+                    sendError = result.message
                 }
             }
         }
@@ -661,13 +722,42 @@ fun ChatConversationScreen(
             }
         }
 
-        Surface(
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 8.dp
+                .fillMaxWidth()
         ) {
+            if (sendError != null) {
+                Surface(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Failed to send: ${sendError}",
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            fontSize = 12.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "Dismiss",
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.clickable { sendError = null }
+                        )
+                    }
+                }
+            }
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.surface,
+                shadowElevation = 8.dp
+            ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -699,6 +789,7 @@ fun ChatConversationScreen(
                     Text("Send")
                 }
             }
+        }
         }
     }
 }

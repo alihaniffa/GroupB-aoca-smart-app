@@ -11,6 +11,11 @@ interface UserProfileServiceInterface {
         callback: (DatabaseResult<UserProfile>) -> Unit
     )
 
+    fun getUserProfile(
+        userId: String,
+        callback: (DatabaseResult<UserProfile>) -> Unit
+    )
+
     fun updateUserProfile(
         userProfile: UserProfile,
         callback: (DatabaseResult<Unit>) -> Unit
@@ -85,6 +90,14 @@ expect class UserProfileService() : UserProfileServiceInterface {
      * Get the current user's profile.
      */
     override fun getCurrentUserProfile(
+        callback: (DatabaseResult<UserProfile>) -> Unit
+    )
+
+    /**
+     * Get a specific user's profile by userId.
+     */
+    override fun getUserProfile(
+        userId: String,
         callback: (DatabaseResult<UserProfile>) -> Unit
     )
 

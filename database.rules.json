@@ -13,7 +13,7 @@
       ],
 
       "$uid": {
-        ".read": "auth != null",
+        ".read": "auth != null && (auth.uid === $uid || data.child('userType').val() === 'doctor' || root.child('UserProfiles').child(auth.uid).child('assignedDoctorId').val() === $uid || root.child('UserProfiles').child(auth.uid).child('userType').val() === 'doctor' || (root.child('UserProfiles').child(auth.uid).child('userType').val() === 'caregiver' && root.child('CaregiverPatients').child(auth.uid).child($uid).val() === true) || data.child('assignedCaregiverId').val() === auth.uid)",
 
         ".write": "auth != null && auth.uid === $uid",
 

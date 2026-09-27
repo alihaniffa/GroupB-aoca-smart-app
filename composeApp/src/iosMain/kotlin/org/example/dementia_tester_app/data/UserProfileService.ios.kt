@@ -195,6 +195,85 @@ actual class UserProfileService actual constructor() :
     }
 
     // ------------------------------------------------------------------
+    // getUserProfile
+    // ------------------------------------------------------------------
+
+    actual override fun getUserProfile(
+        userId: String,
+        callback: (DatabaseResult<UserProfile>) -> Unit
+    ) {
+        if (userId.isBlank()) {
+            callback(
+                DatabaseResult.Error(
+                    "User ID cannot be blank"
+                )
+            )
+            return
+        }
+
+        val ref =
+            rootRef()
+                ?.child(dbPath)
+                ?.child(userId)
+
+        if (ref == null) {
+            callback(
+                DatabaseResult.Error(
+                    "Firebase not initialized"
+                )
+            )
+            return
+        }
+
+        FirebaseDatabaseIosHelper.observeValueOnce(
+            query = ref
+        ) { snapshot ->
+
+            if (
+                snapshot == null ||
+                !snapshot.exists()
+            ) {
+                callback(
+                    DatabaseResult.Error(
+                        "Profile not found"
+                    )
+                )
+
+                return@observeValueOnce
+            }
+
+            try {
+                val data =
+                    snapshotToMap(snapshot)
+
+                if (data != null) {
+                    callback(
+                        DatabaseResult.Success(
+                            UserProfile.fromMap(
+                                data,
+                                userId
+                            )
+                        )
+                    )
+                } else {
+                    callback(
+                        DatabaseResult.Error(
+                            "Profile data is empty"
+                        )
+                    )
+                }
+
+            } catch (t: Throwable) {
+                callback(
+                    DatabaseResult.Error(
+                        "Failed to parse user profile: ${t.message}"
+                    )
+                )
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------
     // updateUserProfile
     // ------------------------------------------------------------------
 
